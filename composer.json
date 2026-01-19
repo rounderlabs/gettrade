@@ -1,0 +1,77 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.3|^8.4",
+        "ext-bcmath": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "doctrine/dbal": "^3.7",
+        "guzzlehttp/guzzle": "^7.9",
+        "inertiajs/inertia-laravel": "^1.0",
+        "ladumor/laravel-pwa": "^0.0.5",
+        "laravel/framework": "^10.0",
+        "laravel/horizon": "^5.20",
+        "laravel/sanctum": "^3.3",
+        "laravel/tinker": "^2.9",
+        "maatwebsite/excel": "^3.1",
+        "predis/predis": "^2.3",
+        "s-ichikawa/laravel-sendgrid-driver": "^3.0",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-permission": "^6.21",
+        "spatie/laravel-short-schedule": "^1.6",
+        "spatie/laravel-webhook-client": "^3.4",
+        "tightenco/ziggy": "^2.4"
+    },
+    "require-dev": {
+        "spatie/laravel-ignition": "^2.3",
+        "laravel/breeze": "^1.21",
+        "fakerphp/faker": "^1.23",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.30",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "files": [
+            "app/Functions/custom_helpers.php"
+        ],
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

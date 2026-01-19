@@ -1,0 +1,21 @@
+// Font Awesome (icons)
+@import "~@fortawesome/fontawesome-free/css/all.min.css";
+
+// OverlayScrollbars (AdminLTE dependency)
+@import "~overlayscrollbars/styles/overlayscrollbars.css";
+
+// AdminLTE core styles
+@import "~admin-lte/dist/css/adminlte.min.css";
+
+// (Optional) Bootstrap base styles
+// @import "~bootstrap/dist/css/bootstrap.min.css";
+
+// Custom Admin overrides
+body {
+    background-color: #f8fafc;
+}
+
+.card {
+    border-radius: 0.5rem;
+    box-shadow: none !important;
+}

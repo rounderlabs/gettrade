@@ -1,0 +1,16 @@
+/*!
+ * Toastify js 1.12.0
+ * https://github.com/apvarun/toastify-js
+ * @license MIT licensed
+ *
+ * Copyright (C) 2018 Varun A P
+ */
+
+/*!
+ * clipboard.js v2.0.6
+ * https://clipboardjs.com/
+ * 
+ * Licensed MIT © Zeno Rocha
+ */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
