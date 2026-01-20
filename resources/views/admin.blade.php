@@ -1,151 +1,136 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title inertia>The Shuchak Admin</title>
-    {{-- Inertia Head --}}
-    @inertiaHead
-    <!--begin::Accessibility Meta Tags-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    <!--end::Accessibility Meta Tags-->
-    <!--begin::Primary Meta Tags-->
-    <meta name="title" content="The Shuchak | Dashboard v2" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta
-        name="description"
-        content="The Shuchak - A REUNION OF DYNAMIC LEADERS"
-    />
-    <meta
-        name="keywords"
-        content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard, accessible admin panel, WCAG compliant"
-    />
-    <!--end::Primary Meta Tags-->
-    <!--begin::Accessibility Features-->
-    <!-- Skip links will be dynamically added by accessibility.js -->
-    <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="/assets/css/adminlte.min.css" as="style" />
-    <!--end::Accessibility Features-->
-    <!--begin::Fonts-->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-        integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
-        crossorigin="anonymous"
-        media="print"
-        onload="this.media='all'"
-    />
-    <!--end::Fonts-->
-    <!--begin::Third Party Plugin(OverlayScrollbars)-->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-        crossorigin="anonymous"
-    />
-    <!--end::Third Party Plugin(OverlayScrollbars)-->
-    <!--begin::Third Party Plugin(Bootstrap Icons)-->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-        crossorigin="anonymous"
-    />
-    <!--end::Third Party Plugin(Bootstrap Icons)-->
-    <!--begin::Required Plugin(TradeMiles)-->
-    <link rel="stylesheet" href="/assets/css/style.css" />
-    <!--end::Required Plugin(TradeMiles)-->
-    <!-- apexcharts -->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
-        integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
-        crossorigin="anonymous"
-    />
-    <style>
-        .card-widget {
-            border: 0;
-            position: relative;
-        }
+    <head>
+        {{-- ===============================
+            BASIC META
+        =============================== --}}
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8">
 
-        .widget-user {
+        <title inertia>
+            {{ $siteSettings['site_name'] ?? config('app.name') }} Admin
+        </title>
 
-        .widget-user-header {
+        @inertiaHead
 
+        {{-- ===============================
+            VIEWPORT & THEME
+        =============================== --}}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+        <meta name="color-scheme" content="light dark" />
 
-            height: 135px;
-            padding: 1rem;
-            text-align: center;
-        }
+        <meta
+            name="theme-color"
+            content="{{ $siteSettings['theme_color'] ?? '#007bff' }}"
+            media="(prefers-color-scheme: light)"
+        />
+        <meta
+            name="theme-color"
+            content="{{ $siteSettings['theme_color_dark'] ?? '#1a1a1a' }}"
+            media="(prefers-color-scheme: dark)"
+        />
 
-        .widget-user-username {
-            font-size: 25px;
-            font-weight: 300;
-            margin-bottom: 0;
-            margin-top: 0;
-            text-shadow: 0 1px 1px rgba($black, .2);
-        }
+        {{-- ===============================
+            PRIMARY SEO META
+        =============================== --}}
+        <meta
+            name="title"
+            content="{{ $siteSettings['site_name'] ?? config('app.name') }} | Admin Dashboard"
+        />
 
-        .widget-user-desc {
-            margin-top: 0;
-        }
+        <meta
+            name="description"
+            content="{{ $siteSettings['site_tagline'] ?? 'Admin Panel' }}"
+        />
 
-        .widget-user-image {
-            left: 50%;
-            margin-left: -45px;
-            position: absolute;
-            top: 80px;
+        <meta
+            name="keywords"
+            content="{{ $siteSettings['site_keywords'] ?? 'admin,dashboard,management' }}"
+        />
 
-            > img {
-                border: 3px solid $white;
-                height: auto;
-                width: 90px;
-            }
-        }
+        <meta
+            name="author"
+            content="{{ $siteSettings['site_author'] ?? 'Admin' }}"
+        />
 
-            .card-footer {
-                padding-top: 50px;
-            }
-        }
+        {{-- ===============================
+            FAVICON
+        =============================== --}}
+        <link
+            rel="icon"
+            type="image/png"
+            href="{{ asset($siteSettings['logo_mobile'] ?? '/favicon.ico') }}"
+        />
 
-        .widget-user-2 {
+        {{-- ===============================
+            PRELOAD / PERFORMANCE
+        =============================== --}}
+        <link rel="preload" href="/assets/css/adminlte.min.css" as="style" />
 
+        {{-- ===============================
+            FONTS
+        =============================== --}}
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+            crossorigin="anonymous"
+            media="print"
+            onload="this.media='all'"
+        />
 
-        .widget-user-header {
+        {{-- ===============================
+            THIRD PARTY CSS
+        =============================== --}}
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+            crossorigin="anonymous"
+        />
 
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+            crossorigin="anonymous"
+        />
 
-            .widget-user-username {
-                font-size: 25px;
-                font-weight: 300;
-                margin-bottom: 5px;
-                margin-top: 5px;
+        {{-- ===============================
+            ADMIN THEME CSS
+        =============================== --}}
+        <link rel="stylesheet" href="/assets/css/style.css" />
+
+        {{-- ===============================
+            CHARTS (OPTIONAL)
+        =============================== --}}
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+            crossorigin="anonymous"
+        />
+
+        {{-- ===============================
+            INLINE WIDGET STYLES
+        =============================== --}}
+        <style>
+            .card-widget {
+                border: 0;
+                position: relative;
             }
 
-
-            .widget-user-desc {
-                margin-top: 0;
+            .small-box {
+                color: #fff;
             }
+        </style>
 
-            .widget-user-username,
-            .widget-user-desc {
-                margin-left: 75px;
-            }
+        {{-- ===============================
+            ZIGGY ROUTES
+        =============================== --}}
+        @routes
 
-
-            .widget-user-image {
-                > img {
-                    float: left;
-                    height: auto;
-                    width: 65px;
-                }
-            }
-        }
-        }
-    </style>
-
-    @routes
-
-    <script src="{{ mix('js/admin.js') }}" defer></script>
+        {{-- ===============================
+            INERTIA ADMIN JS
+        =============================== --}}
+        <script src="{{ mix('js/admin.js') }}" defer></script>
 </head>
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
 {{--<div id="admin-app" data-page="{{ json_encode($page) }}"></div>--}}
