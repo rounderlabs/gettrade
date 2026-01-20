@@ -5,7 +5,7 @@
 //     .sass('resources/css/sass/admin.scss', 'public/css/admin.css')
 //     .vue()
 //     .copyDirectory('resources/shuchack/', 'public/shuchack')
-//     .copyDirectory('resources/theshuchak/', 'public/theshuchak')
+//     .copyDirectory('resources/user-panel/', 'public/user-panel')
 //     .copyDirectory('resources/assets/', 'public/assets')
 //     .copyDirectory('resources/assets/images', 'public/images')
 //     .copyDirectory('resources/js/manifest_user.json', 'public/manifest.json')
@@ -33,7 +33,7 @@ mix.js('resources/js/app.js', 'public/js')
 
     // Copy static assets (ONLY ONCE)
     .copyDirectory('resources/shuchack', 'public/shuchack')
-    .copyDirectory('resources/theshuchak', 'public/theshuchak')
+    .copyDirectory('resources/site', 'public/site')
     .copyDirectory('resources/assets/images', 'public/images')
 
     // PWA / misc
