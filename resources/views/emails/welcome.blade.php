@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to {{ site_setting('site_name', 'Shuchak') }}</title>
+    <title>Welcome to {{ site_setting('site_name', 'Get Trade') }}</title>
 
     <style>
         body {
@@ -102,7 +102,6 @@
 
         <p><strong style="color:#fff">Username:</strong> {{ $user->username }}</p>
         <p><strong style="color:#fff">Referral ID:</strong> {{ $user->ref_code }}</p>
-        <p><strong style="color:#fff">Password:</strong> {{ $user->security_answer }}</p>
 
         <p>
             <strong style="color:#fff">Referral Link:</strong><br>

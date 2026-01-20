@@ -16,7 +16,7 @@ class CreateUserBusinessesTable extends Migration
         Schema::create('user_businesses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique();
-            $table->decimal('usd', 40, 2)->default('0');
+            $table->decimal('amount', 40, 2)->default('0');
             $table->timestamps();
         });
     }

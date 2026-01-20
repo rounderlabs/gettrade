@@ -1,7 +1,7 @@
 <script setup>
 import MainAdminLayout from "@/layouts/Admin/MainAdminLayout.vue"
-import { useForm } from "@inertiajs/vue3"
-import { ref } from "vue"
+import {useForm} from "@inertiajs/vue3"
+import {ref} from "vue"
 
 /* =========================
    LAYOUT
@@ -49,7 +49,7 @@ const commissionForm = useForm({
     level_percentages:
         props.settings.level_percentages?.length
             ? props.settings.level_percentages
-            : [{ level: 1, percent: 0 }],
+            : [{level: 1, percent: 0}],
 })
 
 /* =========================
@@ -75,6 +75,20 @@ function reindexLevels() {
         item.level = index + 1
     })
 }
+
+const emailForm = useForm({
+    email_from_name: props.settings.email_from_name ?? '',
+    email_from_address: props.settings.email_from_address ?? '',
+    email_footer_text: props.settings.email_footer_text ?? '',
+    welcome_email_subject: props.settings.welcome_email_subject ?? '',
+    welcome_email_enabled: props.settings.welcome_email_enabled === 1,
+})
+
+function saveEmailSettings() {
+    emailForm.post(route('admin.site.settings.update.email'), {
+        preserveScroll: true,
+    })
+}
 </script>
 
 <template>
@@ -88,9 +102,9 @@ function reindexLevels() {
                     class="nav-item"
                 >
                     <a
-                        href="#"
-                        class="nav-link"
                         :class="{ active: activeTab === key }"
+                        class="nav-link"
+                        href="#"
                         @click.prevent="activeTab = key"
                     >
                         {{ label }}
@@ -105,9 +119,9 @@ function reindexLevels() {
                 <div class="form-group">
                     <label>Site Name</label>
                     <input
-                        type="text"
-                        class="form-control"
                         v-model="generalForm.site_name"
+                        class="form-control"
+                        type="text"
                     />
                     <div class="text-danger">
                         {{ generalForm.errors.site_name }}
@@ -117,19 +131,19 @@ function reindexLevels() {
                 <div class="form-group">
                     <label>Tagline</label>
                     <input
-                        type="text"
-                        class="form-control"
                         v-model="generalForm.site_tagline"
+                        class="form-control"
+                        type="text"
                     />
                 </div>
                 <div class="form-group">
                     <label>Referral Code Prefix</label>
                     <input
-                        type="text"
-                        class="form-control text-uppercase"
                         v-model="generalForm.referral_prefix"
-                        placeholder="Leave empty for numeric only"
+                        class="form-control text-uppercase"
                         maxlength="5"
+                        placeholder="Leave empty for numeric only"
+                        type="text"
                     />
                     <small class="text-muted">
                         Optional. Uppercase letters only (2–5 chars).
@@ -142,8 +156,8 @@ function reindexLevels() {
                 </div>
 
                 <button
-                    class="btn btn-primary"
                     :disabled="generalForm.processing"
+                    class="btn btn-primary"
                     @click="generalForm.post(route('admin.site.settings.update.general'), { preserveScroll: true })"
                 >
                     Save General
@@ -155,8 +169,8 @@ function reindexLevels() {
                 <div class="form-group">
                     <label>Desktop Logo</label>
                     <input
-                        type="file"
                         class="form-control"
+                        type="file"
                         @change="e => brandingForm.logo_desktop = e.target.files[0]"
                     />
                 </div>
@@ -164,15 +178,15 @@ function reindexLevels() {
                 <div class="form-group">
                     <label>Mobile Logo</label>
                     <input
-                        type="file"
                         class="form-control"
+                        type="file"
                         @change="e => brandingForm.logo_mobile = e.target.files[0]"
                     />
                 </div>
 
                 <button
-                    class="btn btn-primary"
                     :disabled="brandingForm.processing"
+                    class="btn btn-primary"
                     @click="brandingForm.post(route('admin.site.settings.update.branding'), { preserveScroll: true })"
                 >
                     Save Branding
@@ -184,15 +198,15 @@ function reindexLevels() {
                 <div class="form-group">
                     <label>Direct Commission (%)</label>
                     <input
-                        type="number"
-                        class="form-control"
                         v-model.number="commissionForm.direct_percent"
-                        min="0"
+                        class="form-control"
                         max="100"
+                        min="0"
+                        type="number"
                     />
                 </div>
 
-                <hr />
+                <hr/>
 
                 <label class="mb-2">Level Wise Commission</label>
 
@@ -206,17 +220,17 @@ function reindexLevels() {
                     </span>
 
                     <input
-                        type="number"
-                        class="form-control mr-2"
-                        style="max-width: 120px"
                         v-model.number="item.percent"
-                        min="0"
+                        class="form-control mr-2"
                         max="100"
+                        min="0"
+                        style="max-width: 120px"
+                        type="number"
                     />
 
                     <button
-                        class="btn btn-danger btn-sm"
                         v-if="index !== 0"
+                        class="btn btn-danger btn-sm"
                         @click="removeLevel(index)"
                     >
                         Remove
@@ -224,8 +238,8 @@ function reindexLevels() {
                 </div>
 
                 <button
-                    class="btn btn-outline-primary btn-sm mt-2"
                     :disabled="commissionForm.level_percentages.length >= MAX_LEVELS"
+                    class="btn btn-outline-primary btn-sm mt-2"
                     @click="addLevel"
                 >
                     + Add Level
@@ -240,13 +254,64 @@ function reindexLevels() {
                 </div>
 
                 <button
-                    class="btn btn-primary mt-3"
                     :disabled="commissionForm.processing"
+                    class="btn btn-primary mt-3"
                     @click="commissionForm.post(route('admin.site.settings.update.commission'), { preserveScroll: true })"
                 >
                     Save Commission
                 </button>
             </div>
+
+            <!-- ================= EMAIL TAB ================= -->
+            <div v-if="activeTab === 'email'">
+
+                <div class="form-group">
+                    <label>From Name</label>
+                    <input v-model="emailForm.email_from_name" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>From Email</label>
+                    <input v-model="emailForm.email_from_address" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Welcome Email Subject</label>
+                    <input v-model="emailForm.welcome_email_subject" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Footer</label>
+                    <textarea v-model="emailForm.email_footer_text" class="form-control"
+                              rows="3"></textarea>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input v-model="emailForm.welcome_email_enabled" class="form-check-input"
+                           type="checkbox">
+                    <label class="form-check-label">Enable Welcome Email</label>
+                </div>
+
+                <button
+                    :disabled="emailForm.processing"
+                    class="btn btn-primary"
+                    @click="saveEmailSettings">
+                    Save Email Settings
+                </button>
+
+                <hr>
+
+                <h5>Email Preview</h5>
+
+                <iframe
+                    :src="route('admin.site.settings.email.preview')"
+                    style="width:100%;height:600px;border:1px solid #ddd;border-radius:6px;">
+                </iframe>
+                ```
+
+            </div>
+
+
         </div>
     </div>
 </template>

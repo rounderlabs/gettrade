@@ -16,7 +16,7 @@ class SiteSettingController extends Controller
                 'general' => 'General',
                 'branding' => 'Branding',
                 'commission' => 'Commission',
-                'system' => 'System',
+                'email' => 'Email',
             ],
         ]);
     }
@@ -119,5 +119,39 @@ class SiteSettingController extends Controller
         }
 
         return back()->with('notification', ['Settings updated successfully','success']);
+    }
+
+
+    public function updateEmail(Request $request)
+    {
+        $data = $request->validate([
+            'email_from_name' => 'required|string',
+            'email_from_address' => 'required|email',
+            'email_footer_text' => 'nullable|string',
+            'welcome_email_subject' => 'required|string',
+            'welcome_email_enabled' => 'boolean',
+        ]);
+
+        foreach ($data as $key => $value) {
+            SiteSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
+        }
+
+        return back()->with('success', 'Email settings updated');
+    }
+
+    public function previewWelcomeEmail()
+    {
+        $fakeUser = (object)[
+            'name' => 'John Doe',
+            'username' => 'TSK12345',
+            'ref_code' => 'TSK99999',
+        ];
+
+        return view('emails.welcome', [
+            'user' => $fakeUser,
+        ]);
     }
 }

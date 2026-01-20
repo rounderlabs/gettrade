@@ -203,6 +203,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/branding', [SiteSettingController::class, 'updateBranding'])->name('update.branding');
         Route::post('/commission', [SiteSettingController::class, 'updateCommission'])->name('update.commission');
         Route::post('/system', [SiteSettingController::class, 'updateSystem'])->name('update.system');
+        Route::post('update-email', [SiteSettingController::class, 'updateEmail'])->name('update.email');
+        Route::get('email-preview', [SiteSettingController::class, 'previewWelcomeEmail'])->name('email.preview');
     });
     Route::prefix('ranks')->name('ranks.')->group(function () {
         Route::get('/rank-rules', [RankRuleController::class, 'index'])->name('index');

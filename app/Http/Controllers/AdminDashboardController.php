@@ -18,16 +18,25 @@ class AdminDashboardController extends Controller
     public function showDashboard()
     {
         $topTeam = Team::where('user_id', 1)->first();
+
+        $incomeTotals = DB::table('user_income_stats')
+            ->selectRaw('
+            COALESCE(SUM(direct),0) as total_direct_bonus,
+            COALESCE(SUM(roi),0) as total_trading_bonus,
+            COALESCE(SUM(roi_on_roi),0) as total_systematic_bonus,
+            COALESCE(SUM(rank),0) as total_rank_bonus
+        ')
+            ->first();
+
         return Inertia::render('Admin/Dashboard', [
-            'participants' => $topTeam->total,
-            'active_participants' => $topTeam->active_total,
-            'users' => User::where('id', '>', 0)->count(),
-            'total_front_line_bonus'=>0,
-            'total_trading_bonus'=>0,
-            'total_profit_sharing_bonus'=>0,
-            'total_magic_bonus'=>0,
-            'total_reward_bonus'=>0,
-            'total_pool_bonus'=>0,
+            'participants' => $topTeam?->total ?? 0,
+            'active_participants' => $topTeam?->active_total ?? 0,
+            'users' => User::count(),
+
+            'total_direct_bonus'     => (float) $incomeTotals->total_direct_bonus,
+            'total_trading_bonus'    => (float) $incomeTotals->total_trading_bonus,
+            'total_systematic_bonus' => (float) $incomeTotals->total_systematic_bonus,
+            'total_rank_bonus'       => (float) $incomeTotals->total_rank_bonus,
         ]);
     }
 
