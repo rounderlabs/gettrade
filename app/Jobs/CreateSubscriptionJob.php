@@ -55,7 +55,6 @@ class CreateSubscriptionJob implements ShouldQueue
             'user_usd_wallet_transaction_id' => $this->userUsdWalletTransaction->id,
             'amount' => $this->userUsdWalletTransaction->amount_in_usd,
             'tenure_end_date' => $this->userUsdWalletTransaction->created_at->addMonths($tenure)->format('Y-m-d'),
-            'maturity_date' => $this->userUsdWalletTransaction->created_at->addMonths($plan->maturity_tenure)->format('Y-m-d'),
             'lock_end_date' => $this->userUsdWalletTransaction->created_at->addDays(90)->format('Y-m-d'),
             'earned_so_far' => castDecimalString('0', 2),
             'is_active' => $is_active,
@@ -75,7 +74,7 @@ class CreateSubscriptionJob implements ShouldQueue
             if ($this->user->subscriptions()->count() === 1) {
                 dispatch(new UpdateActiveTeamStatJob($this->user))->delay(now()->addSeconds(1));
             }
-            CreateLevelIncomeJob::dispatch($subscription)->delay(now()->addSecond());
+            CreateDirectIncomeJob::dispatch($this->userUsdWalletTransaction, $subscription)->delay(now()->addSecond());
         }
 
         $userActiveModel = $this->user->userActive;

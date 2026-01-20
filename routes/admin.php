@@ -10,9 +10,11 @@ use App\Http\Controllers\Admin\Api\PermissionController;
 use App\Http\Controllers\Admin\Api\RoleController;
 use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ModuleSettingController;
+use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\SubscriptionHistoryController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
+use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\UserUsdWalletAdminUpdateController;
 use http\Client\Request;
 use Illuminate\Support\Facades\Route;
@@ -186,11 +188,29 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     });
 
+
     Route::prefix('fund-requests')->name('fund.requests.')->group(function () {
         Route::get('/', [AdminFundRequestController::class, 'index'])->name('index');
         Route::post('{request}/accept', [AdminFundRequestController::class, 'accept'])->name('accept');
         Route::post('{request}/reject', [AdminFundRequestController::class, 'reject'])->name('reject');
         Route::get('{request}/download', [AdminFundRequestController::class, 'download'])->name('download');
+    });
+
+    Route::prefix('site-settings')->name('site.settings.')->group(function () {
+        Route::get('/', [SiteSettingController::class, 'index'])->name('index');
+        Route::post('/general', [SiteSettingController::class, 'updateGeneral'])->name('update.general');
+        Route::post('/branding', [SiteSettingController::class, 'updateBranding'])->name('update.branding');
+        Route::post('/commission', [SiteSettingController::class, 'updateCommission'])->name('update.commission');
+        Route::post('/system', [SiteSettingController::class, 'updateSystem'])->name('update.system');
+    });
+    Route::prefix('plans')->name('plans.')->group(function () {
+        Route::get('/', [PlanController::class, 'index'])->name('index');
+        Route::get('/create', [PlanController::class, 'create'])->name('create');
+        Route::post('/add-plans', [PlanController::class, 'store'])->name('store');
+
+        Route::get('/{plan}/edit', [PlanController::class, 'edit'])->name('edit');
+        Route::put('/{plan}', [PlanController::class, 'update'])->name('update');
+        Route::delete('/{plan}', [PlanController::class, 'destroy'])->name('destroy');
     });
 
 

@@ -20,8 +20,8 @@
                             <h1 class="display-two nb4-xxl-color mb-5 mb-lg-6">Trade Abundance</h1>
                             <p class="fs-six-up fw_500 nb4-xxl-color">Covesting allows you to automatically copy top performing traders and achieve the returns</p>
                             <div class="d-inline-flex flex-wrap gap-4 gap-lg-10 align-items-center mt-8 mt-lg-10">
-                                <a href="signup.html" class="cmn-btn alt-xxl-bg fs-five nb4-xxl-bg gap-2 gap-lg-3 align-items-center py-2 px-5 py-lg-3 px-lg-6">Start Trading <i class="ti ti-trending-up"></i></a>
-                                <a href="signin.html" class="cmn-btn link link-xxl-color fs-five  gap-2 gap-lg-3 align-items-center "><i class="ti ti-arrow-narrow-right fs-four"></i> Try demo account</a>
+                                <a href="/login" class="cmn-btn alt-xxl-bg fs-five nb4-xxl-bg gap-2 gap-lg-3 align-items-center py-2 px-5 py-lg-3 px-lg-6">Start Trading <i class="ti ti-trending-up"></i></a>
+                                <a href="/register" class="cmn-btn link link-xxl-color fs-five  gap-2 gap-lg-3 align-items-center "><i class="ti ti-arrow-narrow-right fs-four"></i> Create Account</a>
                             </div>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
                             <li class="d-flex align-items-center gap-3 fs-six-up"><i class="ti ti-circle-check s1-color fs-four"></i>Risk Management in Trading </li>
                             <li class="d-flex align-items-center gap-3 fs-six-up"><i class="ti ti-circle-check s1-color fs-four"></i>Technical vs. Fundamental Analysis </li>
                         </ul>
-                        <a href="signup.html" class="cmn-btn secondary-alt fs-six-up nb4-xxl-bg gap-2 gap-lg-3 align-items-center py-2 px-5 py-lg-3 px-lg-6 mt-7 mt-xxl-8">Sign up Now <i class="ti ti-arrow-right fs-four"></i></a>
+                        <a href="/register" class="cmn-btn secondary-alt fs-six-up nb4-xxl-bg gap-2 gap-lg-3 align-items-center py-2 px-5 py-lg-3 px-lg-6 mt-7 mt-xxl-8">Register Now <i class="ti ti-arrow-right fs-four"></i></a>
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-6">

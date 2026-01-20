@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\SiteSetting;
+use App\Services\CommissionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
@@ -15,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(CommissionService::class);
     }
 
     /**
@@ -23,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Inertia::share('siteSettings', function () {
+            return SiteSetting::where('autoload', true)->pluck('value', 'key');
+        });
         // Use different root layouts for admin vs user routes
         Inertia::setRootView(Request::is('admin/*') ? 'admin' : 'app');
 

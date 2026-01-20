@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call([
-            PlanTableSeeder::class,
             UserTableSeeder::class,
             CountryTableSeeder::class,
             AdminSeeder::class,

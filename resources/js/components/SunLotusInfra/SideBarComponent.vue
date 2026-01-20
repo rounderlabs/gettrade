@@ -80,14 +80,14 @@ export default {
                     menu_icon : "users",
                 },
                 {
-                    heading: "Level Bonus",
+                    heading: "Marketing Bonus",
                     link: route("earnings.front.line.bonus"),
                     menu_icon : "award",
 
                 },
 
                 {
-                    heading: "Monthly Dividend",
+                    heading: "Trading Income",
                     link: route("earnings.monthly.trading.bonus"),
                     menu_icon : "bar-chart-2",
 
@@ -95,14 +95,14 @@ export default {
 
 
                 {
-                    heading: "Level On Dividend",
+                    heading: "Systematic Trading Tncome",
                     link: route("earnings.profit.sharing.bonus"),
                     menu_icon : "framer",
 
                 },
 
                 {
-                    heading: "Maturity Bonus",
+                    heading: "Rank Bonus",
                     link: route("earnings.maturity.bonus"),
                     menu_icon : "sunrise",
 

@@ -1,7 +1,7 @@
 <template>
     <div v-if="deferredPrompt" class="text-center mt-3">
         <button @click="installApp" class="btn btn-primary">
-            <i class="fas fa-download"></i> Install The Shuchak User App
+            <i class="fas fa-download"></i> Install The Get Trade App
         </button>
     </div>
 </template>

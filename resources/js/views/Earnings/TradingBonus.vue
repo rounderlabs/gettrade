@@ -2,7 +2,7 @@
     <section class="section-b-space">
         <div class="custom-container">
             <div class="title">
-                <h2>Monthly Dividends (Credits On Daily Basis)</h2>
+                <h2>Trading Incomes (Credits On Daily Basis)</h2>
             </div>
 
             <div class="row gy-3">

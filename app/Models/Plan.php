@@ -11,7 +11,10 @@ class Plan extends Model
     use HasFactory, SerializeDateTrait;
 
     protected $guarded = [];
-
+    protected $casts = [
+        'is_active' => 'boolean',
+        'allow_to_user' => 'boolean',
+    ];
 
     public function subscriptions()
     {

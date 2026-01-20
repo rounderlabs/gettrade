@@ -2,7 +2,7 @@
     <section v-if="subscriptions">
         <div class="custom-container">
             <div class="title">
-                <h2>Maturity</h2>
+                <h2>Current Rank</h2>
 
             </div>
             <div v-for="subscription in subscriptions" class="statistics-banner mb-2" >
@@ -27,7 +27,7 @@
     <section class="section-b-space">
         <div class="custom-container">
             <div class="title">
-                <h2>Maturity Bonuses</h2>
+                <h2>Rank Incomes</h2>
             </div>
 
 

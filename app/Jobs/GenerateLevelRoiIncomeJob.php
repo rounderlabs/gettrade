@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Methods\IncomeMethods;
 use App\Methods\UserLevelMethods;
 use App\Methods\UserMethods;
+use App\Models\SiteSetting;
 use App\Models\User;
 use App\Models\UserInvestment;
 use App\Models\UserLevelRoiIncome;
@@ -43,11 +44,12 @@ class GenerateLevelRoiIncomeJob implements ShouldQueue
      */
     public function handle()
     {
+
         UserLevelMethods::init($this->user)->eachSponsorV1(function ($parentUser, $level)  {
             if ($level > 13) {
                 return true;
             }
-            $unlockedLevel = $this->getActiveLevel($parentUser);
+            $unlockedLevel = $this->getActiveLevel($parentUser->team);
             if ($level > $unlockedLevel) {
                 return null;
             }
@@ -66,14 +68,14 @@ class GenerateLevelRoiIncomeJob implements ShouldQueue
                 return null;
             }
             $amount = castDecimalString($this->userRoiIncome->income, 4);
-            if ($level == 1){
-                $roiPercent = '0.10';
-                $incomePercent = '10';
-            }else {
-                $roiPercent = '0.04';
-                $incomePercent = '4';
+
+            $roiPercent = SiteSetting::getLevelRoiPercent($level);
+
+            if ($roiPercent <= 0) {
+                return null;
             }
-            $incomeAmount = multipleDecimalStrings($amount, $roiPercent);
+            $incomePercent = bcmul((string) $roiPercent, '100', 2);
+            $incomeAmount = multipleDecimalStrings($amount, (string) $roiPercent);
 
             if (UserLevelRoiIncome::where('user_id', $parentUser->id)->where('user_roi_income_id', $this->userRoiIncome->id)->exists()) {
                 return null;
@@ -111,66 +113,23 @@ class GenerateLevelRoiIncomeJob implements ShouldQueue
         });
     }
 
-    public function getActiveLevel(User $user): int
+    public function getActiveLevel($activeDirect): int
     {
-        // Levels 1–3 always open
-        $openLevel = 3;
-
-        /**
-         * STEP 1: Level 1 check → unlock 4–6
-         */
-        $level1Users = $this->getActiveUsersAtLevel($user->id, 1);
-
-        if ($level1Users->count() < 3) {
-            return $openLevel;
+        // If there is no team data or no active direct info
+        if (is_null($activeDirect) || !isset($activeDirect->active_direct)) {
+            return 0;
         }
 
-        $openLevel = 6;
+        $count = (int) $activeDirect->active_direct;
 
-        /**
-         * STEP 2: Level 2 check → unlock 7–9
-         * Each level-1 user must have 3 active level-2 users
-         */
-        $qualifiedLevel2Users = collect();
-
-        foreach ($level1Users as $l1) {
-            $level2 = $this->getActiveUsersAtLevel($l1->downline_user_id, 1);
-
-            if ($level2->count() < 3) {
-                return $openLevel;
-            }
-
-            $qualifiedLevel2Users = $qualifiedLevel2Users->merge($level2);
+        // If less than 10 directs, unlock that level count
+        if ($count < 10) {
+            return $count * 2;
         }
 
-        $openLevel = 9;
-
-        /**
-         * STEP 3: Level 3 check → unlock 10–13
-         * Each level-2 user must have 3 active level-3 users
-         */
-        foreach ($qualifiedLevel2Users as $l2) {
-            $level3 = $this->getActiveUsersAtLevel($l2->downline_user_id, 1);
-
-            if ($level3->count() < 3) {
-                return $openLevel;
-            }
-        }
-
-        return 13;
+        // If 5 or more directs, unlock full 10 levels
+        return 20;
     }
-
-    private function getActiveUsersAtLevel(int $userId, int $level)
-    {
-        return \DB::table('user_level_stats as uls')
-            ->join('subscriptions as s', 's.user_id', '=', 'uls.downline_user_id')
-            ->where('uls.user_id', $userId)
-            ->where('uls.level', $level)
-            ->where('s.is_active', '=', 1)
-            ->select('uls.downline_user_id')
-            ->get();
-    }
-
     private function isUserActive(User $user): bool
     {
         return isUserActive($user);

@@ -46,7 +46,7 @@
                         data-bs-target="#navbar-content" aria-expanded="true" id="nav-icon3">
                     <span></span><span></span><span></span><span></span>
                 </button>
-                <a href="index.html" class="navbar-brand m-0 p-0 d-flex align-items-center gap-5 gap-xl-5 me-2">
+                <a href="/" class="navbar-brand m-0 p-0 d-flex align-items-center gap-5 gap-xl-5 me-2">
                     <img src="site/assets/images/fav.png" class="logo small_logo d-sm-none" alt="logo">
                     <img src="site/assets/images/gt-logo.png" class="logo d-none d-sm-flex" alt="logo">
                 </a>
@@ -140,7 +140,7 @@
                     <p class="fs-six-up fw_500 mt-5">Try our super easy portal for free</p>
                 </div>
                 <div class="col-sm-4 text-sm-end">
-                    <a href="signup.html" class="cmn-btn secondary-alt ms-auto fs-five nb4-xxl-bg gap-2 align-items-center  py-2 px-4 py-lg-3 px-lg-5">Register <i class="ti ti-arrow-right fs-four"></i></a>
+                    <a href="/register" class="cmn-btn secondary-alt ms-auto fs-five nb4-xxl-bg gap-2 align-items-center  py-2 px-4 py-lg-3 px-lg-5">Register <i class="ti ti-arrow-right fs-four"></i></a>
                 </div>
             </div>
         </div>
@@ -201,7 +201,7 @@
                 <div class="footer__part">
                     <h4 class="mb-6 mb-lg-8">Contact Us</h4>
                     <div class="d-flex flex-column gap-2 gap-sm-3 gap-md-4">
-                        <a href="/cdn-cgi/l/email-protection#a8c1c6cec7e8cdd0c9c5d8c4cd86cbc7c5"><span class="__cf_email__" data-cfemail="660f08000926031e070b160a034805090b">[email&#160;protected]</span></a>
+                        <a href=""><span class="__cf_email__" >info@gettrade.space</span></a>
                         <a href="tel:+123456789">+0123 456 789</a>
                     </div>
                 </div>
@@ -210,7 +210,7 @@
         <div class="row">
             <div class="col-12 border-top border-color opac-20 py-7 py-xxl-8">
                 <div class="footer__copyright d-center gap-15 flex-wrap justify-content-md-between">
-                    <p class="fs-six order-2 order-md-0 text-center text-md-start">Copyright ©<span class="currentYear"></span> Tradez <span>|</span> Designed By <a href="https://themeforest.net/user/uiaxis" class="p1-color"> UIAXIS</a> </p>
+                    <p class="fs-six order-2 order-md-0 text-center text-md-start">Copyright ©<span class="currentYear"></span> Get Trade <span>|</span> Designed By <a href="#" class="p1-color"> Get Trade</a> </p>
                     <ul class="social-area d-center gap-2 gap-md-3">
                         <li>
                             <a class="d-center cus-rounded-1 fs-four" href="#"><i class="ti ti-brand-facebook"></i></a>
@@ -235,8 +235,7 @@
 </footer>
 <!-- Footer Section Ends -->
 <!-- ==== js dependencies start ==== -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-</script><script src="site/assets/js/plugins.js"></script>
+<script src="site/assets/js/plugins.js"></script>
 <script src="site/assets/js/plugin-custom.js"></script>
 <script src="site/assets/js/main.js"></script>
 </body>

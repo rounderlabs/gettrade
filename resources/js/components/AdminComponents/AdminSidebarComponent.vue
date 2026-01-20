@@ -5,11 +5,10 @@
         <div class="sidebar-brand">
             <Link class="brand-link" href="/admin/dashboard">
                 <img
-                    alt="AdminLTE Logo"
                     class="brand-image shadow"
-                    src="/shuchack/assets-panel/assets/images/shuchak-logo.png"
+                    :src="siteSettings.logo_desktop"
                 />
-                <span class="brand-text fw-light">The Shuchak</span>
+                <span class="brand-text fw-light">{{siteSettings.site_name}}</span>
             </Link>
         </div>
 
@@ -97,7 +96,7 @@ export default {
         const {props} = usePage();
         const openIndex = ref(null);
         const currentPath = window.location.pathname;
-
+        const siteSettings = usePage().props.siteSettings
         const menus_vue = [
             {
                 heading: "Dashboard",
@@ -169,7 +168,8 @@ export default {
                 heading: "Settings",
                 iconClass: "bi-gear",
                 sub_menus: [
-                    {title: "Module Setting", link: route("admin.module.setting")},
+                    {title: "Plan List", link: route("admin.plans.index")},
+                    {title: "Commission Setting", link: route("admin.site.settings.index")},
                 ],
             },
         ];
@@ -231,6 +231,7 @@ export default {
             toggleSubmenu,
             isActive,
             isActiveGroup,
+            siteSettings
         };
     },
 };

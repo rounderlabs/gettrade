@@ -2,7 +2,7 @@
     <section class="section-b-space">
         <div class="custom-container">
             <div class="title">
-                <h2>Level Bonus</h2>
+                <h2>Marketing Incomes</h2>
             </div>
 
             <div class="row gy-3">

@@ -99,10 +99,11 @@ if (!function_exists('userIncomeOnHold')) {
             ['user_id' => $user->id],
             [
                 'total' => castDecimalString('0', 2),
+                'direct' => castDecimalString('0', 2),
                 'level' => castDecimalString('0', 2),
                 'roi' => castDecimalString('0', 2),
                 'roi_on_roi' => castDecimalString('0', 2),
-                'maturity_level' => castDecimalString('0', 2),
+                'rank' => castDecimalString('0', 2),
                 'bonanza' => castDecimalString('0', 2),
                 'reward' => castDecimalString('0', 2),
             ]
@@ -117,10 +118,11 @@ if (!function_exists('userIncomeStat')) {
             ['user_id' => $user->id],
             [
                 'total' => castDecimalString('0', 2),
+                'direct' => castDecimalString('0', 2),
                 'level' => castDecimalString('0', 2),
                 'roi' => castDecimalString('0', 2),
                 'roi_on_roi' => castDecimalString('0', 2),
-                'maturity_level' => castDecimalString('0', 2),
+                'rank' => castDecimalString('0', 2),
                 'bonanza' => castDecimalString('0', 2),
                 'reward' => castDecimalString('0', 2),
             ]

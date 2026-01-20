@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->unique();
             $table->decimal('total', 40, 4)->default('0');
+            $table->decimal('direct', 40, 4)->default('0');
             $table->decimal('level', 40, 4)->default('0');
             $table->decimal('roi', 40, 4)->default('0');
             $table->decimal('roi_on_roi', 40, 4)->default('0');
-            $table->decimal('maturity_level', 40, 4)->default('0');
+            $table->decimal('rank', 40, 4)->default('0');
             $table->decimal('bonanza', 40, 4)->default('0');
             $table->decimal('reward', 40, 4)->default('0');
             $table->timestamps();

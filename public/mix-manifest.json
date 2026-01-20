@@ -1,6 +1,6 @@
 {
-    "/js/app.js": "/js/app.js?id=505e4ed8d96676f830b9e3aba1f62f05",
-    "/js/admin.js": "/js/admin.js?id=f672d8ca7fc274e72c3499d6b1f905a8",
+    "/js/app.js": "/js/app.js?id=b062ef221ee296c916a031150798109c",
+    "/js/admin.js": "/js/admin.js?id=1fc3a160f8c6786118976e8da2e9704a",
     "/css/admin.css": "/css/admin.css?id=e409aca91e37ea37cc04dccd0b94a9e2",
     "/shuchack/assets/css/all.min.css": "/shuchack/assets/css/all.min.css?id=aa0abbe86b8852d1fd753541ff28b87a",
     "/shuchack/assets/css/bootstrap.min.css": "/shuchack/assets/css/bootstrap.min.css?id=4770de0fff33193fa8839df90f851756",
@@ -167,6 +167,7 @@
     "/site/assets/css/swiper.min.css": "/site/assets/css/swiper.min.css?id=0fb664d3e1d6108e69995f70f5d62ad3",
     "/site/assets/css/tabler-icons.min.css": "/site/assets/css/tabler-icons.min.css?id=59194ae0cf1692f28d7e023caefbe848",
     "/site/assets/css/view-source_https___pixner.net_tradez_main_assets_css_bootstrap.min.css": "/site/assets/css/view-source_https___pixner.net_tradez_main_assets_css_bootstrap.min.css?id=b91dc4048ee6c2425347f35f4f3f08c0",
+    "/site/assets/images/Mob-logo.png": "/site/assets/images/Mob-logo.png?id=7757f41b79042d7aed41a18010f1f452",
     "/site/assets/images/Unconfirmed 182059.crdownload": "/site/assets/images/Unconfirmed 182059.crdownload?id=154d87923967a9806380b76d1a7e6a03",
     "/site/assets/images/Unconfirmed 334635.crdownload": "/site/assets/images/Unconfirmed 334635.crdownload?id=e19ea1ae1e52eec1b9416e98e2d21a86",
     "/site/assets/images/Unconfirmed 668600.crdownload": "/site/assets/images/Unconfirmed 668600.crdownload?id=100f748ceba3e96755f03c6e7a314aa0",
@@ -185,8 +186,8 @@
     "/site/assets/images/circle_star.png": "/site/assets/images/circle_star.png?id=872e822bfbe70606aae1dde49fff3819",
     "/site/assets/images/coin.png": "/site/assets/images/coin.png?id=6877fbaf078bfdf5811a3c928189852e",
     "/site/assets/images/coin_vector.png": "/site/assets/images/coin_vector.png?id=e0153573b3d7bc37ecf707ee7f13e30c",
-    "/site/assets/images/fav.png": "/site/assets/images/fav.png?id=4f215571b27d474cbe9e49536169abf4",
-    "/site/assets/images/gt-logo.png": "/site/assets/images/gt-logo.png?id=d3bb8b53dae4d7ec2a04f8cc99678c6e",
+    "/site/assets/images/fav.png": "/site/assets/images/fav.png?id=1fdebc58d6092dcb7a37195ddad44bb0",
+    "/site/assets/images/gt-logo.png": "/site/assets/images/gt-logo.png?id=dcdba55a49edd3da82da8f91ef387187",
     "/site/assets/images/hero_bg_vector.png": "/site/assets/images/hero_bg_vector.png?id=b68d4f8172fe12c3ac5ce23e9d21a631",
     "/site/assets/images/hero_thumb.png": "/site/assets/images/hero_thumb.png?id=a5c760f78aba25b68e1950b2d8b03f4b",
     "/site/assets/images/hero_vector.png": "/site/assets/images/hero_vector.png?id=280779107601d75937e38719374603b6",
@@ -598,7 +599,7 @@
     "/images/icons/manifest-icon-192.maskable.png": "/images/icons/manifest-icon-192.maskable.png?id=b1b2f219c62e6b0bf2a06176df6afec9",
     "/images/icons/manifest-icon-512.maskable.png": "/images/icons/manifest-icon-512.maskable.png?id=14db74b0b2c012de4c98ba09c9e9b476",
     "/images/logo.png": "/images/logo.png?id=01126717cb008ebb291535b0c0d4ea9d",
-    "/manifest.json": "/manifest.json?id=924a265f9d6311986f7406e19034f53d",
+    "/manifest.json": "/manifest.json?id=b689d650dabd0a2bc0fda8a0a21406ff",
     "/serviceworker.js": "/serviceworker.js?id=89221e5025411d0eddfc3906e4b0c071",
     "/offline.html": "/offline.html?id=b7b2cb14c6463a5e80a7df29426489b2"
 }

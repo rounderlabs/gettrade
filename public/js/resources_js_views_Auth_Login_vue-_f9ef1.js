@@ -224,7 +224,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "btn btn-primary"
   }, _cache[0] || (_cache[0] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
     "class": "fas fa-download"
-  }, null, -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Install The Shuchak User App ")]))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true);
+  }, null, -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Install The Get Trade App ")]))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true);
 }
 
 /***/ }),
@@ -273,7 +273,7 @@ var _hoisted_12 = ["href"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_font_awesome_icon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("font-awesome-icon");
   var _component_PwaInstallPrompt = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("PwaInstallPrompt");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"auth-header\" data-v-be5ebcfe><a href=\"/\" data-v-be5ebcfe><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-arrow-left back-btn\" data-v-be5ebcfe><line x1=\"19\" y1=\"12\" x2=\"5\" y2=\"12\" data-v-be5ebcfe></line><polyline points=\"12 19 5 12 12 5\" data-v-be5ebcfe></polyline></svg></a><img class=\"img-fluid img\" src=\"/shuchack/assets-panel/assets/images/login1.png\" alt=\"v1\" data-v-be5ebcfe><div class=\"auth-content\" data-v-be5ebcfe><div data-v-be5ebcfe><h2 data-v-be5ebcfe>WELCOME !!</h2><h4 class=\"p-0\" data-v-be5ebcfe>TO THE SUCHAK</h4></div></div></div>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"auth-header\" data-v-be5ebcfe><a href=\"/\" data-v-be5ebcfe><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-arrow-left back-btn\" data-v-be5ebcfe><line x1=\"19\" y1=\"12\" x2=\"5\" y2=\"12\" data-v-be5ebcfe></line><polyline points=\"12 19 5 12 12 5\" data-v-be5ebcfe></polyline></svg></a><img class=\"img-fluid img\" src=\"/shuchack/assets-panel/assets/images/login1.png\" alt=\"v1\" data-v-be5ebcfe><div class=\"auth-content\" data-v-be5ebcfe><div data-v-be5ebcfe><h2 data-v-be5ebcfe>WELCOME !!</h2><h4 class=\"p-0\" data-v-be5ebcfe>To The Get Trade</h4></div></div></div>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
     "class": "auth-form",
     onSubmit: _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return _ctx.submit && _ctx.submit.apply(_ctx, arguments);

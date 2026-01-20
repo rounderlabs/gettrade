@@ -9,31 +9,6 @@
     <BalanceInfoComponent :investment="investment" :total_withdrawal="total_withdrawal"
                           :user_income_stats="user_income_stats"></BalanceInfoComponent>
 
-    <section v-if="subscriptions">
-        <div class="custom-container">
-            <div class="title">
-                <h2>Maturity</h2>
-
-            </div>
-            <div class="statistics-banner">
-                <div class="d-flex justify-content-center gap-3">
-
-                        <div class="">
-                            <img style="width:62px" src="/shuchack/assets-panel/assets/images/maturity.svg" alt="M">
-                        </div>
-                        <div class="statistics-content d-block">
-                            <h5 class="text-white mt-2">Maturity Date</h5>
-                            <h4 class="text-white mt-2">{{subscriptions.maturity_date}}</h4>
-                        </div>
-                        <div class="statistics-content d-block">
-                            <h5 class="text-white mt-2">Maturity Amount</h5>
-                            <h4 class="text-white mt-2">₹ {{ parseFloat(subscriptions.plan.maturity_amount).toFixed(2) }}</h4>
-                        </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
     <UserIncomeComponent :user_income_stats="user_income_stats"></UserIncomeComponent>
 
     <team-widget :team="team"></team-widget>

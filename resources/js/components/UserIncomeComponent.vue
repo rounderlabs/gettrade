@@ -28,7 +28,7 @@ export default {
 <!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/6.svg" alt="p6">-->
 <!--                            </div>-->
                             <div class="">
-                                <h5 class="dark-text">Dividend Profit</h5>
+                                <h5 class="dark-text">Trading Income</h5>
                                 <h6 class="light-text mt-2">Monthly</h6>
                             </div>
                         </div>
@@ -45,8 +45,8 @@ export default {
 <!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/7.svg" alt="p7">-->
 <!--                            </div>-->
                             <div class="">
-                                <h5 class="dark-text">Level Profit</h5>
-                                <h6 class="light-text mt-2">Level Bonus</h6>
+                                <h5 class="dark-text">Market Earnings</h5>
+                                <h6 class="light-text mt-2">Referral Bonus</h6>
                             </div>
                         </div>
                         <div class="bill-price">
@@ -62,7 +62,7 @@ export default {
 <!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/8.svg" alt="p8">-->
 <!--                            </div>-->
                             <div class="">
-                                <h5 class="dark-text">Level On Dividend</h5>
+                                <h5 class="dark-text">Systematic trading income</h5>
                                 <h6 class="light-text mt-2">Monthly</h6>
                             </div>
                         </div>
@@ -79,12 +79,12 @@ export default {
 <!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/9.svg" alt="p9">-->
 <!--                            </div>-->
                             <div class="">
-                                <h5 class="dark-text">Maturity Level Profit</h5>
-                                <h6 class="light-text mt-2">On Team Maturity</h6>
+                                <h5 class="dark-text">Rank Profit</h5>
+                                <h6 class="light-text mt-2">On Team Business</h6>
                             </div>
                         </div>
                         <div class="bill-price">
-                            <h5>₹ {{ parseFloat(user_income_stats.maturity_level).toFixed(2) }}</h5>
+                            <h5>₹ {{ parseFloat(user_income_stats.rank).toFixed(2) }}</h5>
                             <Link :href="route('earnings.maturity.bonus')" class="btn bill-pay bill-paid">Details</Link>
                         </div>
                     </div>

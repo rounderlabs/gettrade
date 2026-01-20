@@ -18,14 +18,14 @@ class UserTableSeeder extends Seeder
     {
 
         $user = User::create([
-            'name' => 'Shuchak',
-            'email' => 'suchak@gmail.com',
+            'name' => 'Get Trade',
+            'email' => 'gettrade@gmail.com',
             'password' => '12345678',
             'security_answer' => '12345678',
             'mobile' => '11111111',
             'country_id' => 101,
-            'ref_code' => 'TSK11111',
-            'username' => 'TSK11111',
+            'ref_code' => 'GT11111',
+            'username' => 'GT11111',
             'sponsor_id' => 0,
             'position' => 'LEFT'
         ]);

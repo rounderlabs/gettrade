@@ -6,7 +6,7 @@
         <div class="auth-content">
             <div>
                 <h2>WELCOME !!</h2>
-                <h4 class="p-0">TO THE SUCHAK</h4>
+                <h4 class="p-0">To The Get Trade</h4>
             </div>
         </div>
     </div>

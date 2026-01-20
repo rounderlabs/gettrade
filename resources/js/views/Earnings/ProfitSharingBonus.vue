@@ -2,7 +2,7 @@
     <section class="section-b-space">
         <div class="custom-container">
             <div class="title">
-                <h2>Level On Dividends Bonus</h2>
+                <h2>Systematic Trading Incomes</h2>
             </div>
 
             <div class="row gy-3">

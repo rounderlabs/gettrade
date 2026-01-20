@@ -1,8 +1,8 @@
 {
     "id": "/login",
-    "name": "TheShuchak",
-    "short_name": "TheShuchak",
-    "description": "TheShuchak User Portal",
+    "name": "Get Trade",
+    "short_name": "GetTrade",
+    "description": "Get Trade User Portal",
     "start_url": "/?utm_source=pwa",
     "scope": "/",
     "display": "standalone",

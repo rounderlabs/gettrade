@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Methods\IncomeMethods;
 use App\Models\Plan;
+use App\Models\SiteSetting;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\UserUsdWalletTransaction;
@@ -44,6 +45,8 @@ class CreateDirectIncomeJob implements ShouldQueue
      */
     public function handle()
     {
+        $directPercent = SiteSetting::get('direct_percent', 0);
+        $directPercentDecimal = divDecimalStrings($directPercent, 100, 4);
         $plan = Plan::where('id',$this->subscription->plan_id )->first();
         $parentUser = $this->user->sponsor;
         if (is_null($parentUser) || !$this->isUserActive($parentUser)) {
@@ -55,7 +58,7 @@ class CreateDirectIncomeJob implements ShouldQueue
         }
 
 
-        $incomeAmount = multipleDecimalStrings($this->userUsdWalletTransaction->amount_in_usd, '0.05', 4);
+        $incomeAmount = multipleDecimalStrings($this->userUsdWalletTransaction->amount_in_usd, $directPercentDecimal, 4);
 
         $incomeReceived = IncomeMethods::init($parentUser, $incomeAmount)->updateIncome();
 
@@ -69,12 +72,23 @@ class CreateDirectIncomeJob implements ShouldQueue
             'income' => $incomeReceived
         ]);
 
-        $userIncomeWallet = userIncomeWallet($parentUser);
-        $userIncomeWallet->increment('balance', $incomeReceived);
+
 
         $userIncomeStat = userIncomeStat($parentUser);
         $userIncomeStat->increment('direct', $incomeReceived);
         $userIncomeStat->increment('total', $incomeReceived);
+
+        $userIncomeOnHold = userIncomeOnHold($parentUser);
+        $userIncomeOnHold->increment('direct', $incomeReceived);
+        $userIncomeOnHold->increment('total', $incomeReceived);
+
+        $amount = $incomeReceived;
+        $walletType = 'Income Wallet';
+        $currency = 'INR';
+        $txn_type = 'Credit';
+        $remark = 'Market earnings (Direct Bonus) of ₹ '.$amount.' has been Credited';
+        CreateUserWalletLedgerJob::dispatch($parentUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+
 
     }
 
