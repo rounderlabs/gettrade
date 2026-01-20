@@ -15194,7 +15194,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return _cache[0] || (_cache[0] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "img-fluid",
-        src: "/shuchack/assets-panel/assets/images/scan.svg",
+        src: "/user-panel/assets-panel/assets/images/scan.svg",
         alt: "scan"
       }, null, -1 /* HOISTED */)]);
     }),
@@ -15211,11 +15211,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "icon"
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "unactive",
-        src: "/shuchack/assets-panel/assets/images/mpay.svg",
+        src: "/user-panel/assets-panel/assets/images/mpay.svg",
         alt: "mPay"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "active",
-        src: "/shuchack/assets-panel/assets/images/mpay-fill.svg",
+        src: "/user-panel/assets-panel/assets/images/mpay-fill.svg",
         alt: "mPay"
       })], -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Dashboard", -1 /* HOISTED */)]);
     }),
@@ -15232,11 +15232,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "icon"
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "unactive",
-        src: "/shuchack/assets-panel/assets/images/bitcoin.svg",
+        src: "/user-panel/assets-panel/assets/images/bitcoin.svg",
         alt: "Wallet"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "active",
-        src: "/shuchack/assets-panel/assets/images/bitcoin-fill.svg",
+        src: "/user-panel/assets-panel/assets/images/bitcoin-fill.svg",
         alt: "Wallet"
       })], -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Wallet", -1 /* HOISTED */)]);
     }),
@@ -15253,11 +15253,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "icon"
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "unactive",
-        src: "/shuchack/assets-panel/assets/images/bar-chart.svg",
+        src: "/user-panel/assets-panel/assets/images/bar-chart.svg",
         alt: "Trades"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "active",
-        src: "/shuchack/assets-panel/assets/images/bar-chart-fill.svg",
+        src: "/user-panel/assets-panel/assets/images/bar-chart-fill.svg",
         alt: "Trades"
       })], -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Trades", -1 /* HOISTED */)]);
     }),
@@ -15274,11 +15274,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "icon"
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "unactive",
-        src: "/shuchack/assets-panel/assets/images/user.svg",
+        src: "/user-panel/assets-panel/assets/images/user.svg",
         alt: "Profile"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "active",
-        src: "/shuchack/assets-panel/assets/images/user-fill.svg",
+        src: "/user-panel/assets-panel/assets/images/user-fill.svg",
         alt: "Profile"
       })], -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Profile", -1 /* HOISTED */)]);
     }),
@@ -15326,7 +15326,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "menu-icon"
   })]), _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     "class": "img-fluid logo",
-    src: "/shuchack/assets-panel/assets/images/trademiles.png",
+    src: "/user-panel/assets-panel/assets/images/trademiles.png",
     alt: "logo"
   }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_vue_feather, {
     type: "bell",
@@ -15376,11 +15376,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "sidebar-logo"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     "class": "img-fluid logo",
-    src: "/shuchack/assets-panel/assets/images/trademiles.png",
+    src: "/user-panel/assets-panel/assets/images/trademiles.png",
     alt: "logo"
   })], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     "class": "img-fluid balance-bg",
-    src: "/shuchack/assets-panel/assets/images/auth-bg.jpg",
+    src: "/user-panel/assets-panel/assets/images/auth-bg.jpg",
     alt: "auth-bg"
   }, null, -1 /* HOISTED */)), _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Balance", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "$" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.incomeWallet.balance), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.menus_vue, function (menu, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {

@@ -6,6 +6,7 @@ use App\Models\SiteSetting;
 use App\Services\CommissionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 use Tighten\Ziggy\Ziggy;
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::share('siteSettings', SiteSetting::where('autoload', true)
+            ->pluck('value', 'key')
+            ->toArray());
+
         Inertia::share('siteSettings', function () {
             return SiteSetting::where('autoload', true)->pluck('value', 'key');
         });

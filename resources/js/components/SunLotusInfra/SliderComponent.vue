@@ -61,7 +61,7 @@ onMounted(() => {
                             <img
                                 alt="banner2"
                                 class="img-fluid banner-img"
-                                src="/shuchack/assets-panel/assets/images/banner/banner2.png"
+                                src="/user-panel/assets-panel/assets/images/banner/banner2.png"
                             />
                         </Link>
                     </div>
@@ -70,7 +70,7 @@ onMounted(() => {
                             <img
                                 alt="banner3"
                                 class="img-fluid banner-img"
-                                src="/shuchack/assets-panel/assets/images/banner/banner1.png"
+                                src="/user-panel/assets-panel/assets/images/banner/banner1.png"
                             />
                         </Link>
                     </div>

@@ -15,6 +15,27 @@ use App\Models\UserStop;
 use App\Models\UserUsdWallet;
 use App\Models\UserWeeklyTeamWithBusinessStats;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Models\SiteSetting;
+
+/*
+|--------------------------------------------------------------------------
+| SITE SETTING HELPER (MUST BE FIRST)
+|--------------------------------------------------------------------------
+*/
+if (!function_exists('siteSetting')) {
+    function siteSetting(string $key, $default = null)
+    {
+        static $settings = null;
+
+        if ($settings === null) {
+            $settings = SiteSetting::pluck('value', 'key')->toArray();
+        }
+
+        return $settings[$key] ?? $default;
+    }
+}
+
 
 if (!function_exists('multiplyDecimalStrings')) {
 
@@ -67,14 +88,18 @@ if (!function_exists('generateRefCode')) {
      */
     function generateRefCode(): string
     {
-        while (true) {
-            $refCode = (string)mt_rand(10000, 99999);
-            if (User::where('ref_code')->first()) {
-                continue;
-            } else {
-                return 'TSK'.$refCode;
-            }
-        }
+        $prefix = strtoupper(trim(siteSetting('referral_prefix', '')));
+
+        do {
+            $number = mt_rand(10000, 99999);
+
+            $refCode = $prefix !== ''
+                ? $prefix . $number
+                : (string) $number;
+
+        } while (User::where('ref_code', $refCode)->exists());
+
+        return $refCode;
     }
 }
 
@@ -281,6 +306,29 @@ if (!function_exists('userWeeklyTeamWithBusinessStat')) {
                 'team_business' => 0,
                 'is_pool_active' => 0,
             ]
+        );
+    }
+}
+
+
+function getDirectUserIds(int $userId): array
+{
+    return DB::table('user_level_stats')
+        ->where('user_id', $userId)
+        ->where('level', 1)
+        ->pluck('downline_user_id')
+        ->toArray();
+}
+
+if (!function_exists('siteSetting')) {
+    function siteSetting(string $key, $default = null)
+    {
+        return cache()->remember(
+            "site_setting_{$key}",
+            now()->addHours(6),
+            fn () => DB::table('site_settings')
+                ->where('key', $key)
+                ->value('value') ?? $default
         );
     }
 }

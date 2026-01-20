@@ -25,7 +25,7 @@ export default {
                     <div class="bill-box">
                         <div class="d-flex gap-3">
 <!--                            <div class="bill-icon">-->
-<!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/6.svg" alt="p6">-->
+<!--                                <img class="img-fluid icon" src="/user-panel/assets-panel/assets/images/6.svg" alt="p6">-->
 <!--                            </div>-->
                             <div class="">
                                 <h5 class="dark-text">Trading Income</h5>
@@ -42,7 +42,7 @@ export default {
                     <div class="bill-box">
                         <div class="d-flex gap-3">
 <!--                            <div class="bill-icon">-->
-<!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/7.svg" alt="p7">-->
+<!--                                <img class="img-fluid icon" src="/user-panel/assets-panel/assets/images/7.svg" alt="p7">-->
 <!--                            </div>-->
                             <div class="">
                                 <h5 class="dark-text">Market Earnings</h5>
@@ -59,7 +59,7 @@ export default {
                     <div class="bill-box">
                         <div class="d-flex gap-3">
 <!--                            <div class="bill-icon">-->
-<!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/8.svg" alt="p8">-->
+<!--                                <img class="img-fluid icon" src="/user-panel/assets-panel/assets/images/8.svg" alt="p8">-->
 <!--                            </div>-->
                             <div class="">
                                 <h5 class="dark-text">Systematic trading income</h5>
@@ -76,7 +76,7 @@ export default {
                     <div class="bill-box">
                         <div class="d-flex gap-3">
 <!--                            <div class="bill-icon">-->
-<!--                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/9.svg" alt="p9">-->
+<!--                                <img class="img-fluid icon" src="/user-panel/assets-panel/assets/images/9.svg" alt="p9">-->
 <!--                            </div>-->
                             <div class="">
                                 <h5 class="dark-text">Rank Profit</h5>

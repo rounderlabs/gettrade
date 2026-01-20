@@ -30,7 +30,7 @@
                                 @click="downloadAndShare('whatsapp')"
                                 class="btn btn-dark d-flex align-items-center gap-2 mt-0"
                             >
-                                <img src="/shuchack/assets-panel/assets/images/svg/whatsapp.svg"
+                                <img src="/user-panel/assets-panel/assets/images/svg/whatsapp.svg"
                                      width="20"
                                      alt="WA" />
                             </button>
@@ -39,7 +39,7 @@
                                 @click="downloadAndShare('telegram')"
                                 class="btn btn-dark d-flex align-items-center gap-2 mt-0"
                             >
-                                <img src="/shuchack/assets-panel/assets/images/svg/telegram.svg"
+                                <img src="/user-panel/assets-panel/assets/images/svg/telegram.svg"
                                      width="20"
                                      alt="TG" />
                             </button>

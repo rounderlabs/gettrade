@@ -10,10 +10,10 @@
                     <div class="balance-box active">
                         <img alt="balance-box"
                              class="img-fluid balance-box-img active"
-                             src="/shuchack/assets-panel/assets/images/svg/balance-box-bg-active.svg">
+                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
                         <img alt="balance-box"
                              class="img-fluid balance-box-img unactive"
-                             src="/shuchack/assets-panel/assets/images/svg/balance-box-bg.svg">
+                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
                             <h3>₹ {{ parseFloat(income_on_hold.level).toFixed(2) }}</h3>
@@ -28,10 +28,10 @@
                     <div class="balance-box active">
                         <img alt="balance-box"
                              class="img-fluid balance-box-img active"
-                             src="/shuchack/assets-panel/assets/images/svg/balance-box-bg-active.svg">
+                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
                         <img alt="balance-box"
                              class="img-fluid balance-box-img unactive"
-                             src="/shuchack/assets-panel/assets/images/svg/balance-box-bg.svg">
+                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
                             <h3>₹ {{ parseFloat(parseFloat(income_on_hold.roi) + parseFloat(income_on_hold.roi_on_roi)).toFixed(2) }}</h3>

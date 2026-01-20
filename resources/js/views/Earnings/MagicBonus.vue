@@ -19,7 +19,7 @@
                     <div class="transaction-box">
                         <a href="" class="d-flex gap-3">
                             <div class="transaction-image color5">
-                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/tether.svg" alt="tether">
+                                <img class="img-fluid icon" src="/user-panel/assets-panel/assets/images/tether.svg" alt="tether">
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-name">

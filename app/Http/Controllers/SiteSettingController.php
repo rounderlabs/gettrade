@@ -26,7 +26,21 @@ class SiteSettingController extends Controller
         $data = $request->validate([
             'site_name' => 'required|string|max:100',
             'site_tagline' => 'nullable|string|max:255',
+            'referral_prefix' => [
+                'nullable',
+                'string',
+                'min:2',
+                'max:5',
+                'regex:/^[A-Z]+$/'
+            ],
         ]);
+
+        SiteSetting::set(
+            'referral_prefix',
+            strtoupper($request->referral_prefix ?? '')
+        );
+
+        cache()->forget('site_setting_referral_prefix');
 
         foreach ($data as $key => $value) {
             SiteSetting::set($key, $value);

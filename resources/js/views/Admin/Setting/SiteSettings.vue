@@ -22,7 +22,7 @@ const props = defineProps({
    STATE
 ========================= */
 const activeTab = ref("general")
-const MAX_LEVELS = 10
+const MAX_LEVELS = 30
 
 /* =========================
    GENERAL FORM
@@ -30,6 +30,7 @@ const MAX_LEVELS = 10
 const generalForm = useForm({
     site_name: props.settings.site_name ?? "",
     site_tagline: props.settings.site_tagline ?? "",
+    referral_prefix: props.settings.referral_prefix ?? "",
 })
 
 /* =========================
@@ -120,6 +121,24 @@ function reindexLevels() {
                         class="form-control"
                         v-model="generalForm.site_tagline"
                     />
+                </div>
+                <div class="form-group">
+                    <label>Referral Code Prefix</label>
+                    <input
+                        type="text"
+                        class="form-control text-uppercase"
+                        v-model="generalForm.referral_prefix"
+                        placeholder="Leave empty for numeric only"
+                        maxlength="5"
+                    />
+                    <small class="text-muted">
+                        Optional. Uppercase letters only (2–5 chars).
+                        Leave empty to generate numeric referral codes.
+                    </small>
+
+                    <div class="text-danger">
+                        {{ generalForm.errors.referral_prefix }}
+                    </div>
                 </div>
 
                 <button

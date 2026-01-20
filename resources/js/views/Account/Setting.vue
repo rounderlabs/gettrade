@@ -15,7 +15,7 @@
                                         </figure>
                                         <figure v-else class="avatar avatar-100 coverimg rounded-circle mb-3 mx-auto">
                                             <img alt="" class="ususerphotoonboarding"
-                                                 src="/shuchack/panel-assets/img/user-1.jpg">
+                                                 src="/user-panel/panel-assets/img/user-1.jpg">
                                         </figure>
                                         <div class="row text-center">
                                             <Link :href="route('account.profile.picture')" class="btn btn-theme w-100">

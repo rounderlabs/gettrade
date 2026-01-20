@@ -169,6 +169,7 @@ export default {
                 iconClass: "bi-gear",
                 sub_menus: [
                     {title: "Plan List", link: route("admin.plans.index")},
+                    {title: "Rank Setting", link: route("admin.ranks.index")},
                     {title: "Commission Setting", link: route("admin.site.settings.index")},
                 ],
             },

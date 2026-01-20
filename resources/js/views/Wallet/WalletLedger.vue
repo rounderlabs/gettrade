@@ -56,9 +56,9 @@
                         <a class="d-flex gap-3" href="">
                             <div class="transaction-image color5">
                                 <img v-if="ledger.wallet_type === 'USDT Wallet'" alt="tether" class="img-fluid icon"
-                                     src="/shuchack/assets-panel/assets/images/fund-wallet.svg">
+                                     src="/user-panel/assets-panel/assets/images/fund-wallet.svg">
                                 <img v-if="ledger.wallet_type === 'Income Wallet'" alt="tether" class="img-fluid icon"
-                                     src="/shuchack/assets-panel/assets/images/income-wallet.svg">
+                                     src="/user-panel/assets-panel/assets/images/income-wallet.svg">
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-name">

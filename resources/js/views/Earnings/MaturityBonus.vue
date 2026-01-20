@@ -9,7 +9,7 @@
                 <div class="d-flex justify-content-center gap-3">
 
                     <div class="">
-                        <img style="width:62px" src="/shuchack/assets-panel/assets/images/maturity.svg" alt="M">
+                        <img style="width:62px" src="/user-panel/assets-panel/assets/images/maturity.svg" alt="M">
                     </div>
                     <div class="statistics-content d-block">
                         <h5 class="text-white mt-2">Maturity Date</h5>
@@ -45,7 +45,7 @@
                     <div class="transaction-box">
                         <a href="" class="d-flex gap-3">
                             <div class="transaction-image color5">
-                                <img class="img-fluid icon" src="/shuchack/assets-panel/assets/images/tether.svg" alt="tether">
+                                <img class="img-fluid icon" src="/user-panel/assets-panel/assets/images/tether.svg" alt="tether">
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-name">

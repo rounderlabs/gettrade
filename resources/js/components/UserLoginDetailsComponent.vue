@@ -48,7 +48,7 @@ export default {
 
 .card-box .card-details {
     width: 100%;
-    background-image: url("/shuchack/assets-panel/assets/images/background/user-card-login.jpg");/* webpackIgnore: true */
+    background-image: url("/user-panel/assets-panel/assets/images/background/user-card-login.jpg");/* webpackIgnore: true */
     background-repeat: no-repeat;
     background-size: cover;
     padding: 25px 20px;

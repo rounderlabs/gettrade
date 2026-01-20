@@ -6,7 +6,7 @@
                 <div class="profile-banner">
 
                     <div class="profile-image">
-                        <img class="img-fluid profile-pic" src="/shuchack/assets-panel/assets/images/p3.png" alt="p3">
+                        <img class="img-fluid profile-pic" src="/user-panel/assets-panel/assets/images/p3.png" alt="p3">
                     </div>
                 </div>
                 <h2>{{ profile.full_name }}</h2>
@@ -26,7 +26,7 @@
                         </div>
                         <div class="profile-details">
                             <h4>My Account</h4>
-                            <img class="img-fluid arrow" src="/shuchack/assets-panel/assets/images/arrow.svg" alt="arrow">
+                            <img class="img-fluid arrow" src="/user-panel/assets-panel/assets/images/arrow.svg" alt="arrow">
                         </div>
                     </a>
                 </li>
@@ -37,7 +37,7 @@
                         </div>
                         <div class="profile-details">
                             <h4>Withdraw Account</h4>
-                            <img class="img-fluid arrow" src="/shuchack/assets-panel/assets/images/arrow.svg" alt="arrow">
+                            <img class="img-fluid arrow" src="/user-panel/assets-panel/assets/images/arrow.svg" alt="arrow">
                         </div>
                     </Link>
                 </li>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="profile-details">
                             <h4>Change Password</h4>
-                            <img class="img-fluid arrow" src="/shuchack/assets-panel/assets/images/arrow.svg" alt="arrow">
+                            <img class="img-fluid arrow" src="/user-panel/assets-panel/assets/images/arrow.svg" alt="arrow">
                         </div>
                     </Link>
                 </li>
@@ -59,7 +59,7 @@
 <!--                        </div>-->
 <!--                        <div class="profile-details">-->
 <!--                            <h4>Settings</h4>-->
-<!--                            <img class="img-fluid arrow" src="/shuchack/assets-panel/assets/images/arrow.svg" alt="arrow">-->
+<!--                            <img class="img-fluid arrow" src="/user-panel/assets-panel/assets/images/arrow.svg" alt="arrow">-->
 <!--                        </div>-->
 <!--                    </Link>-->
 <!--                </li>-->
@@ -71,7 +71,7 @@
 <!--                        </div>-->
 <!--                        <div class="profile-details">-->
 <!--                            <h4>Help Center</h4>-->
-<!--                            <img class="img-fluid arrow" src="/shuchack/assets-panel/assets/images/arrow.svg" alt="arrow">-->
+<!--                            <img class="img-fluid arrow" src="/user-panel/assets-panel/assets/images/arrow.svg" alt="arrow">-->
 <!--                        </div>-->
 <!--                    </a>-->
 <!--                </li>-->

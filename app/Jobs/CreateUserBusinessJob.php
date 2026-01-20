@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserLegBusiness;
 use App\Models\UserUsdWalletTransaction;
 use App\Methods\UserLevelMethods;
+use App\Services\RankService;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -46,10 +47,23 @@ class CreateUserBusinessJob implements ShouldQueue
 
         $user = $this->user;
         UserLevelMethods::init($this->user)->eachSponsor(function ($parentUser, $level) use (&$user) {
+//            $userBusiness = $parentUser->userBusiness()->firstOrCreate();
+//            $userBusiness->increment('usd', $this->totalBusiness);
+//            $this->createUserLegBusiness($parentUser, $user, $this->totalBusiness);
+//           // $this->updatePoolEligibility($parentUser);
+//            $user = $parentUser;
+
+            // 1️⃣ Update total business
             $userBusiness = $parentUser->userBusiness()->firstOrCreate();
-            $userBusiness->increment('usd', $this->totalBusiness);
+            $userBusiness->increment('amount', $this->totalBusiness);
+
+            // 2️⃣ Update leg business
             $this->createUserLegBusiness($parentUser, $user, $this->totalBusiness);
-           // $this->updatePoolEligibility($parentUser);
+
+            // ✅ 3️⃣ CHECK RANK AFTER BUSINESS UPDATE
+            RankService::evaluate($parentUser);
+
+            // Move up the tree
             $user = $parentUser;
         });
 

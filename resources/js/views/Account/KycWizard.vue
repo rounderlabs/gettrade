@@ -124,7 +124,7 @@ const progress = computed(() => (step.value / 3) * 100);
             </svg>
         </a>
 
-        <img alt="v1" class="img-fluid img" src="/shuchack/assets-panel/assets/images/login1.svg">
+        <img alt="v1" class="img-fluid img" src="/user-panel/assets-panel/assets/images/login1.svg">
         <div class="auth-content">
             <div>
                 <h2>KYC Verification !!</h2>

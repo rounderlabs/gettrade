@@ -16,4 +16,9 @@ class UserLegBusiness extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function directUser()
+    {
+        return $this->belongsTo(User::class, 'direct_user_id');
+    }
 }

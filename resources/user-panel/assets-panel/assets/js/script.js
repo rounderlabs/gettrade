@@ -102,21 +102,21 @@ dirSwitch ?.addEventListener("change", (e) => {
   console.log(checkbox.checked);
   if (checkbox.checked) {
     htmlDom.setAttribute("dir", "rtl");
-    rtlLink.href = "/shuchack/assets-panel/assets/css/bootstrap.rtl.min.css";
-    localStorage.setItem("rtlcss", "/shuchack/assets-panel/assets/css/bootstrap.rtl.min.css");
+    rtlLink.href = "/user-panel/assets-panel/assets/css/bootstrap.rtl.min.css";
+    localStorage.setItem("rtlcss", "/user-panel/assets-panel/assets/css/bootstrap.rtl.min.css");
     localStorage.setItem("dir", "rtl");
   }
 
   if (!checkbox.checked) {
     htmlDom.setAttribute("dir", "ltr");
-    rtlLink.href = "/shuchack/assets-panel/assets/css/bootstrap.min.css";
-    localStorage.setItem("rtlcss", "/shuchack/assets-panel/assets/css/bootstrap.min.css");
+    rtlLink.href = "/user-panel/assets-panel/assets/css/bootstrap.min.css";
+    localStorage.setItem("rtlcss", "/user-panel/assets-panel/assets/css/bootstrap.min.css");
     localStorage.setItem("dir", "ltr");
   }
 });
 // Rtl
 htmlDom.setAttribute("dir", localStorage.getItem("dir") ? localStorage.getItem("dir") : "ltr");
-rtlLink.href = localStorage.getItem("rtlcss") ? localStorage.getItem("rtlcss") : "/shuchack/assets-panel/assets/css/bootstrap.min.css";
+rtlLink.href = localStorage.getItem("rtlcss") ? localStorage.getItem("rtlcss") : "/user-panel/assets-panel/assets/css/bootstrap.min.css";
 
 /*====================
   Dark js

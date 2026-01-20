@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Api\RoleController;
 use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ModuleSettingController;
 use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Admin\RankRuleController;
 use App\Http\Controllers\Admin\SubscriptionHistoryController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
@@ -202,6 +203,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/branding', [SiteSettingController::class, 'updateBranding'])->name('update.branding');
         Route::post('/commission', [SiteSettingController::class, 'updateCommission'])->name('update.commission');
         Route::post('/system', [SiteSettingController::class, 'updateSystem'])->name('update.system');
+    });
+    Route::prefix('ranks')->name('ranks.')->group(function () {
+        Route::get('/rank-rules', [RankRuleController::class, 'index'])->name('index');
+        Route::post('/rank-rules', [RankRuleController::class, 'store'])->name('store');
     });
     Route::prefix('plans')->name('plans.')->group(function () {
         Route::get('/', [PlanController::class, 'index'])->name('index');

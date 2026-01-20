@@ -2678,6 +2678,9 @@ __webpack_require__.r(__webpack_exports__);
         title: "Plan List",
         link: route("admin.plans.index")
       }, {
+        title: "Rank Setting",
+        link: route("admin.ranks.index")
+      }, {
         title: "Commission Setting",
         link: route("admin.site.settings.index")
       }]

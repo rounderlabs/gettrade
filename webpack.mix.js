@@ -4,7 +4,7 @@
 //     .js('resources/js/admin.js', 'public/js')
 //     .sass('resources/css/sass/admin.scss', 'public/css/admin.css')
 //     .vue()
-//     .copyDirectory('resources/shuchack/', 'public/shuchack')
+//     .copyDirectory('resources/user-panel/', 'public/user-panel')
 //     .copyDirectory('resources/user-panel/', 'public/user-panel')
 //     .copyDirectory('resources/assets/', 'public/assets')
 //     .copyDirectory('resources/assets/images', 'public/images')
@@ -32,7 +32,7 @@ mix.js('resources/js/app.js', 'public/js')
     .vue()
 
     // Copy static assets (ONLY ONCE)
-    .copyDirectory('resources/shuchack', 'public/shuchack')
+    .copyDirectory('resources/user-panel', 'public/user-panel')
     .copyDirectory('resources/site', 'public/site')
     .copyDirectory('resources/assets/images', 'public/images')
 

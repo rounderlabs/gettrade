@@ -7,7 +7,7 @@
                 <div class="profile-banner">
 
                     <div class="profile-image">
-                        <img alt="p3" class="img-fluid profile-pic" src="/shuchack/assets-panel/assets/images/p3.png">
+                        <img alt="p3" class="img-fluid profile-pic" src="/user-panel/assets-panel/assets/images/p3.png">
                     </div>
                 </div>
                 <h2>{{ profile.full_name }}</h2>

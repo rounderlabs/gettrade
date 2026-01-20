@@ -89,7 +89,7 @@ export default {
     margin-top: 50px;
 }
 .notification-list {
-    background-image: url(/shuchack/assets-panel/assets/images/background/home-card-bg.jpg);
+    background-image: url(/user-panel/assets-panel/assets/images/background/home-card-bg.jpg);
     border-radius : 20px;
     background-color: transparent !important;
 }

@@ -6,7 +6,7 @@
   \**********************************************************************/
 /***/ (() => {
 
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/nitishkumarmishra/laravel/shuchack/resources/js/views/Admin/Reports/UserTradingBonusReport.vue~'");
+throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/nitishkumarmishra/laravel/user-panel/resources/js/views/Admin/Reports/UserTradingBonusReport.vue~'");
 
 /***/ })
 

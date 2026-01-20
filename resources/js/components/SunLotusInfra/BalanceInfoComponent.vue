@@ -22,7 +22,7 @@ export default {
                 <div class="card-details">
                     <div class="d-flex justify-content-between">
                         <h5 class="fw-semibold">My Portfolio</h5>
-                        <img alt="ellipse" src="/shuchack/assets-panel/assets/images/ellipse.svg"/>
+                        <img alt="ellipse" src="/user-panel/assets-panel/assets/images/ellipse.svg"/>
                     </div>
 
                     <h1 class="mt-2 text-white">₹ {{parseFloat(user_income_stats.total).toFixed(2)}}</h1>
@@ -31,7 +31,7 @@ export default {
                         <div class="amount w-50 text-start">
                             <div class="d-flex align-items-center justify-content-start">
                                 <img alt="down"
-                                     class="img-fluid icon" src="/shuchack/assets-panel/assets/images/arrow-down-right.svg"/>
+                                     class="img-fluid icon" src="/user-panel/assets-panel/assets/images/arrow-down-right.svg"/>
                                 <h5>Investment</h5>
                             </div>
                             <h3 class="text-white">₹ {{parseFloat(investment).toFixed(2)}}</h3>
@@ -39,7 +39,7 @@ export default {
                         <div class="amount w-50 text-end border-0">
                             <div class="d-flex align-items-center justify-content-end">
                                 <img alt="up"
-                                     class="img-fluid icon" src="/shuchack/assets-panel/assets/images/arrow-up-right.svg"/>
+                                     class="img-fluid icon" src="/user-panel/assets-panel/assets/images/arrow-up-right.svg"/>
                                 <h5>Withdrawn</h5>
                             </div>
                             <h3 class="text-white">₹ {{parseFloat(total_withdrawal).toFixed(2)}}</h3>

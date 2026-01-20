@@ -115,7 +115,7 @@
 <div class="email-wrapper">
     <!-- Header -->
     <div class="header">
-        <img src="{{ asset('/shuchack/assets-panel/assets/images/shuchak-logo.png') }}" alt="Shuchak Logo">
+        <img src="{{ asset('/user-panel/assets-panel/assets/images/shuchak-logo.png') }}" alt="Shuchak Logo">
         <a href="{{ route('login') }}" style="font-size: 14px; color:#ffffff;; text-decoration: underline;">Sign In</a>
     </div>
 
