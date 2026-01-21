@@ -593,12 +593,12 @@
     "/site/assets/webfonts/themify.woff": "/site/assets/webfonts/themify.woff?id=c95f7829ecda1202e2dda1087f95410f",
     "/site/assets/webfonts/vector4.png": "/site/assets/webfonts/vector4.png?id=09192e22e5d529a294918c50c7744bae",
     "/images/fancy_upload-dark.png": "/images/fancy_upload-dark.png?id=8447600aeb41d839b93201c1e63aed03",
-    "/images/icons/apple-icon-180.png": "/images/icons/apple-icon-180.png?id=f07b103207ae73f2574f48bf0bf82170",
+    "/images/icons/apple-icon-180.png": "/images/icons/apple-icon-180.png?id=342fc629cc9f721d01f2691124aa9435",
     "/images/icons/download-app.png": "/images/icons/download-app.png?id=7ef0f67747638345fd6750e17a4f83d1",
-    "/images/icons/manifest-icon-192.maskable.png": "/images/icons/manifest-icon-192.maskable.png?id=b1b2f219c62e6b0bf2a06176df6afec9",
-    "/images/icons/manifest-icon-512.maskable.png": "/images/icons/manifest-icon-512.maskable.png?id=14db74b0b2c012de4c98ba09c9e9b476",
-    "/images/logo.png": "/images/logo.png?id=01126717cb008ebb291535b0c0d4ea9d",
+    "/images/icons/manifest-icon-192.maskable.png": "/images/icons/manifest-icon-192.maskable.png?id=c1d4be83ec5fa4fe2344526ce9e25328",
+    "/images/icons/manifest-icon-512.maskable.png": "/images/icons/manifest-icon-512.maskable.png?id=5befb40dc5c1cb1777465b3c971eadbb",
+    "/images/logo.png": "/images/logo.png?id=704f5146d82aaea209e88ea2210291fa",
     "/manifest.json": "/manifest.json?id=b689d650dabd0a2bc0fda8a0a21406ff",
-    "/serviceworker.js": "/serviceworker.js?id=89221e5025411d0eddfc3906e4b0c071",
+    "/serviceworker.js": "/serviceworker.js?id=3b077703a222d1dfe5018fb254667b61",
     "/offline.html": "/offline.html?id=b7b2cb14c6463a5e80a7df29426489b2"
 }

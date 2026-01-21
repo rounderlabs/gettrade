@@ -1,7 +1,7 @@
 self.addEventListener('install', event => {
     console.log('[PWA] Installed');
     event.waitUntil(
-        caches.open('the-shuchak-cache-v1').then(cache => {
+        caches.open('get-trade-cache-v1').then(cache => {
             return cache.addAll([
                 '/',
                 '/offline.html',
