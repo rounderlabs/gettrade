@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use App\SerializeDateTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class UserRank extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'rank',
-        'achieved_at',
-    ];
+    use HasFactory, SerializeDateTrait;
+
+    protected $guarded = [];
 
     protected $casts = [
         'achieved_at' => 'datetime',

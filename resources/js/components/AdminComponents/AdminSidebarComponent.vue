@@ -158,10 +158,10 @@ export default {
                 heading: "Reports",
                 iconClass: "bi-cash-stack",
                 sub_menus: [
-                    {title: "Dividend Bonus", link: route("admin.reports.user.trading.bonus")},
-                    {title: "Level On Dividend Bonus", link: route("admin.reports.user.level.roi.bonus")},
-                    {title: "Level Bonus", link: route("admin.reports.user.level.bonus")},
-                    {title: "Maturity Bonus", link: route("admin.reports.user.level.bonus")},
+                    {title: "Trading Bonus", link: route("admin.reports.user.trading.bonus")},
+                    {title: "Systematic Bonus", link: route("admin.reports.user.level.roi.bonus")},
+                    {title: "Direct Bonus", link: route("admin.reports.user.direct.bonus")},
+                    {title: "Rank Bonus", link: route("admin.reports.user.rank.income")},
                 ],
             },
             {

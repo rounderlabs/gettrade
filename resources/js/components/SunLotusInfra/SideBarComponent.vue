@@ -97,7 +97,7 @@ const menus_vue = [
     },
     {
         heading: "Marketing Bonus",
-        link: route("earnings.front.line.bonus"),
+        link: route("earnings.direct.bonus"),
         menu_icon: "award",
     },
     {
@@ -107,12 +107,12 @@ const menus_vue = [
     },
     {
         heading: "Systematic Trading Income",
-        link: route("earnings.profit.sharing.bonus"),
+        link: route("earnings.systematic.bonus"),
         menu_icon: "framer",
     },
     {
         heading: "Rank Bonus",
-        link: route("earnings.maturity.bonus"),
+        link: route("earnings.rank.bonus"),
         menu_icon: "sunrise",
     },
     {

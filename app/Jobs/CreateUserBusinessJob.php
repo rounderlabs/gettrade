@@ -47,11 +47,6 @@ class CreateUserBusinessJob implements ShouldQueue
 
         $user = $this->user;
         UserLevelMethods::init($this->user)->eachSponsor(function ($parentUser, $level) use (&$user) {
-//            $userBusiness = $parentUser->userBusiness()->firstOrCreate();
-//            $userBusiness->increment('usd', $this->totalBusiness);
-//            $this->createUserLegBusiness($parentUser, $user, $this->totalBusiness);
-//           // $this->updatePoolEligibility($parentUser);
-//            $user = $parentUser;
 
             // 1️⃣ Update total business
             $userBusiness = $parentUser->userBusiness()->firstOrCreate();

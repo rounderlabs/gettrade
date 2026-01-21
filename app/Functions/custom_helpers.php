@@ -190,10 +190,10 @@ if (!function_exists('userStop')) {
             ['user_id' => $user->id],
             [
                 'is_blocked' => 0,
-                'level' => 0,
+                'direct' => 0,
                 'roi' => 0,
                 'roi_on_roi' => 0,
-                'maturity_level' => 0,
+                'rank' => 0,
                 'bonanza' => 0,
                 'reward' => 0,
                 'withdrawal' => 0,

@@ -17,10 +17,10 @@ class CreateUserStopsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->unique();
             $table->tinyInteger('is_blocked')->nullable()->default(0);
-            $table->tinyInteger('level')->nullable()->default(0);
+            $table->tinyInteger('direct')->nullable()->default(0);
             $table->tinyInteger('roi')->nullable()->default(0);
             $table->tinyInteger('roi_on_roi')->nullable()->default(0);
-            $table->tinyInteger('maturity_level')->nullable()->default(0);
+            $table->tinyInteger('rank')->nullable()->default(0);
             $table->tinyInteger('bonanza')->nullable()->default(0);
             $table->tinyInteger('reward')->nullable()->default(0);
             $table->tinyInteger('withdrawal')->nullable()->default(0);

@@ -39,7 +39,7 @@ class SiteSetting extends Model
 
     public static function getLevelRoiPercent(int $level): float
     {
-        $levels = self::get('level_roi_percentages', []);
+        $levels = self::get('level_percentages', []);
 
         $config = collect($levels)->firstWhere('level', $level);
 

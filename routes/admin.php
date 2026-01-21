@@ -167,25 +167,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('user-trading-bonus-report', [AdminReportController::class, 'userTradingBonus'])->name('user.trading.bonus');
         Route::get('get-user-trading-bonus-report', [AdminReportController::class, 'getUserTradingBonus'])->name('get.user.trading.bonus');
 
-        Route::get('user-level-bonus', [AdminReportController::class, 'userLevelBonus'])->name('user.level.bonus');
-        Route::get('get-user-level-bonus-report', [AdminReportController::class, 'getUserLevelBonus'])->name('user-level-bonus.data');
-        Route::get('user-level-bonus/export', [AdminReportController::class, 'exportUserLevelBonus'])->name('user-level-bonus.export');
-
         Route::get('user-level-roi-bonus', [AdminReportController::class, 'userTradeProfitBonus'])->name('user.level.roi.bonus');
         Route::get('get-user-level-roi-bonus-report', [AdminReportController::class, 'getUserTradeProfitBonus'])->name('user.level.roi.bonus.data');
         Route::get('user-level-roi-bonus/export', [AdminReportController::class, 'exportUserTradeProfitBonus'])->name('user.level.roi.bonus.export');
 
-        Route::get('user-pool-bonus', [AdminReportController::class, 'userPoolBonus'])->name('user.pool.bonus');
-        Route::get('get-user-pool-bonus-report', [AdminReportController::class, 'getUserPoolBonus'])->name('user.pool.bonus.data');
-        Route::get('user-pool-bonus/export', [AdminReportController::class, 'exportUserPoolBonus'])->name('user.pool.bonus.export');
-
-        Route::get('user-magic-bonus', [AdminReportController::class, 'userMagicBonus'])->name('user.magic.bonus');
-        Route::get('get-user-magic-bonus-report', [AdminReportController::class, 'getUserMagicBonus'])->name('user.magic.bonus.data');
-        Route::get('user-magic-bonus/export', [AdminReportController::class, 'exportUserMagicBonus'])->name('user.magic.bonus.export');
-
         Route::get('user-reward-bonus', [AdminReportController::class, 'userRewardBonus'])->name('admin.reports.user.reward.bonus');
         Route::get('get-user-reward-bonus-report', [AdminReportController::class, 'getUserRewardBonus'])->name('user.reward.bonus.data');
         Route::get('user-reward-bonus/export', [AdminReportController::class, 'exportUserRewardBonus'])->name('user.reward.bonus.export');
+
+        Route::get('user-direct-bonus', [AdminReportController::class, 'userDirectBonus'])->name('user.direct.bonus');
+        Route::get('get-user-direct-bonus-report', [AdminReportController::class, 'getUserDirectBonus'])->name('user.direct.bonus.data');
+        Route::get('user-direct-bonus/export', [AdminReportController::class, 'exportUserDirectBonus'])->name('user.direct.bonus.export');
+
+        Route::get('user-rank-income', [AdminReportController::class, 'userRankIncome'])->name('user.rank.income');
+        Route::get('get-user-rank-income-report', [AdminReportController::class, 'getUserRankIncome'])->name('user.rank.income.data');
+        Route::get('user-rank-income/export', [AdminReportController::class, 'exportUserRankIncome'])->name('user.rank.income.export');
+
 
     });
 

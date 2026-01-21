@@ -99,24 +99,17 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('earnings')->name('earnings.')->group(function () {
 
-        Route::get('level-bonus', [EarningController::class, 'showFrontLineBonus'])->name('front.line.bonus');
-        Route::get('level-bonus-get', [EarningController::class, 'getFrontLineBonus'])->name('front.line.bonus.get');
+        Route::get('marketing-bonus', [EarningController::class, 'showDirectBonus'])->name('direct.bonus');
+        Route::get('marketing-bonus-get', [EarningController::class, 'getDirectBonus'])->name('direct.bonus.get');
 
         Route::get('monthly-dividend-bonus', [EarningController::class, 'showMonthlyTradingBonus'])->name('monthly.trading.bonus');
         Route::get('monthly-roi-bonus-get', [EarningController::class, 'getMonthlyTradingBonus'])->name('monthly.trading.bonus.get');
 
-        Route::get('level-on-dividend-bonus', [EarningController::class, 'showProfitSharingBonus'])->name('profit.sharing.bonus');
-        Route::get('level-on-roi-bonus-get', [EarningController::class, 'getProfitSharingBonus'])->name('profit.sharing.bonus.get');
+        Route::get('systematic-bonus', [EarningController::class, 'showSystematicBonus'])->name('systematic.bonus');
+        Route::get('systematic-bonus-get', [EarningController::class, 'getSystematicBonus'])->name('systematic.bonus.get');
 
-        Route::get('maturity-bonus', [EarningController::class, 'showMaturityBonus'])->name('maturity.bonus');
-        Route::get('maturity-bonus-get', [EarningController::class, 'getMaturityBonus'])->name('maturity.bonus.get');
-
-        Route::get('pool-bonus', [EarningController::class, 'showPoolBonus'])->name('pool.bonus');
-        Route::get('get-pool-bonus', [EarningController::class, 'getPoolBonus'])->name('pool.bonus.get');
-
-        Route::get('reward-bonus', [EarningController::class, 'showRewardBonus'])->name('reward.bonus');
-        Route::get('get-reward-bonus', [EarningController::class, 'getRewardBonus'])->name('reward.bonus.get');
-
+        Route::get('rank-bonus', [EarningController::class, 'showRankBonus'])->name('rank.bonus');
+        Route::get('rank-bonus-get', [EarningController::class, 'getRankBonus'])->name('rank.bonus.get');
 
     });
 

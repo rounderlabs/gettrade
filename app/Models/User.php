@@ -385,5 +385,10 @@ class User extends Authenticatable
         return $this->hasMany(KycSubmission::class);
     }
 
+    public function userRankRoiIncomes()
+    {
+        return $this->hasMany(UserRankRoiIncomes::class);
+    }
+
 
 }

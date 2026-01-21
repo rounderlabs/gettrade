@@ -23,6 +23,11 @@ class CreateSubscriptionsTable extends Migration
             $table->date('maturity_date');
             $table->date('lock_end_date');
             $table->decimal('earned_so_far', 40, 4);
+            $table->decimal('working_earned_so_far', 40, 4);
+            $table->decimal('passive_earned_so_far', 40, 4);
+            $table->decimal('max_income_limit', 40, 4);
+            $table->decimal('working_income_limit', 40, 4);
+            $table->decimal('passive_income_limit', 40, 4);
             $table->tinyInteger('is_active')->default(1);
             $table->timestamps();
         });

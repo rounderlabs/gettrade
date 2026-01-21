@@ -50,8 +50,8 @@ export default {
                             </div>
                         </div>
                         <div class="bill-price">
-                            <h5>₹ {{ parseFloat(user_income_stats.level).toFixed(2) }}</h5>
-                            <Link :href="route('earnings.front.line.bonus')" class="btn bill-pay bill-paid">Details</Link>
+                            <h5>₹ {{ parseFloat(user_income_stats.direct).toFixed(2) }}</h5>
+                            <Link :href="route('earnings.direct.bonus')" class="btn bill-pay bill-paid">Details</Link>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@ export default {
                         </div>
                         <div class="bill-price">
                             <h5>₹ {{ parseFloat(user_income_stats.roi_on_roi).toFixed(2) }}</h5>
-                            <Link :href="route('earnings.profit.sharing.bonus')" class="btn bill-pay bill-paid">Details</Link>
+                            <Link :href="route('earnings.systematic.bonus')" class="btn bill-pay bill-paid">Details</Link>
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@ export default {
                         </div>
                         <div class="bill-price">
                             <h5>₹ {{ parseFloat(user_income_stats.rank).toFixed(2) }}</h5>
-                            <Link :href="route('earnings.maturity.bonus')" class="btn bill-pay bill-paid">Details</Link>
+                            <Link :href="route('earnings.rank.bonus')" class="btn bill-pay bill-paid">Details</Link>
                         </div>
                     </div>
                 </div>

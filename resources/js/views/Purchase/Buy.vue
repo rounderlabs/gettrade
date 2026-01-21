@@ -10,18 +10,19 @@
                     <div class="notification-details">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="fw-semibold  text-white">Invest Amount</h5>
-                                <h6 class="fw-normal  text-white mt-1">Dividend Monthly</h6>
+                                <h5 class="fw-semibold  text-white">Package Amount</h5>
+                                <h6 class="fw-normal  text-white mt-1">Monthly Trading Bonus</h6>
                                 <h6 class="fw-normal  text-white mt-1">Package Tenure</h6>
-                                <h6 class="fw-normal  text-white mt-1">Maturity Tenure</h6>
-                                <h6 class="fw-normal  text-white mt-1">Maturity Amount</h6>
+                                <h6 class="fw-normal  text-white mt-1">Systematic Bonus *</h6>
+                                <h6 class="fw-normal  text-white mt-1">Rank Bonus Return *</h6>
+
                             </div>
                             <div>
                                 <h6 class="time fw-normal  text-white mt-1">₹ {{ plan.amount }}</h6>
-                                <h6 class="time fw-normal  text-white mt-1">₹ {{ plan.monthly_roi_amount }}</h6>
-                                <h6 class="time fw-normal  text-white mt-1">{{ plan.tenure }} Months</h6>
-                                <h6 class="time fw-normal  text-white mt-1">{{ plan.maturity_tenure }} Months</h6>
-                                <h6 class="time fw-normal  text-white mt-1">₹ {{ plan.maturity_amount }}</h6>
+                                <h6 class="time fw-normal  text-white mt-1"> {{ plan.monthly_roi_amount }} %</h6>
+                                <h6 class="time fw-normal  text-white mt-1">{{plan.tenure}} Months</h6>
+                                <h6 class="time fw-normal  text-white mt-1">20 Level</h6>
+                                <h6 class="time fw-normal  text-white mt-1">Upto 10% Extra</h6>
                             </div>
                         </div>
                         <div class="justify-content-between align-items-center mt-3">

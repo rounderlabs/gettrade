@@ -2237,17 +2237,17 @@ __webpack_require__.r(__webpack_exports__);
       heading: "Reports",
       iconClass: "bi-cash-stack",
       sub_menus: [{
-        title: "Dividend Bonus",
+        title: "Trading Bonus",
         link: route("admin.reports.user.trading.bonus")
       }, {
-        title: "Level On Dividend Bonus",
+        title: "Systematic Bonus",
         link: route("admin.reports.user.level.roi.bonus")
       }, {
-        title: "Level Bonus",
-        link: route("admin.reports.user.level.bonus")
+        title: "Direct Bonus",
+        link: route("admin.reports.user.direct.bonus")
       }, {
-        title: "Maturity Bonus",
-        link: route("admin.reports.user.level.bonus")
+        title: "Rank Bonus",
+        link: route("admin.reports.user.rank.income")
       }]
     }, {
       heading: "Settings",
@@ -3212,7 +3212,7 @@ var _hoisted_5 = {
   "class": "app-content"
 };
 var _hoisted_6 = {
-  "class": "container-fluid"
+  "class": ""
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_AdminHeaderComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AdminHeaderComponent");

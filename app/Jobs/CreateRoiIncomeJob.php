@@ -2,102 +2,105 @@
 
 namespace App\Jobs;
 
-use App\Methods\IncomeMethods;
 use App\Models\Plan;
 use App\Models\RoiIncomeClosing;
 use App\Models\Subscription;
+use App\Services\Income\IncomeService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class CreateRoiIncomeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private Subscription $subscription;
-    private RoiIncomeClosing $roiIncomeClosing;
+    private RoiIncomeClosing $closing;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(Subscription $subscription, RoiIncomeClosing $roiIncomeClosing)
+    public function __construct(Subscription $subscription, RoiIncomeClosing $closing)
     {
         $this->onQueue('income');
         $this->subscription = $subscription->withoutRelations();
-        $this->roiIncomeClosing = $roiIncomeClosing->withoutRelations();
+        $this->closing = $closing->withoutRelations();
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         $this->subscription->refresh();
-        $investmentAmount = $this->subscription->amount;
         $user = $this->subscription->user;
 
-        if (!isUserActive($user)) {
-            Log::warning("User is not active.");
+        if (! $user || ! isUserActive($user)) return;
+        if (! $this->subscription->is_active) return;
+
+        if (
+            $user->userRoiIncomes()
+                ->where('subscription_id', $this->subscription->id)
+                ->where('closing_date', $this->closing->closing_date)
+                ->exists()
+        ) {
             return;
         }
 
-        if (!$this->subscription->is_active) {
-            Log::warning("Subscription is not active.");
-            return;
-        }
+        $plan = Plan::find($this->subscription->plan_id);
+        if (! $plan) return;
 
+        /* ===============================
+           MONTHLY % → DAILY ROI AMOUNT
+        =============================== */
+        $monthlyPercent = castDecimalString($plan->monthly_roi_amount, 4);
+        $monthlyAmount  = multipleDecimalStrings(
+            $this->subscription->amount,
+            divDecimalStrings($monthlyPercent, '100', 6),
+            4
+        );
 
-        $userStop = userStop($user);
-        if ($userStop->is_blocked) {
-            return null;
-        }
+        $days = Carbon::parse($this->closing->closing_date)->daysInMonth;
+        $dailyAmount = divDecimalStrings($monthlyAmount, $days, 2);
 
-        if ($userStop->roi) {
-            return null;
-        }
+        if ($dailyAmount <= 0) return;
 
-        $userRoiIncome = $user->userRoiIncomes()->where('closing_date', $this->roiIncomeClosing->closing_date)->where('subscription_id', $this->subscription->id)->exists();
+        /* ===============================
+           CREDIT BASE PASSIVE INCOME
+        =============================== */
+        $credited = IncomeService::creditPassiveIncome(
+            $this->subscription,
+            $dailyAmount
+        );
 
-        if (!$userRoiIncome) {
-            $plan = Plan::find($this->subscription->plan_id);
-            $daysInMonth = Carbon::now()->daysInMonth;
-            $incomeAmount = divDecimalStrings($plan->monthly_roi_amount, $daysInMonth, 2);
+        if ($credited <= 0) return;
 
-            if (is_null($incomeAmount)) {
-                return;
-            }
+        /* ===============================
+           SAVE ROI ENTRY
+        =============================== */
+        $roiIncome = $user->userRoiIncomes()->create([
+            'subscription_id' => $this->subscription->id,
+            'closing_date'    => $this->closing->closing_date,
+            'amount'          => $this->subscription->amount,
+            'income'          => $credited,
+        ]);
 
-            $userRoiIncome = $user->userRoiIncomes()->create([
-                'closing_date' => $this->roiIncomeClosing->closing_date,
-                'subscription_id' => $this->subscription->id,
-                'amount' => $investmentAmount,
-                'income' => $incomeAmount,
-            ]);
+        userIncomeStat($user)->increment('roi', $credited);
+        userIncomeStat($user)->increment('total', $credited);
 
-            $userIncomeStat = userIncomeStat($user);
-            $userIncomeStat->increment('roi', $incomeAmount);
-            $userIncomeStat->increment('total', $incomeAmount);
+        userIncomeOnHold($user)->increment('roi', $credited);
+        userIncomeOnHold($user)->increment('total', $credited);
 
-            $userIncomeOnHold = userIncomeOnHold($user);
-            $userIncomeOnHold->increment('roi', $incomeAmount);
-            $userIncomeOnHold->increment('total', $incomeAmount);
+        CreateUserWalletLedgerJob::dispatch(
+            $user,
+            'Income Wallet',
+            'INR',
+            'Credit',
+            $credited,
+            "Daily ROI income ₹{$credited}"
+        )->delay(now()->addSecond());
 
-            $amount = $incomeAmount;
-            $walletType = 'Income Wallet';
-            $currency = 'INR';
-            $txn_type = 'Credit';
-            $remark = 'Daily Dividend (Fraction Of Monthly Dividend) Bonus of ₹ '.$amount.' has been Credited';
-            CreateUserWalletLedgerJob::dispatch($user, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
-
-            dispatch( new GenerateLevelRoiIncomeJob($userRoiIncome))->delay(now());
-        }
+        /* ===============================
+           NEXT STEPS
+        =============================== */
+        dispatch(new CreateRankRoiIncomeJob($roiIncome))->afterCommit();
+        dispatch(new GenerateLevelRoiIncomeJob($roiIncome))->afterCommit();
     }
 }

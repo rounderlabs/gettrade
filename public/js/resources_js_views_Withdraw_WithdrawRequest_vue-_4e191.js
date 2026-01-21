@@ -197,7 +197,7 @@ __webpack_require__.r(__webpack_exports__);
       menu_icon: "users"
     }, {
       heading: "Marketing Bonus",
-      link: route("earnings.front.line.bonus"),
+      link: route("earnings.direct.bonus"),
       menu_icon: "award"
     }, {
       heading: "Trading Income",
@@ -205,11 +205,11 @@ __webpack_require__.r(__webpack_exports__);
       menu_icon: "bar-chart-2"
     }, {
       heading: "Systematic Trading Income",
-      link: route("earnings.profit.sharing.bonus"),
+      link: route("earnings.systematic.bonus"),
       menu_icon: "framer"
     }, {
       heading: "Rank Bonus",
-      link: route("earnings.maturity.bonus"),
+      link: route("earnings.rank.bonus"),
       menu_icon: "sunrise"
     }, {
       heading: "Withdrawals History",
@@ -790,8 +790,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "dark-text"
   }, "Market Earnings"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
-  }, "Referral Bonus")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.level).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-    href: _ctx.route('earnings.front.line.bonus'),
+  }, "Referral Bonus")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.direct).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+    href: _ctx.route('earnings.direct.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -823,7 +823,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, "Rank Profit"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
   }, "On Team Business")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.rank).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-    href: _ctx.route('earnings.maturity.bonus'),
+    href: _ctx.route('earnings.rank.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {

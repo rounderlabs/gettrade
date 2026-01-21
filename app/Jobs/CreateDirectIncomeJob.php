@@ -2,12 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Methods\IncomeMethods;
-use App\Models\Plan;
 use App\Models\SiteSetting;
 use App\Models\Subscription;
-use App\Models\User;
 use App\Models\UserUsdWalletTransaction;
+use App\Services\Income\IncomeService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,81 +17,96 @@ class CreateDirectIncomeJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public UserUsdWalletTransaction $userUsdWalletTransaction;
-    /**
-     * @var mixed
-     */
-    public $user;
-    private Subscription $subscription;
+    public UserUsdWalletTransaction $transaction;
+    public Subscription $subscription;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(UserUsdWalletTransaction $userUsdWalletTransaction, Subscription $subscription)
+    public function __construct(
+        UserUsdWalletTransaction $transaction,
+        Subscription             $subscription
+    )
     {
-        $this->userUsdWalletTransaction = $userUsdWalletTransaction;
-        $this->user = $userUsdWalletTransaction->user;
+        $this->transaction = $transaction;
         $this->subscription = $subscription;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $directPercent = SiteSetting::get('direct_percent', 0);
-        $directPercentDecimal = divDecimalStrings($directPercent, 100, 4);
-        $plan = Plan::where('id',$this->subscription->plan_id )->first();
-        $parentUser = $this->user->sponsor;
-        if (is_null($parentUser) || !$this->isUserActive($parentUser)) {
-            return null;
-        }
+        $user = $this->transaction->user;
+        $parent = $user->sponsor;
 
-        if (!haveActiveSubscriptions($parentUser,)) {
-            return null;
-        }
-
-
-        $incomeAmount = multipleDecimalStrings($this->userUsdWalletTransaction->amount_in_usd, $directPercentDecimal, 4);
-
-        $incomeReceived = IncomeMethods::init($parentUser, $incomeAmount)->updateIncome();
-
-        if ($incomeReceived <= castDecimalString('0', 2)) {
+        // ❌ No sponsor or inactive sponsor
+        if (!$parent || !isUserActive($parent)) {
             return;
         }
-        $subscription = $this->userUsdWalletTransaction->subscription;
 
-        $parentUser->userDirectIncomes()->create([
-            'subscription_id' => $subscription->id,
-            'income' => $incomeReceived
+        // ❌ Sponsor has no active subscription
+        $parentSubscription = $parent->subscriptions()
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->first();
+
+        if (!$parentSubscription) {
+            return;
+        }
+
+        $userStop = userStop($parent);
+        if ($userStop->is_blocked || $userStop->direct) {
+            return;
+        }
+
+
+        /* ===============================
+           CALCULATE DIRECT BONUS
+        =============================== */
+        $directPercent = SiteSetting::get('direct_percent', 0);
+        if ($directPercent <= 0) {
+            return;
+        }
+
+        $percentDecimal = divDecimalStrings($directPercent, 100, 4);
+        $rawIncome = multipleDecimalStrings(
+            $this->transaction->amount_in_usd,
+            $percentDecimal,
+            4
+        );
+
+        /* ===============================
+           CREDIT WORKING INCOME (3× CAP)
+        =============================== */
+        $creditedIncome = IncomeService::creditWorkingIncome(
+            $parentSubscription,
+            $rawIncome
+        );
+
+        if ($creditedIncome <= 0) {
+            return;
+        }
+
+        /* ===============================
+           RECORD INCOME
+        =============================== */
+        $parent->userDirectIncomes()->create([
+            'from_user'=>$this->subscription->user_id,
+            'subscription_id' => $this->subscription->id,
+            'income' => $creditedIncome,
         ]);
 
+        userIncomeStat($parent)->increment('direct', $creditedIncome);
+        userIncomeStat($parent)->increment('total', $creditedIncome);
 
+        userIncomeOnHold($parent)->increment('direct', $creditedIncome);
+        userIncomeOnHold($parent)->increment('total', $creditedIncome);
 
-        $userIncomeStat = userIncomeStat($parentUser);
-        $userIncomeStat->increment('direct', $incomeReceived);
-        $userIncomeStat->increment('total', $incomeReceived);
-
-        $userIncomeOnHold = userIncomeOnHold($parentUser);
-        $userIncomeOnHold->increment('direct', $incomeReceived);
-        $userIncomeOnHold->increment('total', $incomeReceived);
-
-        $amount = $incomeReceived;
-        $walletType = 'Income Wallet';
-        $currency = 'INR';
-        $txn_type = 'Credit';
-        $remark = 'Market earnings (Direct Bonus) of ₹ '.$amount.' has been Credited';
-        CreateUserWalletLedgerJob::dispatch($parentUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
-
-
-    }
-
-    private function isUserActive(User $user): bool
-    {
-        return isUserActive($user);
+        /* ===============================
+           LEDGER ENTRY
+        =============================== */
+        CreateUserWalletLedgerJob::dispatch(
+            $parent,
+            'Income Wallet',
+            'INR',
+            'Credit',
+            $creditedIncome,
+            "Direct Bonus of ₹{$creditedIncome} credited"
+        )->delay(now()->addSecond());
     }
 }

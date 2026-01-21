@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->bigInteger('from_user');
+            $table->bigInteger('subscription_id');
             $table->decimal('income', 40, 4);
             $table->timestamps();
         });

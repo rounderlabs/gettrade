@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserDirectIncome;
 use App\Models\UserLevelIncome;
 use App\Models\UserLevelIncomeStat;
 use App\Models\UserLevelRoiIncome;
 use App\Models\UserMagicIncomeStats;
 use App\Models\UserPoolIncomeStats;
+use App\Models\UserRankRoiIncomes;
 use App\Models\UserRewardIncomeStats;
 use App\Models\UserRoiIncome;
 use Illuminate\Http\Request;
@@ -110,7 +112,7 @@ class AdminReportController extends Controller
         $from    = $request->input('from');
         $to      = $request->input('to');
 
-        $query = UserLevelRoiIncome::with(['user', 'userRoiIncome', 'userInvestment'])
+        $query = UserLevelRoiIncome::with(['user', 'userRoiIncome'])
             ->orderByDesc('id');
 
         if ($search) {
@@ -134,7 +136,7 @@ class AdminReportController extends Controller
 
     public function exportUserTradeProfitBonus(Request $request)
     {
-        $query = UserLevelRoiIncome::with(['user', 'userRoiIncome', 'userInvestment'])
+        $query = UserLevelRoiIncome::with(['user', 'userRoiIncome'])
             ->orderByDesc('id');
 
         if ($request->filled('search')) {
@@ -161,7 +163,7 @@ class AdminReportController extends Controller
 
         $callback = function () use ($query) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['#', 'Username', 'Level', 'Income %', 'Income (USD)', 'Created']);
+            fputcsv($handle, ['#', 'Username', 'Level', 'Income %', 'Income', 'Created']);
 
             $i = 1;
             foreach ($query->get() as $record) {
@@ -269,165 +271,6 @@ class AdminReportController extends Controller
         return Inertia::render('Admin/Reports/UserPoolBonusReport');
     }
 
-    public function getUserPoolBonus(Request $request)
-    {
-        $perPage = $request->input('per_page', 10);
-        $search  = $request->input('search');
-        $from    = $request->input('from');
-        $to      = $request->input('to');
-
-        $query = UserPoolIncomeStats::with(['user', 'poolIncomeClosing'])
-            ->orderByDesc('id');
-
-        if ($search) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('username', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        if ($from) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-
-        if ($to) {
-            $query->whereDate('created_at', '<=', $to);
-        }
-
-        return response()->json($query->paginate($perPage));
-    }
-
-    public function exportUserPoolBonus(Request $request)
-    {
-        $query = UserPoolIncomeStats::with(['user', 'poolIncomeClosing'])
-            ->orderByDesc('id');
-
-        if ($request->filled('search')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('username', 'like', "%{$request->search}%")
-                    ->orWhere('name', 'like', "%{$request->search}%")
-                    ->orWhere('email', 'like', "%{$request->search}%");
-            });
-        }
-
-        if ($request->filled('from')) {
-            $query->whereDate('created_at', '>=', $request->from);
-        }
-
-        if ($request->filled('to')) {
-            $query->whereDate('created_at', '<=', $request->to);
-        }
-
-        $filename = 'user_pool_bonus_' . now()->format('Ymd_His') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function () use ($query) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['#', 'Username', 'Pool Closing ID', 'Income %', 'Income (USD)', 'Created']);
-
-            $i = 1;
-            foreach ($query->get() as $record) {
-                fputcsv($handle, [
-                    $i++,
-                    optional($record->user)->username,
-                    optional($record->poolIncomeClosing)->id,
-                    $record->income_percent,
-                    $record->income_usd,
-                    $record->created_at->format('Y-m-d'),
-                ]);
-            }
-            fclose($handle);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function userMagicBonus()
-    {
-        return Inertia::render('Admin/Reports/UserMagicBonusReport');
-    }
-
-    public function getUserMagicBonus(Request $request)
-    {
-        $perPage = $request->input('per_page', 10);
-        $search  = $request->input('search');
-        $from    = $request->input('from');
-        $to      = $request->input('to');
-
-        $query = UserMagicIncomeStats::with(['user', 'magicIncomeClosing'])
-            ->orderByDesc('id');
-
-        if ($search) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('username', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        if ($from) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-
-        if ($to) {
-            $query->whereDate('created_at', '<=', $to);
-        }
-
-        return response()->json($query->paginate($perPage));
-    }
-
-    public function exportUserMagicBonus(Request $request)
-    {
-        $query = UserMagicIncomeStats::with(['user', 'magicIncomeClosing'])
-            ->orderByDesc('id');
-
-        if ($request->filled('search')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('username', 'like', "%{$request->search}%")
-                    ->orWhere('name', 'like', "%{$request->search}%")
-                    ->orWhere('email', 'like', "%{$request->search}%");
-            });
-        }
-
-        if ($request->filled('from')) {
-            $query->whereDate('created_at', '>=', $request->from);
-        }
-
-        if ($request->filled('to')) {
-            $query->whereDate('created_at', '<=', $request->to);
-        }
-
-        $filename = 'user_magic_bonus_' . now()->format('Ymd_His') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function () use ($query) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['#', 'Username', 'Magic Closing ID', 'Income %', 'Income (USD)', 'Created']);
-
-            $i = 1;
-            foreach ($query->get() as $record) {
-                fputcsv($handle, [
-                    $i++,
-                    optional($record->user)->username,
-                    optional($record->magicIncomeClosing)->id,
-                    $record->income_percent,
-                    $record->income_usd,
-                    $record->created_at->format('Y-m-d'),
-                ]);
-            }
-            fclose($handle);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
 
     public function userRewardBonus()
     {
@@ -510,6 +353,181 @@ class AdminReportController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+
+
+    public function userRankIncome()
+    {
+        return Inertia::render('Admin/Reports/UserRankIncomeReport');
+    }
+
+    public function getUserRankIncome(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $search  = $request->input('search');
+        $from    = $request->input('from');
+        $to      = $request->input('to');
+
+        $query = UserRankRoiIncomes::with([
+            'user:id,username,name,email',
+            'userRoiIncome:id,closing_date'
+        ])->orderByDesc('id');
+
+        if ($search) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($from) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        if ($to) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        return response()->json($query->paginate($perPage));
+    }
+
+
+    public function exportUserRankIncome(Request $request): StreamedResponse
+    {
+        $query = UserRankRoiIncomes::with([
+            'user:id,username,name,email',
+            'userRoiIncome:id,closing_date'
+        ])->orderByDesc('id');
+
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('username', 'like', "%{$request->search}%")
+                    ->orWhere('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
+            });
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+
+        return response()->streamDownload(function () use ($query) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, [
+                '#',
+                'Username',
+                'Rank',
+                'Income %',
+                'Income',
+                'ROI Date',
+                'Created At'
+            ]);
+
+            $i = 1;
+            foreach ($query->get() as $row) {
+                fputcsv($handle, [
+                    $i++,
+                    optional($row->user)->username,
+                    $row->current_rank,
+                    $row->income_percent,
+                    $row->income,
+                    optional($row->userRoiIncome)->closing_date,
+                    $row->created_at->format('Y-m-d'),
+                ]);
+            }
+
+            fclose($handle);
+        }, 'user_rank_income_' . now()->format('Ymd_His') . '.csv');
+    }
+    public function userDirectBonus()
+    {
+        return Inertia::render('Admin/Reports/UserDirectBonusReport');
+    }
+
+    public function getUserDirectBonus(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $search  = $request->input('search');
+        $from    = $request->input('from');
+        $to      = $request->input('to');
+
+        $query = UserDirectIncome::with([
+            'user:id,username,name,email',
+            'fromUser:id,username,name'
+        ])->orderByDesc('id');
+
+        if ($search) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($from) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        if ($to) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        return response()->json($query->paginate($perPage));
+    }
+
+
+    public function exportUserDirectBonus(Request $request): StreamedResponse
+    {
+        $query = UserDirectIncome::with(['user', 'fromUser'])
+            ->orderByDesc('id');
+
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('username', 'like', "%{$request->search}%")
+                    ->orWhere('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
+            });
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+
+        return response()->streamDownload(function () use ($query) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+                '#',
+                'User',
+                'From User',
+                'Income',
+                'Date'
+            ]);
+
+            $i = 1;
+            foreach ($query->get() as $row) {
+                fputcsv($handle, [
+                    $i++,
+                    optional($row->user)->username,
+                    optional($row->fromUser)->username,
+                    $row->income,
+                    $row->created_at->format('Y-m-d'),
+                ]);
+            }
+
+            fclose($handle);
+        }, 'user_direct_bonus_' . now()->format('Ymd_His') . '.csv');
+    }
+
 
 
 }

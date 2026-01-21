@@ -9,22 +9,12 @@ use App\Models\UserLevelIncome;
 use App\Models\UserLevelIncomeStat;
 use App\Models\UserLevelRoiIncome;
 use App\Models\UserNlitenPoolIncome;
+use App\Models\UserRank;
 use App\Models\UserRoiCompoundedIncomes;
 use Inertia\Inertia;
 
 class EarningController extends Controller
 {
-
-    public function showFrontLineBonus()
-    {
-        return Inertia::render('Earnings/FrontLineBonus', []);
-    }
-
-    public function getFrontLineBonus()
-    {
-        $directEarnings = auth()->user()->userLevelIncomeStats()->with('subscription.user')->withCasts(['created_at' => 'datetime:Y-m-d'])->orderByDesc('id')->simplePaginate(10);
-        return response()->json($directEarnings);
-    }
 
     public function showMonthlyTradingBonus()
     {
@@ -42,14 +32,30 @@ class EarningController extends Controller
         return response()->json($monthlyRoi);
     }
 
-    public function showProfitSharingBonus()
+    public function showDirectBonus()
     {
-        return Inertia::render('Earnings/ProfitSharingBonus', [
+        return Inertia::render('Earnings/MarketingBonus', []);
+    }
+
+    public function getDirectBonus()
+    {
+        $monthlyRoi = auth()->user()
+            ->userDirectIncomes()
+            ->with('subscription.user') // ✅ singular
+            ->orderByDesc('id')
+            ->simplePaginate(10);
+
+        return response()->json($monthlyRoi);
+    }
+
+    public function showSystematicBonus()
+    {
+        return Inertia::render('Earnings/SystematicBonus', [
             'team' => auth()->user()->team,
         ]);
     }
 
-    public function getProfitSharingBonus()
+    public function getSystematicBonus()
     {
         $levelRoi = auth()->user()
             ->userLevelRoiIncomes()
@@ -64,52 +70,23 @@ class EarningController extends Controller
     }
 
 
-    public function getDownLineRoiIncome($level = 1)
-    {
-        $user = auth()->user();
-        $incomeByLevel = UserLevelRoiIncome::where('user_id', $user->id)->where('level', $level)->orderByDesc('id')->get();
-        return Inertia::render('Earnings/DownLineLevelROIDetails', [
-            'incomes' => $incomeByLevel,
-        ]);
-    }
 
-
-
-
-
-    public function showPoolBonus()
-    {
-        return Inertia::render('Earnings/PoolBonus', []);
-    }
-
-    public function getPoolBonus()
-    {
-        $poolBonus = auth()->user()->userPoolIncomeStats()->orderby('id', 'desc')->orderByDesc('id')->simplePaginate(10);
-        return response()->json($poolBonus);
-    }
-
-    public function showMagicBonus()
-    {
-        return Inertia::render('Earnings/MagicBonus', []);
-    }
-
-    public function getMagicBonus()
-    {
-        $magicBonus = auth()->user()->userMagicIncomeStats()->orderby('id', 'desc')->orderByDesc('id')->simplePaginate(10);
-        return response()->json($magicBonus);
-    }
-
-    public function showMaturityBonus()
+    public function showRankBonus()
     {
         $subscriptions = Subscription::where('user_id', auth()->id())->with('plan')->get();
-        return Inertia::render('Earnings/MaturityBonus', [
+        $userRank = UserRank::where('user_id', auth()->id())->first();
+        return Inertia::render('Earnings/RankBonus', [
             'subscriptions' => $subscriptions,
+            'user_rank' => $userRank,
         ]);
     }
 
-    public function getMaturityBonus()
+    public function getRankBonus()
     {
-        $magicBonus = auth()->user()->userMagicIncomeStats()->orderby('id', 'desc')->orderByDesc('id')->simplePaginate(10);
+        $magicBonus = auth()->user()->userRankRoiIncomes()->with([
+            'userRoiIncome.user',
+            'userRoiIncome.subscription',
+        ])->orderby('id', 'desc')->orderByDesc('id')->simplePaginate(10);
         return response()->json($magicBonus);
     }
 

@@ -2237,17 +2237,17 @@ __webpack_require__.r(__webpack_exports__);
       heading: "Reports",
       iconClass: "bi-cash-stack",
       sub_menus: [{
-        title: "Dividend Bonus",
+        title: "Trading Bonus",
         link: route("admin.reports.user.trading.bonus")
       }, {
-        title: "Level On Dividend Bonus",
+        title: "Systematic Bonus",
         link: route("admin.reports.user.level.roi.bonus")
       }, {
-        title: "Level Bonus",
-        link: route("admin.reports.user.level.bonus")
+        title: "Direct Bonus",
+        link: route("admin.reports.user.direct.bonus")
       }, {
-        title: "Maturity Bonus",
-        link: route("admin.reports.user.level.bonus")
+        title: "Rank Bonus",
+        link: route("admin.reports.user.rank.income")
       }]
     }, {
       heading: "Settings",
@@ -2476,19 +2476,116 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _layouts_Admin_MainAdminLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/layouts/Admin/MainAdminLayout.vue */ "./resources/js/layouts/Admin/MainAdminLayout.vue");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Dashboard',
-  layout: _layouts_Admin_MainAdminLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+
+/* ================= SMALL STAT BOX ================= */
+var StatBox = {
   props: {
-    active_participants: Number,
-    users: Number,
-    total_direct_bonus: Number,
-    total_trading_bonus: Number,
-    total_systematic_bonus: Number,
-    total_rank_bonus: Number,
+    title: String,
+    value: [Number, String],
+    icon: String,
+    color: String,
+    prefix: {
+      type: String,
+      "default": ""
+    }
+  },
+  template: "\n        <div class=\"col-lg-3 col-6\">\n            <div class=\"small-box\" :class=\"'bg-' + color\">\n                <div class=\"inner\">\n                    <h3>{{ prefix }}{{ Number(value || 0).toFixed(0) }}</h3>\n                    <p>{{ title }}</p>\n                </div>\n                <div class=\"icon\">\n                    <i class=\"fas\" :class=\"'fa-' + icon\"></i>\n                </div>\n            </div>\n        </div>\n    "
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "AdminDashboard",
+  layout: _layouts_Admin_MainAdminLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+  components: {
+    StatBox: StatBox
+  },
+  props: {
+    users: {
+      type: Number,
+      "default": 0
+    },
+    active_participants: {
+      type: Number,
+      "default": 0
+    },
+    total_direct_bonus: {
+      type: Number,
+      "default": 0
+    },
+    total_trading_bonus: {
+      type: Number,
+      "default": 0
+    },
+    total_systematic_bonus: {
+      type: Number,
+      "default": 0
+    },
+    total_rank_bonus: {
+      type: Number,
+      "default": 0
+    },
+    /* 🔥 IMPORTANT FIX */
+    monthly_income: {
+      type: Array,
+      "default": function _default() {
+        return [];
+      }
+    },
     auth: Object
   },
-  setup: function setup(props) {}
+  computed: {
+    hasIncomeData: function hasIncomeData() {
+      return this.total_direct_bonus + this.total_trading_bonus + this.total_systematic_bonus + this.total_rank_bonus > 0;
+    },
+    /* ===== DONUT ===== */donutSeries: function donutSeries() {
+      return [this.total_direct_bonus || 0, this.total_trading_bonus || 0, this.total_systematic_bonus || 0, this.total_rank_bonus || 0];
+    },
+    donutOptions: function donutOptions() {
+      return {
+        labels: ["Direct Bonus", "Trading Bonus", "Systematic Bonus", "Rank Bonus"],
+        legend: {
+          position: "bottom"
+        },
+        dataLabels: {
+          enabled: true
+        }
+      };
+    },
+    /* ===== LINE ===== */lineSeries: function lineSeries() {
+      return [{
+        name: "Income",
+        data: this.monthly_income.map(function (i) {
+          return i.amount;
+        })
+      }];
+    },
+    lineOptions: function lineOptions() {
+      return {
+        chart: {
+          toolbar: {
+            show: false
+          }
+        },
+        xaxis: {
+          categories: this.monthly_income.map(function (i) {
+            return i.month;
+          })
+        },
+        stroke: {
+          curve: "smooth",
+          width: 3
+        },
+        markers: {
+          size: 4
+        },
+        tooltip: {
+          y: {
+            formatter: function formatter(val) {
+              return "$".concat(val);
+            }
+          }
+        }
+      };
+    }
+  }
 });
 
 /***/ }),
@@ -2955,7 +3052,7 @@ var _hoisted_5 = {
   "class": "app-content"
 };
 var _hoisted_6 = {
-  "class": "container-fluid"
+  "class": ""
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_AdminHeaderComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AdminHeaderComponent");
@@ -2983,167 +3080,111 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "row top-125"
+  "class": "content-header"
 };
 var _hoisted_2 = {
-  "class": "col-6"
+  "class": "container-fluid"
 };
 var _hoisted_3 = {
-  "class": "card border-0 mb-4 theme-yellow bg-radial-gradient"
+  "class": "content"
 };
 var _hoisted_4 = {
-  "class": "card-body bg-none"
+  "class": "container-fluid"
 };
 var _hoisted_5 = {
-  "class": "row gx-2 align-items-center"
-};
-var _hoisted_6 = {
-  "class": "col"
-};
-var _hoisted_7 = {
-  "class": "fw-medium"
-};
-var _hoisted_8 = {
-  "class": "col-6"
-};
-var _hoisted_9 = {
-  "class": "card border-0 mb-4 theme-yellow bg-radial-gradient text-dark"
-};
-var _hoisted_10 = {
-  "class": "card-body bg-none"
-};
-var _hoisted_11 = {
-  "class": "row gx-2 align-items-center"
-};
-var _hoisted_12 = {
-  "class": "col"
-};
-var _hoisted_13 = {
-  "class": "fw-medium"
-};
-var _hoisted_14 = {
   "class": "row"
 };
+var _hoisted_6 = {
+  "class": "row"
+};
+var _hoisted_7 = {
+  "class": "row"
+};
+var _hoisted_8 = {
+  "class": "col-md-4"
+};
+var _hoisted_9 = {
+  "class": "card"
+};
+var _hoisted_10 = {
+  "class": "card-body"
+};
+var _hoisted_11 = {
+  key: 1,
+  "class": "text-center text-muted"
+};
+var _hoisted_12 = {
+  "class": "col-md-8"
+};
+var _hoisted_13 = {
+  "class": "card"
+};
+var _hoisted_14 = {
+  "class": "card-body"
+};
 var _hoisted_15 = {
-  "class": "col-6 col-sm-6 col-md-6 col-lg-3 col-xxl-3"
-};
-var _hoisted_16 = {
-  "class": "card border-0 mb-4 theme-green bg-radial-gradient text-dark"
-};
-var _hoisted_17 = {
-  "class": "card-body bg-none"
-};
-var _hoisted_18 = {
-  "class": "row gx-2 align-items-center"
-};
-var _hoisted_19 = {
-  "class": "col"
-};
-var _hoisted_20 = {
-  "class": "col-6 col-sm-6 col-md-6 col-lg-3 col-xxl-3"
-};
-var _hoisted_21 = {
-  "class": "card border-0 mb-4 theme-yellow bg-radial-gradient text-dark"
-};
-var _hoisted_22 = {
-  "class": "card-body bg-none"
-};
-var _hoisted_23 = {
-  "class": "row gx-2 align-items-center"
-};
-var _hoisted_24 = {
-  "class": "col"
-};
-var _hoisted_25 = {
-  "class": "fw-medium"
-};
-var _hoisted_26 = {
-  "class": "col-6 col-sm-6 col-md-6 col-lg-3 col-xxl-3"
-};
-var _hoisted_27 = {
-  "class": "card border-0 mb-4 theme-red bg-radial-gradient text-dark"
-};
-var _hoisted_28 = {
-  "class": "card-body bg-none"
-};
-var _hoisted_29 = {
-  "class": "row gx-2 align-items-center"
-};
-var _hoisted_30 = {
-  "class": "col"
-};
-var _hoisted_31 = {
-  "class": "fw-medium"
-};
-var _hoisted_32 = {
-  "class": "col-6 col-sm-6 col-md-6 col-lg-3 col-xxl-3"
-};
-var _hoisted_33 = {
-  "class": "card border-0 mb-4 theme-yellow bg-radial-gradient text-dark"
-};
-var _hoisted_34 = {
-  "class": "card-body bg-none"
-};
-var _hoisted_35 = {
-  "class": "row gx-2 align-items-center"
-};
-var _hoisted_36 = {
-  "class": "col"
-};
-var _hoisted_37 = {
-  "class": "fw-medium"
+  key: 1,
+  "class": "text-center text-muted"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  var _$props$auth$user;
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, "Welcome, " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(((_$props$auth$user = $props.auth.user) === null || _$props$auth$user === void 0 ? void 0 : _$props$auth$user.name) || 'Admin'), 1 /* TEXT */), _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, "Users Activity", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "col-auto"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "avatar avatar-40 h5 bg-light-white rounded-circle"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-    "class": "bi bi-star"
-  })])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-1"
-  }, "Total User", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.users), 1 /* TEXT */)])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "col-auto"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "avatar avatar-40 h5 bg-light-white rounded-circle"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-    "class": "bi bi-star"
-  })])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-1"
-  }, "Paid Users", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_13, [_cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", null, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.active_participants), 1 /* TEXT */)])])])])])])]), _cache[18] || (_cache[18] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, "Incomes", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" summary blocks "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "col-auto"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "avatar avatar-40 h5 bg-light-white text-dark rounded-circle"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-    "class": "bi bi-thermometer-sun"
-  })])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-1"
-  }, " Total Direct Bonus", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", null, "$", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.total_direct_bonus).toFixed(0)), 1 /* TEXT */)])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [_cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "col-auto"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "avatar avatar-40 h5 bg-light-white rounded-circle"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-    "class": "bi bi-star"
-  })])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-1"
-  }, "Total Trading Bonus", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_25, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", null, "$", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.total_trading_bonus).toFixed(0)), 1 /* TEXT */)])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [_cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "col-auto"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "avatar avatar-40 h5 bg-light-white rounded-circle"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-    "class": "bi bi-coin"
-  })])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_30, [_cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-1"
-  }, "Total Systematic Bonus", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_31, [_cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", null, "$", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.total_systematic_bonus).toFixed(0)), 1 /* TEXT */)])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_35, [_cache[17] || (_cache[17] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "col-auto"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "avatar avatar-40 h5 bg-light-white rounded-circle"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
-    "class": "bi bi-star"
-  })])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_36, [_cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-    "class": "text-muted small mb-1"
-  }, "Total Rank Bonus", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_37, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("small", null, "$", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.total_rank_bonus).toFixed(0)), 1 /* TEXT */)])])])])])])])], 64 /* STABLE_FRAGMENT */);
+  var _$props$auth$user$nam, _$props$auth;
+  var _component_StatBox = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("StatBox");
+  var _component_apexchart = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("apexchart");
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ================= HEADER ================= "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, " Welcome, " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$props$auth$user$nam = (_$props$auth = $props.auth) === null || _$props$auth === void 0 || (_$props$auth = _$props$auth.user) === null || _$props$auth === void 0 ? void 0 : _$props$auth.name) !== null && _$props$auth$user$nam !== void 0 ? _$props$auth$user$nam : 'Admin'), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ================= CONTENT ================= "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ===== USER STATS ===== "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_StatBox, {
+    title: "Total Users",
+    value: $props.users,
+    icon: "users",
+    color: "info"
+  }, null, 8 /* PROPS */, ["value"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_StatBox, {
+    title: "Paid Users",
+    value: $props.active_participants,
+    icon: "user-check",
+    color: "success"
+  }, null, 8 /* PROPS */, ["value"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ===== INCOME STATS ===== "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_StatBox, {
+    title: "Direct Bonus",
+    value: $props.total_direct_bonus,
+    prefix: "$",
+    icon: "hand-holding-usd",
+    color: "primary"
+  }, null, 8 /* PROPS */, ["value"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_StatBox, {
+    title: "Trading Bonus",
+    value: $props.total_trading_bonus,
+    prefix: "$",
+    icon: "chart-line",
+    color: "warning"
+  }, null, 8 /* PROPS */, ["value"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_StatBox, {
+    title: "Systematic Bonus",
+    value: $props.total_systematic_bonus,
+    prefix: "$",
+    icon: "sync-alt",
+    color: "danger"
+  }, null, 8 /* PROPS */, ["value"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_StatBox, {
+    title: "Rank Bonus",
+    value: $props.total_rank_bonus,
+    prefix: "$",
+    icon: "award",
+    color: "secondary"
+  }, null, 8 /* PROPS */, ["value"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ================= CHARTS ================= "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" DONUT CHART "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "card-header"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
+    "class": "card-title"
+  }, " Income Distribution ")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [$options.hasIncomeData ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_apexchart, {
+    key: 0,
+    type: "donut",
+    height: "280",
+    options: $options.donutOptions,
+    series: $options.donutSeries
+  }, null, 8 /* PROPS */, ["options", "series"])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_11, " No income data available "))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" LINE CHART "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "card-header"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
+    "class": "card-title"
+  }, " Monthly Income Trend ")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [$props.monthly_income.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_apexchart, {
+    key: 0,
+    type: "line",
+    height: "300",
+    options: $options.lineOptions,
+    series: $options.lineSeries
+  }, null, 8 /* PROPS */, ["options", "series"])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_15, " No monthly income data "))])])])])])])]);
 }
 
 /***/ }),

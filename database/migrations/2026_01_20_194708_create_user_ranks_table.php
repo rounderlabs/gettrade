@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_ranks', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
             $table->unsignedInteger('rank'); // 1,2,3,4,5...
             $table->timestamp('achieved_at');

@@ -1,7 +1,7 @@
 <template>
     <MainAdminLayout>
         <div class="card">
-            <h5 class="card-title mb-2">User Dividends Report</h5>
+            <h5 class="card-title mb-2">User Trading Bonus Report (ROI)</h5>
             <div class="card-header">
 
                 <div class="d-flex align-items-center gap-2">
@@ -33,9 +33,8 @@
                         <th>#</th>
                         <th>Username</th>
                         <th>Name</th>
-                        <th>Investment</th>
-                        <th>Dividends Amount</th>
-                        <th>Dividends Income</th>
+                        <th>Package Amount</th>
+                        <th>Daily Trading Income</th>
                         <th>Closing Date</th>
                         <th>Created</th>
                     </tr>
@@ -51,9 +50,8 @@
                         <td>{{ index + 1 + ((roiData.current_page - 1) * roiData.per_page) }}</td>
                         <td>{{ row.user && row.user.username ? row.user.username : '-' }}</td>
                         <td>{{ row.user && row.user.name ? row.user.name : '-' }}</td>
-                        <td>{{ formatCurrency(row.user.user_investment?.amount) }}</td>
-                        <td>{{ formatCurrency(row.amount) }}</td>
-                        <td>{{ formatCurrency(row.income) }}</td>
+                        <td>₹ {{ formatCurrency(row.amount) }}</td>
+                        <td>₹ {{ formatCurrency(row.income) }}</td>
                         <td>{{ formatDate(row.closing_date) }}</td>
                         <td>{{ formatDate(row.created_at) }}</td>
                     </tr>

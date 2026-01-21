@@ -10,11 +10,13 @@ class IncomeMethods
 {
     private User $user;
     private string $totalIncomeAmount;
+    private string $type;
 
-    public function __construct(User $user, string $totalIncomeAmount)
+    public function __construct(User $user, string $totalIncomeAmount, string $type)
     {
         $this->user = $user;
         $this->totalIncomeAmount = $totalIncomeAmount;
+        $this->type = $type;
     }
 
     public static function init(User $user, string $totalIncomeAmount): self
@@ -25,8 +27,20 @@ class IncomeMethods
     public function updateIncome(): string
     {
         $incomeUsd = $this->totalIncomeAmount;
+        $type = $this->type;
+
         foreach (Subscription::where('user_id', $this->user->id)->where('is_active', true)->cursor() as $subscription) {
+
+
             $availableUsd = subDecimalStrings($subscription->max_income_limit, $subscription->earned_so_far, 2);
+
+            if ($type === 'working'){
+                $availableWorkingUsd = subDecimalStrings($subscription->working_income_limit, $subscription->working_earned_so_far, 2);
+            }
+
+            if ($type === 'passive'){
+                $availablePassiveUsd = subDecimalStrings($subscription->passive_income_limit, $subscription->passive_earned_so_far, 2);
+            }
             if ($availableUsd == '0.00') {
 
                 $subscription->update([

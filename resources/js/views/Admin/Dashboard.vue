@@ -1,69 +1,117 @@
 <template>
-    <div class="content-wrapper">
+    <div>
 
-        <!-- HEADER -->
+        <!-- ================= HEADER ================= -->
         <section class="content-header">
             <div class="container-fluid">
-                <h1>Welcome, {{ auth?.user?.name ?? 'Admin' }}</h1>
+                <h1>
+                    Welcome, {{ auth?.user?.name ?? 'Admin' }}
+                </h1>
             </div>
         </section>
 
-        <!-- CONTENT -->
+        <!-- ================= CONTENT ================= -->
         <section class="content">
             <div class="container-fluid">
 
-                <!-- SUMMARY BOXES -->
+                <!-- ===== USER STATS ===== -->
                 <div class="row">
-                    <StatBox title="Total Users" :value="users" icon="users" color="info" />
-                    <StatBox title="Paid Users" :value="active_participants" icon="user-check" color="success" />
+                    <StatBox
+                        title="Total Users"
+                        :value="users"
+                        icon="users"
+                        color="info"
+                    />
+                    <StatBox
+                        title="Paid Users"
+                        :value="active_participants"
+                        icon="user-check"
+                        color="success"
+                    />
                 </div>
 
+                <!-- ===== INCOME STATS ===== -->
                 <div class="row">
-                    <StatBox title="Direct Bonus" :value="total_direct_bonus" prefix="$" icon="hand-holding-usd" color="primary" />
-                    <StatBox title="Trading Bonus" :value="total_trading_bonus" prefix="$" icon="chart-line" color="warning" />
-                    <StatBox title="Systematic Bonus" :value="total_systematic_bonus" prefix="$" icon="sync-alt" color="danger" />
-                    <StatBox title="Rank Bonus" :value="total_rank_bonus" prefix="$" icon="award" color="secondary" />
+                    <StatBox
+                        title="Direct Bonus"
+                        :value="total_direct_bonus"
+                        prefix="$"
+                        icon="hand-holding-usd"
+                        color="primary"
+                    />
+                    <StatBox
+                        title="Trading Bonus"
+                        :value="total_trading_bonus"
+                        prefix="$"
+                        icon="chart-line"
+                        color="warning"
+                    />
+                    <StatBox
+                        title="Systematic Bonus"
+                        :value="total_systematic_bonus"
+                        prefix="$"
+                        icon="sync-alt"
+                        color="danger"
+                    />
+                    <StatBox
+                        title="Rank Bonus"
+                        :value="total_rank_bonus"
+                        prefix="$"
+                        icon="award"
+                        color="secondary"
+                    />
                 </div>
 
-                <!-- CHARTS -->
+                <!-- ================= CHARTS ================= -->
                 <div class="row">
 
-                    <!-- DONUT -->
+                    <!-- DONUT CHART -->
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Income Distribution</h3>
+                                <h3 class="card-title">
+                                    Income Distribution
+                                </h3>
                             </div>
                             <div class="card-body">
                                 <apexchart
+                                    v-if="hasIncomeData"
                                     type="donut"
                                     height="280"
                                     :options="donutOptions"
                                     :series="donutSeries"
                                 />
+                                <p v-else class="text-center text-muted">
+                                    No income data available
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- LINE -->
+                    <!-- LINE CHART -->
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Monthly Income Trend</h3>
+                                <h3 class="card-title">
+                                    Monthly Income Trend
+                                </h3>
                             </div>
                             <div class="card-body">
                                 <apexchart
+                                    v-if="monthly_income.length"
                                     type="line"
                                     height="300"
                                     :options="lineOptions"
                                     :series="lineSeries"
                                 />
+                                <p v-else class="text-center text-muted">
+                                    No monthly income data
+                                </p>
                             </div>
                         </div>
                     </div>
 
                 </div>
-
             </div>
         </section>
     </div>
@@ -72,9 +120,18 @@
 <script>
 import MainAdminLayout from "@/layouts/Admin/MainAdminLayout.vue"
 
-/* 🔹 SMALL STAT BOX COMPONENT */
+/* ================= SMALL STAT BOX ================= */
 const StatBox = {
-    props: ["title", "value", "icon", "color", "prefix"],
+    props: {
+        title: String,
+        value: [Number, String],
+        icon: String,
+        color: String,
+        prefix: {
+            type: String,
+            default: "",
+        },
+    },
     template: `
         <div class="col-lg-3 col-6">
             <div class="small-box" :class="'bg-' + color">
@@ -87,28 +144,42 @@ const StatBox = {
                 </div>
             </div>
         </div>
-    `
+    `,
 }
 
 export default {
-    name: "Dashboard",
+    name: "AdminDashboard",
     layout: MainAdminLayout,
-    components: {StatBox},
+    components: { StatBox },
 
     props: {
-        users: Number,
-        active_participants: Number,
-        total_direct_bonus: Number,
-        total_trading_bonus: Number,
-        total_systematic_bonus: Number,
-        total_rank_bonus: Number,
+        users: { type: Number, default: 0 },
+        active_participants: { type: Number, default: 0 },
+        total_direct_bonus: { type: Number, default: 0 },
+        total_trading_bonus: { type: Number, default: 0 },
+        total_systematic_bonus: { type: Number, default: 0 },
+        total_rank_bonus: { type: Number, default: 0 },
 
-        /* 🔥 NEW */
-        monthly_income: Array, // [{month:'Jan', amount:1000}]
+        /* 🔥 IMPORTANT FIX */
+        monthly_income: {
+            type: Array,
+            default: () => [],
+        },
+
         auth: Object,
     },
 
     computed: {
+        hasIncomeData() {
+            return (
+                this.total_direct_bonus +
+                this.total_trading_bonus +
+                this.total_systematic_bonus +
+                this.total_rank_bonus
+            ) > 0
+        },
+
+        /* ===== DONUT ===== */
         donutSeries() {
             return [
                 this.total_direct_bonus || 0,
@@ -121,15 +192,21 @@ export default {
         donutOptions() {
             return {
                 labels: [
-                    "Direct",
-                    "Trading",
-                    "Systematic",
-                    "Rank",
+                    "Direct Bonus",
+                    "Trading Bonus",
+                    "Systematic Bonus",
+                    "Rank Bonus",
                 ],
-                legend: {position: "bottom"},
+                legend: {
+                    position: "bottom",
+                },
+                dataLabels: {
+                    enabled: true,
+                },
             }
         },
 
+        /* ===== LINE ===== */
         lineSeries() {
             return [
                 {
@@ -141,12 +218,24 @@ export default {
 
         lineOptions() {
             return {
-                chart: {toolbar: {show: false}},
+                chart: {
+                    toolbar: { show: false },
+                },
                 xaxis: {
                     categories: this.monthly_income.map(i => i.month),
                 },
-                stroke: {curve: "smooth"},
-                markers: {size: 4},
+                stroke: {
+                    curve: "smooth",
+                    width: 3,
+                },
+                markers: {
+                    size: 4,
+                },
+                tooltip: {
+                    y: {
+                        formatter: val => `$${val}`,
+                    },
+                },
             }
         },
     },

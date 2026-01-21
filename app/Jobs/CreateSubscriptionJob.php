@@ -56,8 +56,16 @@ class CreateSubscriptionJob implements ShouldQueue
             'amount' => $this->userUsdWalletTransaction->amount_in_usd,
             'tenure_end_date' => $this->userUsdWalletTransaction->created_at->addMonths($tenure)->format('Y-m-d'),
             'lock_end_date' => $this->userUsdWalletTransaction->created_at->addDays(90)->format('Y-m-d'),
-            'earned_so_far' => castDecimalString('0', 2),
-            'is_active' => $is_active,
+            // TOTAL (5x example, optional)
+            'max_income_limit' => multipleDecimalStrings($plan->amount, 5, 2),
+            'earned_so_far' => '0.00',
+            // WORKING (Direct Bonus → Referrer)
+            'working_income_limit' => multipleDecimalStrings($plan->amount, 3, 2),
+            'working_earned_so_far' => '0.00',
+            // PASSIVE (ROI / Level → Self)
+            'passive_income_limit' => multipleDecimalStrings($plan->amount, 2, 2),
+            'passive_earned_so_far' => '0.00',
+            'is_active' => true,
             'created_at' => $this->userUsdWalletTransaction->created_at
         ]);
         $amount = $this->userUsdWalletTransaction->amount_in_usd;
