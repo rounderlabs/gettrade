@@ -43,16 +43,16 @@
                                 </div>
                                 <div>
                                     <h5 class="fw-semibold dark-text">Total Business </h5>
-                                    <h5 class="fw-semibold dark-text mt-2">₹ {{ partner.downline_user.user_business?partner.downline_user.user_business.usd:'0.00' }}</h5>
+                                    <h5 class="fw-semibold dark-text mt-2">₹ {{ partner.downline_user.user_business?partner.downline_user.user_business.amount:'0.00' }}</h5>
                                 </div>
                                 <div>
                                     <h5 class="fw-semibold dark-text">Joined On </h5>
-                                    <h5 class="fw-semibold dark-text mt-2">{{ partner.downline_user.created_at }}</h5>
+                                    <h5 class="fw-semibold dark-text mt-2">{{ formatDate(partner.downline_user.created_at) }}</h5>
                                 </div>
 
                                 <div>
                                     <h5 class="fw-semibold dark-text">Activated On </h5>
-                                    <h5 v-if="partner.downline_user.subscriptions.length" class="fw-semibold dark-text mt-2"> {{ partner.downline_user.subscriptions[0].created_at }}</h5>
+                                    <h5 v-if="partner.downline_user.subscriptions.length" class="fw-semibold dark-text mt-2"> {{ formatDate(partner.downline_user.subscriptions[0].created_at) }}</h5>
                                     <h5 v-else class="fw-semibold dark-text mt-2">--</h5>
                                 </div>
 <!--&lt;!&ndash;                                <div>&ndash;&gt;-->
@@ -144,6 +144,15 @@ export default {
     },
     methods: {
 
+        formatDate(date) {
+            if (!date) return '--'
+            return new Date(date).toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            })
+        },
+
         loadLevel(selectedLevel) {
             axios.get(route("team.by.level.list", [this.selectedLevel, 1])).then(res => {
                 let response = res.data;
@@ -228,7 +237,6 @@ export default {
     gap: 10px;
     width: 100%;
     padding: 15px;
-    background-color: #d6cfe9;
     border: 1px solid rgba(var(--box-bg), 0.15);
     -webkit-box-shadow: 0px 4px 22px rgba(var(-dark-text), 0.04);
     box-shadow: 0px 4px 22px rgba(var(-dark-text), 0.04);
