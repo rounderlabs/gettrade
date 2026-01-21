@@ -100,7 +100,7 @@ async function downloadAndShare(platform) {
     link.click();
     document.body.removeChild(link);
 
-    const message = encodeURIComponent(`🌸 Join The Shuchak using my referral:\n${sharePageUrl}`);
+    const message = encodeURIComponent(`🌸 Join Us using my referral:\n${sharePageUrl}`);
 
     if (platform === "whatsapp") {
         window.open(`https://wa.me/?text=${message}`, "_blank");
