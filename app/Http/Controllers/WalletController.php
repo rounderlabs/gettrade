@@ -91,7 +91,7 @@ class WalletController extends Controller
 
     public function showActivateMemberForm()
     {
-        $plans = Plan::where('is_active', 1)->where('id', '>', 5)->orderBy('id', 'ASC')->get();
+        $plans = Plan::where('is_active', 1)->orderBy('id', 'ASC')->get();
         return Inertia::render('Wallet/ActivateMemberFrom', [
             'plans' => $plans
         ]);

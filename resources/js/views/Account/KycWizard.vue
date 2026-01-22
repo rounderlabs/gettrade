@@ -143,9 +143,9 @@ const progress = computed(() => (step.value / 3) * 100);
                 ></div>
             </div>
             <div class="d-flex justify-content-between mt-2 small">
-                <span :class="{ 'fw-bold': step === 1 }">Aadhaar</span>
-                <span :class="{ 'fw-bold': step === 2 }">PAN</span>
-                <span :class="{ 'fw-bold': step === 3 }">Bank</span>
+                <span class="text-white fs" :class="{ 'fw-bold': step === 1 }">Aadhaar</span>
+                <span class="text-white" :class="{ 'fw-bold': step === 2 }">PAN</span>
+                <span class="text-white" :class="{ 'fw-bold': step === 3 }">Bank</span>
             </div>
         </div>
 
