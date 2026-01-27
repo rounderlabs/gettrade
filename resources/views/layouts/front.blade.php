@@ -48,7 +48,7 @@
                 </button>
                 <a href="/" class="navbar-brand m-0 p-0 d-flex align-items-center gap-5 gap-xl-5 me-2">
                     <img src="site/assets/images/getwealth-fav.png" class="logo small_logo d-sm-none" alt="logo">
-                    <img src="site/assets/images/getwealth.png" class="logo d-none d-sm-flex" alt="logo">
+                    <img style="width:120px" src="site/assets/images/getwealth.png" class="logo d-none d-sm-flex" alt="logo">
                 </a>
             </div>
             <div class="nav_alt">
