@@ -31,7 +31,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new GenerateRoiIncomeJob(now()->format('Y-m-d')))
             ->dailyAt('00:01')
-            ->days([2, 3, 4, 5, 6]) // Tuesday to Saturday
             ->withoutOverlapping()
             ->onOneServer();
     }

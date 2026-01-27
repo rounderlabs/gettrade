@@ -7,13 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- #keywords -->
-    <meta name="keywords" content="boot, Bootstrap, Forex and Stock Broker HTML Template">
+    <meta name="keywords" content="Get Wealth, A Multi Verticals Broker">
     <!-- #description -->
-    <meta name="description" content="Forex and Stock Broker HTML Template">
+    <meta name="description" content="Get Wealth- A Multi Verticals Broker">
     <!-- #title -->
-    <title>Get Trade - A Multi Verticals Trades Broker </title>
+    <title>Get Wealth- A Multi Verticals Broker </title>
     <!-- #favicon -->
-    <link rel="shortcut icon" href="site/assets/images/fav.png" type="image/x-icon">
+    <link rel="shortcut icon" href="site/assets/images/getwealth-fav.png" type="image/x-icon">
     <!-- ==== css dependencies start ==== -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.36.0/tabler-icons.min.css">
     <link rel="stylesheet" href="site/assets/css/style.min.css">
@@ -47,8 +47,8 @@
                     <span></span><span></span><span></span><span></span>
                 </button>
                 <a href="/" class="navbar-brand m-0 p-0 d-flex align-items-center gap-5 gap-xl-5 me-2">
-                    <img src="site/assets/images/fav.png" class="logo small_logo d-sm-none" alt="logo">
-                    <img src="site/assets/images/gt-logo.png" class="logo d-none d-sm-flex" alt="logo">
+                    <img src="site/assets/images/getwealth-fav.png" class="logo small_logo d-sm-none" alt="logo">
+                    <img src="site/assets/images/getwealth.png" class="logo d-none d-sm-flex" alt="logo">
                 </a>
             </div>
             <div class="nav_alt">
