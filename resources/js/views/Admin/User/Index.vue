@@ -150,10 +150,10 @@
                         <form @submit.prevent="submit">
 
                             <Toggle label="Block User" v-model="form.is_blocked" />
-                            <Toggle label="Level Income" v-model="form.level" />
-                            <Toggle label="ROI Income" v-model="form.roi" />
-                            <Toggle label="ROI on ROI" v-model="form.roi_on_roi" />
-                            <Toggle label="Maturity Level" v-model="form.maturity_level" />
+                            <Toggle label="Direct Bonus" v-model="form.direct" />
+                            <Toggle label="Trading Bonus" v-model="form.roi" />
+                            <Toggle label="Systematic Bonus" v-model="form.roi_on_roi" />
+                            <Toggle label="Rank Bonus" v-model="form.rank" />
                             <Toggle label="Bonanza" v-model="form.bonanza" />
                             <Toggle label="Reward" v-model="form.reward" />
                             <Toggle label="Withdrawal" v-model="form.withdrawal" />
@@ -337,10 +337,10 @@ export default {
         const form = useForm({
             user_id: props.user.id,
             is_blocked: props.user_stop?.is_blocked ?? false,
-            level: props.user_stop?.level ?? false,
+            direct: props.user_stop?.direct ?? false,
             roi: props.user_stop?.roi ?? false,
             roi_on_roi: props.user_stop?.roi_on_roi ?? false,
-            maturity_level: props.user_stop?.maturity_level ?? false,
+            rank: props.user_stop?.rank ?? false,
             bonanza: props.user_stop?.bonanza ?? false,
             reward: props.user_stop?.reward ?? false,
             withdrawal: props.user_stop?.withdrawal ?? false,

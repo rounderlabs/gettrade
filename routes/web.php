@@ -21,6 +21,7 @@ use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WithdrawController;
 use App\Models\UserIncomeStat;
 use App\Models\UserIncomeWallet;
+use App\Services\CoinPayment\CoinPaymentsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -178,6 +179,20 @@ Route::middleware('auth')->get('/sidebar-data', function (Request $request) {
     $wallet = UserIncomeStat::where('user_id', $user->id)->first();
     return response()->json([
         'balance' => $wallet->total ?? 0,
+    ]);
+});
+
+
+
+Route::get('/test-coinpayments', function (CoinPaymentsService $coin) {
+    return $coin->createTransaction([
+        'amount' => 1,
+        'currency1' => 'USD',
+        'currency2' => 'USDT',
+        'buyer_email' => 'test@example.com',
+        'item_name' => 'Test Payment',
+        'custom' => 'TEST123',
+        'ipn_url' => url('/coinpayments/ipn'),
     ]);
 });
 

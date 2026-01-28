@@ -30,6 +30,43 @@ class SiteSettingSeeder extends Seeder
             // System
             ['key' => 'site_status', 'value' => 'live', 'type' => 'string'],
             ['key' => 'allow_registration', 'value' => true, 'type' => 'boolean'],
+
+            [
+                'key' => 'coinpayments_enabled',
+                'value' => '0',
+                'type' => 'boolean',
+                'autoload' => true,
+            ],
+            [
+                'key' => 'coinpayments_public_key',
+                'value' => null,
+                'type' => 'string',
+                'autoload' => false,
+            ],
+            [
+                'key' => 'coinpayments_private_key',
+                'value' => null,
+                'type' => 'string',
+                'autoload' => false,
+            ],
+            [
+                'key' => 'coinpayments_merchant_id',
+                'value' => null,
+                'type' => 'string',
+                'autoload' => false,
+            ],
+            [
+                'key' => 'coinpayments_ipn_secret',
+                'value' => null,
+                'type' => 'string',
+                'autoload' => false,
+            ],
+            [
+                'key' => 'coinpayments_mode',
+                'value' => 'live', // live | sandbox
+                'type' => 'string',
+                'autoload' => true,
+            ],
         ];
 
         foreach ($settings as $setting) {
