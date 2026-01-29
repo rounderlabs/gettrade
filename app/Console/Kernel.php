@@ -20,9 +20,7 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping();
 
         // ✅ Update user ranks once per day at 12:10 AM
-        // $schedule->command('update:rank')
-        //    ->dailyAt('00:10')
-         //   ->withoutOverlapping();
+        //  $schedule->command('update:rank')->dailyAt('00:10')->withoutOverlapping();
 
         // ✅ Generate ROI incomes daily at 12:01 AM
 //        $schedule->job(new GenerateRoiIncomeJob(now()->format('Y-m-d')))
