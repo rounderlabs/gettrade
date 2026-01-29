@@ -578,10 +578,10 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'is_blocked' => 'boolean',
-            'level' => 'boolean',
+            'direct' => 'boolean',
             'roi' => 'boolean',
             'roi_on_roi' => 'boolean',
-            'maturity_level' => 'boolean',
+            'rank' => 'boolean',
             'bonanza' => 'boolean',
             'reward' => 'boolean',
             'withdrawal' => 'boolean',

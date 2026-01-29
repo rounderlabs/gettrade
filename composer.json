@@ -9,6 +9,7 @@
         "ext-bcmath": "*",
         "ext-json": "*",
         "ext-openssl": "*",
+        "coinpaymentsnet/coinpayments-php": "^1.4",
         "doctrine/dbal": "^3.7",
         "guzzlehttp/guzzle": "^7.9",
         "inertiajs/inertia-laravel": "^1.0",
