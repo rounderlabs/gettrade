@@ -2261,6 +2261,9 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         title: "Commission Setting",
         link: route("admin.site.settings.index")
+      }, {
+        title: "Schedule Setting",
+        link: route("admin.scheduled.jobs.index")
       }]
     }];
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
@@ -2631,7 +2634,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     user_stop: Object
   },
   setup: function setup(props) {
-    var _props$user_stop$is_b, _props$user_stop, _props$user_stop$leve, _props$user_stop2, _props$user_stop$roi, _props$user_stop3, _props$user_stop$roi_, _props$user_stop4, _props$user_stop$matu, _props$user_stop5, _props$user_stop$bona, _props$user_stop6, _props$user_stop$rewa, _props$user_stop7, _props$user_stop$with, _props$user_stop8;
+    var _props$user_stop$is_b, _props$user_stop, _props$user_stop$dire, _props$user_stop2, _props$user_stop$roi, _props$user_stop3, _props$user_stop$roi_, _props$user_stop4, _props$user_stop$rank, _props$user_stop5, _props$user_stop$bona, _props$user_stop6, _props$user_stop$rewa, _props$user_stop7, _props$user_stop$with, _props$user_stop8;
     var walletForm = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.useForm)({
       amount: null,
       type: null,
@@ -2722,10 +2725,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     var form = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.useForm)({
       user_id: props.user.id,
       is_blocked: (_props$user_stop$is_b = (_props$user_stop = props.user_stop) === null || _props$user_stop === void 0 ? void 0 : _props$user_stop.is_blocked) !== null && _props$user_stop$is_b !== void 0 ? _props$user_stop$is_b : false,
-      level: (_props$user_stop$leve = (_props$user_stop2 = props.user_stop) === null || _props$user_stop2 === void 0 ? void 0 : _props$user_stop2.level) !== null && _props$user_stop$leve !== void 0 ? _props$user_stop$leve : false,
+      direct: (_props$user_stop$dire = (_props$user_stop2 = props.user_stop) === null || _props$user_stop2 === void 0 ? void 0 : _props$user_stop2.direct) !== null && _props$user_stop$dire !== void 0 ? _props$user_stop$dire : false,
       roi: (_props$user_stop$roi = (_props$user_stop3 = props.user_stop) === null || _props$user_stop3 === void 0 ? void 0 : _props$user_stop3.roi) !== null && _props$user_stop$roi !== void 0 ? _props$user_stop$roi : false,
       roi_on_roi: (_props$user_stop$roi_ = (_props$user_stop4 = props.user_stop) === null || _props$user_stop4 === void 0 ? void 0 : _props$user_stop4.roi_on_roi) !== null && _props$user_stop$roi_ !== void 0 ? _props$user_stop$roi_ : false,
-      maturity_level: (_props$user_stop$matu = (_props$user_stop5 = props.user_stop) === null || _props$user_stop5 === void 0 ? void 0 : _props$user_stop5.maturity_level) !== null && _props$user_stop$matu !== void 0 ? _props$user_stop$matu : false,
+      rank: (_props$user_stop$rank = (_props$user_stop5 = props.user_stop) === null || _props$user_stop5 === void 0 ? void 0 : _props$user_stop5.rank) !== null && _props$user_stop$rank !== void 0 ? _props$user_stop$rank : false,
       bonanza: (_props$user_stop$bona = (_props$user_stop6 = props.user_stop) === null || _props$user_stop6 === void 0 ? void 0 : _props$user_stop6.bonanza) !== null && _props$user_stop$bona !== void 0 ? _props$user_stop$bona : false,
       reward: (_props$user_stop$rewa = (_props$user_stop7 = props.user_stop) === null || _props$user_stop7 === void 0 ? void 0 : _props$user_stop7.reward) !== null && _props$user_stop$rewa !== void 0 ? _props$user_stop$rewa : false,
       withdrawal: (_props$user_stop$with = (_props$user_stop8 = props.user_stop) === null || _props$user_stop8 === void 0 ? void 0 : _props$user_stop8.withdrawal) !== null && _props$user_stop$with !== void 0 ? _props$user_stop$with : false
@@ -2828,6 +2831,7 @@ var _hoisted_11 = {
   "class": "user-footer"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _ctx$$page$props$admi, _ctx$$page$props$admi2, _ctx$$page$props$admi3, _ctx$$page$props$admi4;
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Header"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("nav", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Container"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Start Navbar Links"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" use @click.prevent so it works without relying on AdminLTE "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn btn-sidebar-toggle",
@@ -2865,11 +2869,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     alt: "User Image",
     "class": "user-image rounded-circle shadow",
     src: "/assets/img/user2-160x160.jpg"
-  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$page.props.admin.name), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_10, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_ctx$$page$props$admi = (_ctx$$page$props$admi2 = _ctx.$page.props.admin) === null || _ctx$$page$props$admi2 === void 0 ? void 0 : _ctx$$page$props$admi2.name) !== null && _ctx$$page$props$admi !== void 0 ? _ctx$$page$props$admi : 'Admin'), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_10, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     alt: "User Image",
     "class": "rounded-circle shadow",
     src: "/assets/img/user2-160x160.jpg"
-  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$page.props.admin.name), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Body"), _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<li class=\"user-body\" data-v-41073b36><!--begin::Row--><div class=\"row\" data-v-41073b36><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Followers</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Sales</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Friends</a></div></div><!--end::Row--></li>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::Menu Body"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Footer"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_ctx$$page$props$admi3 = (_ctx$$page$props$admi4 = _ctx.$page.props.admin) === null || _ctx$$page$props$admi4 === void 0 ? void 0 : _ctx$$page$props$admi4.name) !== null && _ctx$$page$props$admi3 !== void 0 ? _ctx$$page$props$admi3 : 'Admin'), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Body"), _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<li class=\"user-body\" data-v-41073b36><!--begin::Row--><div class=\"row\" data-v-41073b36><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Followers</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Sales</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Friends</a></div></div><!--end::Row--></li>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::Menu Body"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Footer"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: _ctx.route('account.profile'),
     "class": "btn btn-default btn-flat"
   }, {
@@ -3560,28 +3564,28 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return $setup.form.is_blocked = $event;
     })
   }, null, 8 /* PROPS */, ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Toggle, {
-    label: "Level Income",
-    modelValue: $setup.form.level,
+    label: "Direct Bonus",
+    modelValue: $setup.form.direct,
     "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
-      return $setup.form.level = $event;
+      return $setup.form.direct = $event;
     })
   }, null, 8 /* PROPS */, ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Toggle, {
-    label: "ROI Income",
+    label: "Trading Bonus",
     modelValue: $setup.form.roi,
     "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
       return $setup.form.roi = $event;
     })
   }, null, 8 /* PROPS */, ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Toggle, {
-    label: "ROI on ROI",
+    label: "Systematic Bonus",
     modelValue: $setup.form.roi_on_roi,
     "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
       return $setup.form.roi_on_roi = $event;
     })
   }, null, 8 /* PROPS */, ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Toggle, {
-    label: "Maturity Level",
-    modelValue: $setup.form.maturity_level,
+    label: "Rank Bonus",
+    modelValue: $setup.form.rank,
     "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
-      return $setup.form.maturity_level = $event;
+      return $setup.form.rank = $event;
     })
   }, null, 8 /* PROPS */, ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Toggle, {
     label: "Bonanza",

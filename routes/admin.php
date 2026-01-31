@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ModuleSettingController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\RankRuleController;
+use App\Http\Controllers\Admin\ScheduledJobController;
 use App\Http\Controllers\Admin\SubscriptionHistoryController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
@@ -216,6 +217,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{plan}', [PlanController::class, 'update'])->name('update');
         Route::delete('/{plan}', [PlanController::class, 'destroy'])->name('destroy');
     });
+    Route::prefix('scheduled')->name('scheduled.')->group(function () {
+        Route::get('/jobs', [ScheduledJobController::class, 'index'])->name('jobs.index');
+        Route::post('/jobs', [ScheduledJobController::class, 'store'])->name('jobs.store');
+        Route::patch('/jobs/{scheduledJob}/toggle', [ScheduledJobController::class, 'toggle'])->name('jobs.toggle');
 
-
+        Route::post('/jobs/{scheduledJob}/run-now', [ScheduledJobController::class, 'runNow'])->name('jobs.run-now');
+        Route::get('/jobs/{scheduledJob}/logs', [ScheduledJobController::class, 'logs'])->name('jobs.logs');
+    });
 });

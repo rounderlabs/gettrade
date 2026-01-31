@@ -221,7 +221,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
-              message = encodeURIComponent("\uD83C\uDF38 Join The Shuchak using my referral:\n".concat(sharePageUrl));
+              message = encodeURIComponent("\uD83C\uDF38 Join Us using my referral:\n".concat(sharePageUrl));
               if (platform === "whatsapp") {
                 window.open("https://wa.me/?text=".concat(message), "_blank");
               } else if (platform === "telegram") {
@@ -2206,7 +2206,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, "Systematic trading income"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
   }, "Monthly")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.roi_on_roi).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-    href: _ctx.route('earnings.profit.sharing.bonus'),
+    href: _ctx.route('earnings.systematic.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {

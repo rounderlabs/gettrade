@@ -39,7 +39,7 @@
                             class="user-image rounded-circle shadow"
                             src="/assets/img/user2-160x160.jpg"
                         />
-                        <span class="d-none d-md-inline">{{ $page.props.admin.name }}</span>
+                        <span class="d-none d-md-inline">{{ $page.props.admin?.name ?? 'Admin' }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                         <!--begin::User Image-->
@@ -49,8 +49,8 @@
                                 class="rounded-circle shadow"
                                 src="/assets/img/user2-160x160.jpg"
                             />
-                            <p>
-                                {{ $page.props.admin.name }}
+                            <p>{{ $page.props.admin?.name ?? 'Admin' }}
+
                             </p>
                         </li>
                         <!--end::User Image-->

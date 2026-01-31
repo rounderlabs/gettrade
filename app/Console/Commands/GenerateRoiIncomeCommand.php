@@ -4,49 +4,61 @@ namespace App\Console\Commands;
 
 use App\Jobs\GenerateRoiIncomeJob;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class GenerateRoiIncomeCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * Command signature
      */
-    protected $signature = 'generate:roi {income_date}';
+    protected $signature = 'generate:roi {date}';
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * Description
      */
-    protected $description = 'Generate Roi Command';
+    protected $description = 'Generate ROI income for a given date';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
+     * Execute the command
      */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    public function handle(): int
     {
         $incomeDate = $this->argument('income_date');
-        $validator = Validator::make(['income_date' => $incomeDate], [
-            'income_date' => ['required', 'date']
-        ]);
+
+        $validator = Validator::make(
+            ['income_date' => $incomeDate],
+            ['income_date' => ['required', 'date']]
+        );
+
         if ($validator->fails()) {
-            $this->error("Invalid date");
-            exit();
+            $this->error('❌ Invalid income_date. Format: YYYY-MM-DD');
+            return SymfonyCommand::FAILURE;
         }
-        GenerateRoiIncomeJob::dispatch($incomeDate)->delay(now()->addSecond());
+
+        /**
+         * ✅ IDEMPOTENCY CHECK (CRITICAL)
+         * Prevent double ROI generation
+         */
+        $alreadyDone = DB::table('roi_income_closings')
+            ->where('closing_date', $incomeDate)
+            ->where('status', 'success')
+            ->exists();
+
+        if ($alreadyDone) {
+            $this->warn("⚠ ROI already generated for {$incomeDate}");
+            return SymfonyCommand::SUCCESS;
+        }
+
+        /**
+         * Dispatch job
+         */
+        GenerateRoiIncomeJob::dispatch($incomeDate)
+            ->delay(now()->addSecond());
+
+        $this->info("✅ ROI job dispatched for {$incomeDate}");
+
+        return SymfonyCommand::SUCCESS;
     }
 }

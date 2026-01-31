@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\LevelWithdrawalHistoryClosing;
+use App\Models\WorkingWithdrawalHistoryClosing;
 use App\Models\UserIncomeOnHold;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,10 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateAutoLevelWithdrawHistoryJob implements ShouldQueue
+class GenerateAutoWorkingWithdrawHistoryJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     private string $levelWithdrawDate;
     /**
      * Create a new job instance.
@@ -31,14 +30,14 @@ class GenerateAutoLevelWithdrawHistoryJob implements ShouldQueue
     {
         $levelWithdrawDate = $this->levelWithdrawDate;
 
-        $closing = LevelWithdrawalHistoryClosing::firstOrCreate(
+        $closing = WorkingWithdrawalHistoryClosing::firstOrCreate(
             ['closing_date' => $levelWithdrawDate],
             ['status' => 'pending']
         );
         if ($closing->status === 'pending') {
-            $userIncomeOnHolds = UserIncomeOnHold::where('level', '>', 0)->get();
+            $userIncomeOnHolds = UserIncomeOnHold::where('direct', '>', 0)->get();
             foreach ($userIncomeOnHolds as $userIncomeOnHold) {
-                CreateAutoLevelWithdrawHistoryJob::dispatch($userIncomeOnHold)->delay(now()->addSecond());
+                CreateAutoWorkingWithdrawHistoryJob::dispatch($userIncomeOnHold)->delay(now()->addSecond());
             }
             $closing->update([
                 'status' => 'success'

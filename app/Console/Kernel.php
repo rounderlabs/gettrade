@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Jobs\GenerateRoiIncomeJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Spatie\ShortSchedule\ShortSchedule;
@@ -14,23 +13,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // ✅ Regular Laravel scheduler (every minute check)
-        $schedule->command('redis:heart-beat')
-            ->everyFiveSeconds()
-            ->withoutOverlapping();
-
-        // ✅ Update user ranks once per day at 12:10 AM
-        //  $schedule->command('update:rank')->dailyAt('00:10')->withoutOverlapping();
-
-        // ✅ Generate ROI incomes daily at 12:01 AM
-//        $schedule->job(new GenerateRoiIncomeJob(now()->format('Y-m-d')))
-//            ->dailyAt('00:01')
-//            ->withoutOverlapping();
-
-        $schedule->job(new GenerateRoiIncomeJob(now()->format('Y-m-d')))
-            ->dailyAt('00:01')
+        /**
+         * ✅ Admin-controlled scheduler
+         * This is the ONLY scheduled entry
+         */
+        $schedule->command('admin:run-scheduled-jobs')
+            ->everyMinute()
             ->withoutOverlapping()
-            ->onOneServer();
+            ->runInBackground();
     }
 
     /**
@@ -43,10 +33,13 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-     * Short schedule for sub-minute task intervals (using spatie/laravel-short-schedule)
+     * Short schedule (sub-minute tasks)
      */
     protected function shortSchedule(ShortSchedule $shortSchedule): void
     {
-        $shortSchedule->command('redis:heart-beat')->everySeconds(10);
+        $shortSchedule
+            ->command('redis:heart-beat')
+            ->everySeconds(10)
+            ->withoutOverlapping();
     }
 }

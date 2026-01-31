@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\DividendWithdrawalHistoryClosing;
+use App\Models\NonWorkingWithdrawalHistoryClosing;
 use App\Models\UserIncomeOnHold;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,9 +10,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateAutoDividendWithdrawHistoryJob implements ShouldQueue
+class GenerateAutoNonWorkingWithdrawHistoryJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     private string $levelWithdrawDate;
     /**
      * Create a new job instance.
@@ -30,14 +31,14 @@ class GenerateAutoDividendWithdrawHistoryJob implements ShouldQueue
     {
         $levelWithdrawDate = $this->levelWithdrawDate;
 
-        $closing = DividendWithdrawalHistoryClosing::firstOrCreate(
+        $closing = NonWorkingWithdrawalHistoryClosing::firstOrCreate(
             ['closing_date' => $levelWithdrawDate],
             ['status' => 'pending']
         );
         if ($closing->status === 'pending') {
             $userIncomeOnHolds = UserIncomeOnHold::where('roi', '>', 0)->get();
             foreach ($userIncomeOnHolds as $userIncomeOnHold) {
-                CreateAutoDividendWithdrawHistoryJob::dispatch($userIncomeOnHold)->delay(now()->addSecond());
+                CreateAutoNonWorkingWithdrawHistoryJob::dispatch($userIncomeOnHold)->delay(now()->addSecond());
             }
             $closing->update([
                 'status' => 'success'

@@ -171,6 +171,7 @@ export default {
                     {title: "Plan List", link: route("admin.plans.index")},
                     {title: "Rank Setting", link: route("admin.ranks.index")},
                     {title: "Commission Setting", link: route("admin.site.settings.index")},
+                    {title: "Schedule Setting", link: route("admin.scheduled.jobs.index")},
                 ],
             },
         ];

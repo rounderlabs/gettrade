@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dividend_withdrawal_history_closings', function (Blueprint $table) {
+        Schema::create('non_working_withdrawal_history_closings', function (Blueprint $table) {
             $table->id();
             $table->date('closing_date')->unique();
             $table->enum('status', ['pending', 'processing', 'success', 'failed'])->default('pending');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dividend_withdrawal_history_closings');
+        Schema::dropIfExists('non_working_withdrawal_history_closings');
     }
 };

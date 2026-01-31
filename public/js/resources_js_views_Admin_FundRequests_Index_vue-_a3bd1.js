@@ -2261,6 +2261,9 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         title: "Commission Setting",
         link: route("admin.site.settings.index")
+      }, {
+        title: "Schedule Setting",
+        link: route("admin.scheduled.jobs.index")
       }]
     }];
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
@@ -2599,6 +2602,7 @@ var _hoisted_11 = {
   "class": "user-footer"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _ctx$$page$props$admi, _ctx$$page$props$admi2, _ctx$$page$props$admi3, _ctx$$page$props$admi4;
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Header"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("nav", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Container"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Start Navbar Links"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" use @click.prevent so it works without relying on AdminLTE "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn btn-sidebar-toggle",
@@ -2636,11 +2640,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     alt: "User Image",
     "class": "user-image rounded-circle shadow",
     src: "/assets/img/user2-160x160.jpg"
-  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$page.props.admin.name), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_10, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_ctx$$page$props$admi = (_ctx$$page$props$admi2 = _ctx.$page.props.admin) === null || _ctx$$page$props$admi2 === void 0 ? void 0 : _ctx$$page$props$admi2.name) !== null && _ctx$$page$props$admi !== void 0 ? _ctx$$page$props$admi : 'Admin'), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_10, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     alt: "User Image",
     "class": "rounded-circle shadow",
     src: "/assets/img/user2-160x160.jpg"
-  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$page.props.admin.name), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Body"), _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<li class=\"user-body\" data-v-41073b36><!--begin::Row--><div class=\"row\" data-v-41073b36><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Followers</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Sales</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Friends</a></div></div><!--end::Row--></li>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::Menu Body"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Footer"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_ctx$$page$props$admi3 = (_ctx$$page$props$admi4 = _ctx.$page.props.admin) === null || _ctx$$page$props$admi4 === void 0 ? void 0 : _ctx$$page$props$admi4.name) !== null && _ctx$$page$props$admi3 !== void 0 ? _ctx$$page$props$admi3 : 'Admin'), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::User Image"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Body"), _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<li class=\"user-body\" data-v-41073b36><!--begin::Row--><div class=\"row\" data-v-41073b36><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Followers</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Sales</a></div><div class=\"col-4 text-center\" data-v-41073b36><a href=\"#\" data-v-41073b36>Friends</a></div></div><!--end::Row--></li>", 1)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("end::Menu Body"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("begin::Menu Footer"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: _ctx.route('account.profile'),
     "class": "btn btn-default btn-flat"
   }, {
