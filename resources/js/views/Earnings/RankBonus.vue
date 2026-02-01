@@ -64,7 +64,7 @@
                                 <div class="d-flex justify-content-between">
                                     <h5>Bonus Amount</h5>
                                     <h3 class="theme-color">
-                                        ₹ {{ bonus.income }}%
+                                        ₹ {{ bonus.income }}
                                     </h3>
                                 </div>
                                 <div class="d-flex justify-content-between">

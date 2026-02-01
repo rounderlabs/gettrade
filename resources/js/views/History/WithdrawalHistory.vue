@@ -16,8 +16,8 @@
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
-                            <h3>₹ {{ parseFloat(income_on_hold.level).toFixed(2) }}</h3>
-                            <h5>Level Bonus </h5>
+                            <h3>₹ {{ parseFloat(income_on_hold.direct).toFixed(2) }}</h3>
+                            <h5>Marketing Bonus</h5>
                         </div>
                     </div>
                 </li>
@@ -34,8 +34,8 @@
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
-                            <h3>₹ {{ parseFloat(parseFloat(income_on_hold.roi) + parseFloat(income_on_hold.roi_on_roi)).toFixed(2) }}</h3>
-                            <h5>Dividend Balance </h5>
+                            <h3>₹ {{ parseFloat(parseFloat(income_on_hold.roi) + parseFloat(income_on_hold.roi_on_roi) + parseFloat(income_on_hold.rank)).toFixed(2) }}</h3>
+                            <h5>Return Bonus </h5>
                         </div>
                     </div>
                 </li>
