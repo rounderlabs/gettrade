@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\AdminWithdrawalReportController;
 use App\Http\Controllers\Admin\Api\AdminRoleController;
 use App\Http\Controllers\Admin\Api\PermissionController;
 use App\Http\Controllers\Admin\Api\RoleController;
+use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\ExchangeRateController;
 use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ModuleSettingController;
 use App\Http\Controllers\Admin\PlanController;
@@ -225,4 +227,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/jobs/{scheduledJob}/run-now', [ScheduledJobController::class, 'runNow'])->name('jobs.run-now');
         Route::get('/jobs/{scheduledJob}/logs', [ScheduledJobController::class, 'logs'])->name('jobs.logs');
     });
+
+    Route::prefix('currencies')->name('currencies.')->group(function () {
+        Route::get('/', [CurrencyController::class, 'index'])->name('index');
+        Route::post('/', [CurrencyController::class, 'store'])->name('store');
+        Route::patch('{currency}/toggle', [CurrencyController::class, 'toggle'])->name('toggle');
+    });
+
+    Route::prefix('exchange-rates')->name('exchange-rates.')->group(function () {
+        Route::get('/', [ExchangeRateController::class, 'index'])->name('index');
+        Route::post('/', [ExchangeRateController::class, 'store'])->name('store');
+    });
+
+
+
+
 });

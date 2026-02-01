@@ -14,6 +14,7 @@ use App\Models\UserRewardRank;
 use App\Models\UserStop;
 use App\Models\UserUsdWallet;
 use App\Models\UserWeeklyTeamWithBusinessStats;
+use App\Services\CurrencyService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\SiteSetting;
@@ -337,6 +338,11 @@ if (!function_exists('site_setting')) {
     {
         return siteSetting($key, $default);
     }
+}
+
+function money_convert($amount, $to, $from = 'INR')
+{
+    return CurrencyService::convert((string)$amount, $from, $to);
 }
 
 

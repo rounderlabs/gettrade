@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\SiteSetting;
 use App\Services\CommissionService;
+use App\Services\Crypto\CoinGeckoProvider;
+use App\Services\Crypto\CryptoPriceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
@@ -19,6 +21,12 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(CommissionService::class);
+
+        // ✅ Bind crypto price provider
+        $this->app->bind(
+            CryptoPriceProvider::class,
+            CoinGeckoProvider::class
+        );
     }
 
     /**
@@ -38,6 +46,16 @@ class AppServiceProvider extends ServiceProvider
 
         // Share common props
         Inertia::share([
+
+            'currency' => fn () => Auth::check()
+                ? [
+                    'preferred' => Auth::user()->preferred_currency ?? 'INR',
+                    'base' => 'INR',
+                ]
+                : [
+                    'preferred' => 'INR',
+                    'base' => 'INR',
+                ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => url()->current(),

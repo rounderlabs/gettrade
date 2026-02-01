@@ -172,6 +172,7 @@ export default {
                     {title: "Rank Setting", link: route("admin.ranks.index")},
                     {title: "Commission Setting", link: route("admin.site.settings.index")},
                     {title: "Schedule Setting", link: route("admin.scheduled.jobs.index")},
+                    {title: "Currency Setting", link: route("admin.currencies.index")},
                 ],
             },
         ];

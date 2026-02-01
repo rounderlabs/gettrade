@@ -2686,6 +2686,9 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         title: "Schedule Setting",
         link: route("admin.scheduled.jobs.index")
+      }, {
+        title: "Currency Setting",
+        link: route("admin.currencies.index")
       }]
     }];
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {

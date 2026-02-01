@@ -37,7 +37,8 @@ class User extends Authenticatable
         'profile_picture',
         'is_blocked',
         'welcome_seen_at',
-        'welcome_mode'
+        'welcome_mode',
+        'preferred_currency'
 
     ];
 

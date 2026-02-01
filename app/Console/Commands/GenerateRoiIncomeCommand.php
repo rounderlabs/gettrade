@@ -25,7 +25,7 @@ class GenerateRoiIncomeCommand extends Command
      */
     public function handle(): int
     {
-        $incomeDate = $this->argument('income_date');
+        $incomeDate = $this->argument('date');
 
         $validator = Validator::make(
             ['income_date' => $incomeDate],

@@ -21,6 +21,11 @@ class Kernel extends ConsoleKernel
             ->everyMinute()
             ->withoutOverlapping()
             ->runInBackground();
+
+        $schedule->command('crypto:fetch-prices')
+            ->everyFiveMinutes()
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**

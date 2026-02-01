@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProfilePicture;
+use App\Models\Currency;
 use App\Models\WithdrawCoin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -29,7 +30,8 @@ class AccountController extends Controller
             'kyc' => [
                 'status' => $user->kyc?->status ?? 'not_submitted',
                 'remark' => $user->kyc?->rejection_reason,
-            ]
+            ],
+            'currencies' => Currency::where('is_active', true)->get(['code','name']),
         ]);
     }
 
@@ -181,4 +183,23 @@ class AccountController extends Controller
             'kyc' => $userKyc ? : null,
         ]);
     }
+
+    public function updateCurrency(Request $request)
+    {
+        $request->validate([
+            'currency' => 'required|exists:currencies,code',
+        ]);
+        $user = auth()->user();
+        $currencyUpdate = $user->update([
+            'preferred_currency' => $request->currency,
+        ]);
+        if ($currencyUpdate){
+            return back()->with('notification',['Currency updated', 'success']);
+        }else{
+            return back()->with('notification',['Currency not updated', 'danger']);
+        }
+
+
+    }
+
 }
