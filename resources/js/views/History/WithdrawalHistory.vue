@@ -16,7 +16,7 @@
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
-                            <h3>₹ {{ parseFloat(income_on_hold.direct).toFixed(2) }}</h3>
+                            <h3>{{ currencySymbol }} {{ income_on_hold.direct_display }}</h3>
                             <h5>Marketing Bonus</h5>
                         </div>
                     </div>
@@ -34,7 +34,7 @@
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
-                            <h3>₹ {{ parseFloat(parseFloat(income_on_hold.roi) + parseFloat(income_on_hold.roi_on_roi) + parseFloat(income_on_hold.rank)).toFixed(2) }}</h3>
+                            <h3>{{ currencySymbol }} {{ income_on_hold.return_display }}</h3>
                             <h5>Return Bonus </h5>
                         </div>
                     </div>
@@ -67,10 +67,10 @@
                         <a class="d-flex gap-3" href="">
                             <div class="transaction-details">
                                 <div class="transaction-name">
-                                    <h6 class="dark-text">Amount <br> ₹ {{ parseFloat(txn.amount).toFixed(2) }}</h6>
-                                    <h6 class="dark-text">Fees <br> ₹ {{ parseFloat(txn.fees).toFixed(2) }}</h6>
-                                    <h6 class="dark-text">Received Amount <br> ₹
-                                        {{ parseFloat(txn.receivable_amount).toFixed(2) }}</h6>
+                                    <h6 class="dark-text">Amount <br>{{ currencySymbol }} {{ txn.amount_display }}</h6>
+                                    <h6 class="dark-text">Fees <br>{{ currencySymbol }} {{ txn.fees_display }}</h6>
+                                    <h6 class="dark-text">Received Amount <br>
+                                        {{ currencySymbol }} {{ txn.receivable_display }}</h6>
 
                                 </div>
                                 <div class="d-flex justify-content-between">

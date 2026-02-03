@@ -346,3 +346,24 @@ function money_convert($amount, $to, $from = 'INR')
 }
 
 
+if (!function_exists('displayAmount')) {
+    function displayAmount(string|float $amountBase, User $user): string
+    {
+        $currency = $user->preferred_currency ?? 'INR';
+
+        // No conversion needed
+        if ($currency === 'INR') {
+            return number_format((float) $amountBase, 2);
+        }
+
+        // Example: convert INR → USDT
+        return app(CurrencyService::class)
+            ->convert(
+                (string) $amountBase,
+                'INR',
+                $currency
+            );
+    }
+}
+
+

@@ -23,7 +23,7 @@
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-name">
-                                    <h5>Package Amount : <span class="success-color">₹ {{parseFloat(bonus.subscription.amount).toFixed(2)}}</span></h5>
+                                    <h5>Package Amount : <span class="success-color">{{currencySymbol}} {{bonus.amount_display}}</span></h5>
 
                                     <h3 class="dark-text">{{currencySymbol}} {{bonus.income_display}}</h3>
                                 </div>

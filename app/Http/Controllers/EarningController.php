@@ -29,6 +29,7 @@ class EarningController extends Controller
             ->simplePaginate(10);
 
         $monthlyRoi->getCollection()->transform(function ($row) use ($user) {
+            $row->amount_display = $this->displayAmount($row->amount ?? 0, $user);
             $row->income_display = $this->displayAmount($row->income ?? 0, $user);
             return $row;
         });

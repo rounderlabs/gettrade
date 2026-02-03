@@ -156,6 +156,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @inertiajs/vue3 */ "./node_modules/@inertiajs/vue3/dist/index.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
 
 
 /* =========================
@@ -165,7 +167,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __name: 'SideBarComponent',
   props: {
-    incomeWallet: Object
+    userIncomeStat: Object
   },
   setup: function setup(__props, _ref) {
     var __expose = _ref.expose;
@@ -175,6 +177,11 @@ __webpack_require__.r(__webpack_exports__);
        GLOBAL SETTINGS
     ========================= */
     var siteSettings = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.usePage)().props.siteSettings;
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.usePage)();
+    var currencySymbol = (0,vue__WEBPACK_IMPORTED_MODULE_1__.computed)(function () {
+      var _page$props$currency$, _page$props$currency;
+      return (_page$props$currency$ = (_page$props$currency = page.props.currency) === null || _page$props$currency === void 0 ? void 0 : _page$props$currency.symbol) !== null && _page$props$currency$ !== void 0 ? _page$props$currency$ : "₹";
+    });
 
     /* =========================
        MENU CONFIG
@@ -228,6 +235,8 @@ __webpack_require__.r(__webpack_exports__);
     }
     var __returned__ = {
       siteSettings: siteSettings,
+      page: page,
+      currencySymbol: currencySymbol,
       menus_vue: menus_vue,
       closeOffCanvas: closeOffCanvas,
       get Link() {
@@ -235,7 +244,8 @@ __webpack_require__.r(__webpack_exports__);
       },
       get usePage() {
         return _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.usePage;
-      }
+      },
+      computed: vue__WEBPACK_IMPORTED_MODULE_1__.computed
     };
     Object.defineProperty(__returned__, '__isScriptSetup', {
       enumerable: false,
@@ -283,36 +293,29 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     NotificationToast: _components_NotificationToast_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   setup: function setup() {
-    var incomeWallet = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({});
+    var userIncomeStat = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({
+      balance_base: "0.00",
+      balance_display: "0.00"
+    });
     (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var response;
+      var _yield$axios$get, data;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _context.prev = 0;
-            _context.next = 3;
-            return axios__WEBPACK_IMPORTED_MODULE_5__["default"].get("/sidebar-data", {
-              headers: {
-                Authorization: "Bearer ".concat(localStorage.getItem("token"))
-              }
-            });
-          case 3:
-            response = _context.sent;
-            incomeWallet.value = response.data;
-            _context.next = 10;
-            break;
-          case 7:
-            _context.prev = 7;
-            _context.t0 = _context["catch"](0);
-            console.error("Error fetching sidebar data:", _context.t0);
-          case 10:
+            _context.next = 2;
+            return axios__WEBPACK_IMPORTED_MODULE_5__["default"].get("/sidebar-data");
+          case 2:
+            _yield$axios$get = _context.sent;
+            data = _yield$axios$get.data;
+            userIncomeStat.value = data;
+          case 5:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[0, 7]]);
+      }, _callee);
     })));
     return {
-      incomeWallet: incomeWallet
+      userIncomeStat: userIncomeStat
     };
   }
 });
@@ -649,7 +652,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "img-fluid balance-bg",
     src: "/user-panel/assets-panel/assets/images/auth-bg.jpg",
     alt: "auth-bg"
-  }, null, -1 /* HOISTED */)), _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Portfolio", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.incomeWallet.balance), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" BODY "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.menus_vue, function (menu, index) {
+  }, null, -1 /* HOISTED */)), _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Portfolio", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.currencySymbol) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.userIncomeStat.balance_display), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" BODY "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.menus_vue, function (menu, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", {
       key: index
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Link"], {
@@ -689,8 +692,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_BottonNavBarComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("BottonNavBarComponent");
   var _component_NotificationToast = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("NotificationToast");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SideBarComponent, {
-    "income-wallet": $setup.incomeWallet
-  }, null, 8 /* PROPS */, ["income-wallet"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_HeaderComponent), (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default"), _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", {
+    "user-income-stat": $setup.userIncomeStat
+  }, null, 8 /* PROPS */, ["user-income-stat"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_HeaderComponent), (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default"), _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", {
     "class": "panel-space"
   }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BottonNavBarComponent), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_NotificationToast)], 64 /* STABLE_FRAGMENT */);
 }

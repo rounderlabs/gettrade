@@ -1,5 +1,5 @@
 <template>
-    <SideBarComponent :income-wallet="incomeWallet"></SideBarComponent>
+    <SideBarComponent :user-income-stat="userIncomeStat"></SideBarComponent>
     <HeaderComponent></HeaderComponent>
     <slot></slot>
     <section class="panel-space"></section>
@@ -25,23 +25,17 @@ export default {
         NotificationToast,
         },
     setup() {
-        const incomeWallet = ref({});
-
+        const userIncomeStat = ref({
+            balance_base: "0.00",
+            balance_display: "0.00",
+        })
         onMounted(async () => {
-            try {
-                const response = await axios.get("/sidebar-data", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
-                incomeWallet.value = response.data;
-            } catch (error) {
-                console.error("Error fetching sidebar data:", error);
-            }
-        });
+            const { data } = await axios.get("/sidebar-data")
+            userIncomeStat.value = data
+        })
 
         return {
-            incomeWallet,
+            userIncomeStat,
         };
 
     }

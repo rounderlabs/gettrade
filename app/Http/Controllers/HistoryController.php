@@ -15,13 +15,62 @@ class HistoryController extends Controller
         ]);
     }
 
+//    public function showWithdrawalHistory()
+//    {
+//        $userIncomeOnHold = auth()->user()->userIncomeOnHold;
+//        $withdrawalTransactions = auth()->user()->withdrawalHistories()->orderByDesc('id')->get();
+//        return Inertia::render('History/WithdrawalHistory', [
+//            'history' => $withdrawalTransactions,
+//            'income_on_hold' => $userIncomeOnHold
+//        ]);
+//    }
+
+
     public function showWithdrawalHistory()
     {
-        $userIncomeOnHold = auth()->user()->userIncomeOnHold;
-        $withdrawalTransactions = auth()->user()->withdrawalHistories()->orderByDesc('id')->get();
+        $user = auth()->user();
+
+        $incomeOnHold = $user->userIncomeOnHold;
+
+        $withdrawals = $user->withdrawalHistories()
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($txn) use ($user) {
+
+                return [
+                    'id'                   => $txn->id,
+                    'status'               => $txn->status,
+                    'created_at'           => $txn->created_at->format('d M Y'),
+
+                    // BASE values (INR)
+                    'amount_base'          => $txn->amount,
+                    'fees_base'            => $txn->fees,
+                    'receivable_base'      => $txn->receivable_amount,
+
+                    // DISPLAY values (user currency)
+                    'amount_display'       => displayAmount($txn->amount, $user),
+                    'fees_display'         => displayAmount($txn->fees, $user),
+                    'receivable_display'   => displayAmount($txn->receivable_amount, $user),
+                ];
+            });
+
         return Inertia::render('History/WithdrawalHistory', [
-            'history' => $withdrawalTransactions,
-            'income_on_hold' => $userIncomeOnHold
+            'history' => $withdrawals,
+
+            'income_on_hold' => [
+                'direct_display' => displayAmount($incomeOnHold->direct ?? '0.00', $user),
+
+                'return_display' => displayAmount(
+                    addDecimalStrings(
+                        $incomeOnHold->roi ?? '0.00',
+                        addDecimalStrings(
+                            $incomeOnHold->roi_on_roi ?? '0.00',
+                            $incomeOnHold->rank ?? '0.00'
+                        )
+                    ),
+                    $user
+                ),
+            ],
         ]);
     }
 

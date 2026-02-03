@@ -176,9 +176,13 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware('auth')->get('/sidebar-data', function (Request $request) {
     $user = $request->user();
-    $wallet = UserIncomeStat::where('user_id', $user->id)->first();
+    $stat = UserIncomeStat::firstWhere('user_id', $user->id);
+
+    $baseAmount = $stat?->total ?? '0.00';
+
     return response()->json([
-        'balance' => $wallet->total ?? 0,
+        'balance_base'    => $baseAmount,
+        'balance_display' => displayAmount($baseAmount, $user),
     ]);
 });
 

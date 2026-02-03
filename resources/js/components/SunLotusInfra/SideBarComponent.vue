@@ -28,7 +28,7 @@
                     alt="auth-bg"
                 />
                 <h5>Portfolio</h5>
-                <h2>₹ {{ incomeWallet.balance }}</h2>
+                <h2>{{ currencySymbol }} {{ userIncomeStat.balance_display }}</h2>
             </div>
         </div>
 
@@ -58,18 +58,25 @@
 
 <script setup>
 import { Link, usePage } from "@inertiajs/vue3"
+import {computed} from "vue";
 
 /* =========================
    PROPS
 ========================= */
 defineProps({
-    incomeWallet: Object,
+    userIncomeStat: Object,
 })
 
 /* =========================
    GLOBAL SETTINGS
 ========================= */
 const siteSettings = usePage().props.siteSettings
+
+const page = usePage()
+
+const currencySymbol = computed(() => {
+    return page.props.currency?.symbol ?? "₹"
+})
 
 /* =========================
    MENU CONFIG
