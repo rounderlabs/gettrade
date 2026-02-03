@@ -8,6 +8,7 @@
 //       .register('sw.js');
 //   }
 // }
+'use strict';
 
 /*=====================
     wishlist added start
@@ -26,8 +27,9 @@ divs.forEach((el) =>
 =======================*/
 window.addEventListener("load", () => {
   const bgImg = document.querySelectorAll(".bg-img");
-  for (i = 0; i < bgImg.length; i++) {
-    let bgImgEl = bgImg[i];
+    for (let i = 0; i < bgImg.length; i++){
+
+         let bgImgEl = bgImg[i];
 
     if (bgImgEl.classList.contains("bg-top")) {
       bgImgEl.parentNode.classList.add("b-top");
@@ -69,7 +71,6 @@ window.addEventListener("load", () => {
  Range js
 =======================*/
 const rangeInputs = document.querySelectorAll('input[type="range"]');
-const numberInput = document.querySelector('input[type="number"]');
 
 function handleInputChange(e) {
   let target = e.target;
@@ -88,35 +89,41 @@ rangeInputs.forEach((input) => {
 });
 
 /*====================
-  RTL js
+  RTL js (SAFE)
 ======================*/
 const dirSwitch = document.querySelector("#dir-switch");
-const htmlDom = document.querySelector("html");
+const htmlDom = document.documentElement;
 const rtlLink = document.querySelector("#rtl-link");
-const initialCheck = localStorage.getItem("dir");
-if (dirSwitch) {
-  if (initialCheck === "rtl") dirSwitch.checked = true;
-}
-dirSwitch ?.addEventListener("change", (e) => {
-  const checkbox = e.target;
-  console.log(checkbox.checked);
-  if (checkbox.checked) {
-    htmlDom.setAttribute("dir", "rtl");
-    rtlLink.href = "/user-panel/assets-panel/assets/css/bootstrap.rtl.min.css";
-    localStorage.setItem("rtlcss", "/user-panel/assets-panel/assets/css/bootstrap.rtl.min.css");
-    localStorage.setItem("dir", "rtl");
-  }
 
-  if (!checkbox.checked) {
-    htmlDom.setAttribute("dir", "ltr");
-    rtlLink.href = "/user-panel/assets-panel/assets/css/bootstrap.min.css";
-    localStorage.setItem("rtlcss", "/user-panel/assets-panel/assets/css/bootstrap.min.css");
-    localStorage.setItem("dir", "ltr");
-  }
-});
-// Rtl
-htmlDom.setAttribute("dir", localStorage.getItem("dir") ? localStorage.getItem("dir") : "ltr");
-rtlLink.href = localStorage.getItem("rtlcss") ? localStorage.getItem("rtlcss") : "/user-panel/assets-panel/assets/css/bootstrap.min.css";
+if (rtlLink) {
+    const savedDir = localStorage.getItem("dir") || "ltr";
+    const savedCss =
+        localStorage.getItem("rtlcss") ||
+        "/user-panel/assets-panel/assets/css/bootstrap.min.css";
+
+    htmlDom.setAttribute("dir", savedDir);
+    rtlLink.href = savedCss;
+}
+
+if (dirSwitch && rtlLink) {
+    if (localStorage.getItem("dir") === "rtl") {
+        dirSwitch.checked = true;
+    }
+
+    dirSwitch.addEventListener("change", (e) => {
+        if (e.target.checked) {
+            htmlDom.setAttribute("dir", "rtl");
+            rtlLink.href = "/user-panel/assets-panel/assets/css/bootstrap.rtl.min.css";
+            localStorage.setItem("rtlcss", rtlLink.href);
+            localStorage.setItem("dir", "rtl");
+        } else {
+            htmlDom.setAttribute("dir", "ltr");
+            rtlLink.href = "/user-panel/assets-panel/assets/css/bootstrap.min.css";
+            localStorage.setItem("rtlcss", rtlLink.href);
+            localStorage.setItem("dir", "ltr");
+        }
+    });
+}
 
 /*====================
   Dark js
