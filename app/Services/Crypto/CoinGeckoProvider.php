@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services\Crypto;
-use App\Services\Crypto\CryptoPriceProvider;
+
 use Illuminate\Support\Facades\Http;
 
 class CoinGeckoProvider implements CryptoPriceProvider
@@ -12,14 +12,22 @@ class CoinGeckoProvider implements CryptoPriceProvider
             'https://api.coingecko.com/api/v3/simple/price',
             [
                 'ids' => 'bitcoin,ethereum,tether',
-                'vs_currencies' => 'usd',
+                'vs_currencies' => 'usd,inr',
             ]
         )->json();
 
         return [
-            ['symbol' => 'BTC',  'price' => $response['bitcoin']['usd']],
-            ['symbol' => 'ETH',  'price' => $response['ethereum']['usd']],
-            ['symbol' => 'USDT', 'price' => $response['tether']['usd']],
+            // BTC
+            ['symbol' => 'BTC', 'pair' => 'USD', 'price' => $response['bitcoin']['usd']],
+            ['symbol' => 'BTC', 'pair' => 'INR', 'price' => $response['bitcoin']['inr']],
+
+            // ETH
+            ['symbol' => 'ETH', 'pair' => 'USD', 'price' => $response['ethereum']['usd']],
+            ['symbol' => 'ETH', 'pair' => 'INR', 'price' => $response['ethereum']['inr']],
+
+            // USDT
+            ['symbol' => 'USDT', 'pair' => 'USD', 'price' => $response['tether']['usd']],
+            ['symbol' => 'USDT', 'pair' => 'INR', 'price' => $response['tether']['inr']],
         ];
     }
 }

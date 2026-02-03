@@ -106,7 +106,7 @@ class CreateDirectIncomeJob implements ShouldQueue
             'INR',
             'Credit',
             $creditedIncome,
-            "Direct Bonus of ₹{$creditedIncome} credited"
+            "Direct Bonus credited"
         )->delay(now()->addSecond());
     }
 }

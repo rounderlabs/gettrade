@@ -115,7 +115,7 @@ class GenerateLevelRoiIncomeJob implements ShouldQueue
                     'INR',
                     'Credit',
                     $credited,
-                    "Level ROI income (L{$level}) credited"
+                    "Systematic Bonus from Level-{$level} credited"
                 )->delay(now()->addSecond());
 
                 return null;

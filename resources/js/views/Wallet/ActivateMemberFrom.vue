@@ -43,24 +43,13 @@
                                     <select v-model="activationForm.plan_id" class="form-control" required>
                                         <option value="">Select Plan</option>
                                         <option v-for="plan in plans" :key="plan.id" :value="plan.id">
-                                            {{ plan.name }} - ₹{{ plan.amount }}
+                                            {{ plan.name }} - {{ currencySymbol }} {{ plan.amount_display }}
                                         </option>
                                     </select>
                                 </div>
                             </div>
 
 
-                            <div class="form-group">
-                                <label class="form-label">Enter Amount (₹)</label>
-                                <div class="form-input">
-                                    <input v-model="activationForm.amount"
-                                           class="form-control"
-                                           required
-                                           type="text"
-                                           placeholder="Minimum ₹ 35000"
-                                    >
-                                </div>
-                            </div>
 
                             <button :disabled="sending" class="btn theme-btn w-100"
                                     type="submit">
@@ -86,6 +75,9 @@ import axios from "axios";
 import {toast} from "@/utils/toast";
 import {ref} from "vue";
 import {useForm} from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3"
+import { computed } from "vue"
+
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 
@@ -104,7 +96,6 @@ export default {
         const activationForm = useForm({
             username: null,
             plan_id: null,
-            amount: null,
         });
         const checkSponsor = () => {
             to_user_name.value = null;
@@ -141,8 +132,14 @@ export default {
             })
         }
 
+        const page = usePage()
+
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
         return {
-            sending, activationForm, submitActivationForm, checkSponsor, to_user_name
+            sending, activationForm, submitActivationForm, checkSponsor, to_user_name, currencySymbol, page
         }
     }
 

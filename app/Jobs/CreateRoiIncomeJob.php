@@ -94,7 +94,7 @@ class CreateRoiIncomeJob implements ShouldQueue
             'INR',
             'Credit',
             $credited,
-            "Daily ROI income ₹{$credited}"
+            "Daily Trading Bonus credited"
         )->delay(now()->addSecond());
 
         /* ===============================

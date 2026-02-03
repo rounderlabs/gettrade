@@ -64,7 +64,7 @@
                                 <div class="d-flex justify-content-between">
                                     <h5>Bonus Amount</h5>
                                     <h3 class="theme-color">
-                                        ₹ {{ bonus.income }}
+                                        {{currencySymbol}} {{ bonus.income_display }}
                                     </h3>
                                 </div>
                                 <div class="d-flex justify-content-between">
@@ -87,9 +87,9 @@
 <script>
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import EarningWidget from "@/components/EarningWidget";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import Paginator from "@/components/xino/Paginator.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, usePage} from "@inertiajs/vue3";
 import VueFeather from "vue-feather";
 
 export default {
@@ -121,8 +121,13 @@ export default {
             pageMeta.value = data
         }
 
+        const page = usePage()
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
         return {
-            paginatorResponse, paginatorPageMeta, pageMeta, rank_bonuses,formatDate
+            paginatorResponse, paginatorPageMeta, pageMeta, rank_bonuses,formatDate, currencySymbol
         }
     }
 }

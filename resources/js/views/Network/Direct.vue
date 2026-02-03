@@ -26,7 +26,8 @@
                                 <div>
                                     <h5 class="fw-semibold dark-text">Total Business</h5>
 
-                                    <h6 class="fw-normal success-color mt-2">{{ partner.user.user_business.amount }}</h6>
+                                    <h6 class="fw-normal success-color mt-2">{{ currencySymbol }} {{ partner.user.user_business.amount_display }}
+                                    </h6>
                                 </div>
                                 <div>
                                     <h5 v-if="!partner.user.subscriptions.length " class="fw-semibold error-color ">Not
@@ -84,6 +85,8 @@
 import TeamWidget from "@/components/xino/TeamWidget";
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import VueFeather from "vue-feather";
+import { usePage } from "@inertiajs/vue3"
+import { computed } from "vue"
 
 export default {
     name: "Direct",
@@ -94,6 +97,15 @@ export default {
     layout: UserLayout,
     props: {
         team: Object
+    },
+    setup(){
+        const page = usePage()
+
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
+        return {currencySymbol}
     },
     data() {
         return {

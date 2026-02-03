@@ -458,11 +458,17 @@ __webpack_require__.r(__webpack_exports__);
     function paginatorPageMeta(data) {
       pageMeta.value = data;
     }
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_4__.usePage)();
+    var currencySymbol = (0,vue__WEBPACK_IMPORTED_MODULE_2__.computed)(function () {
+      var _page$props$currency$, _page$props$currency;
+      return (_page$props$currency$ = (_page$props$currency = page.props.currency) === null || _page$props$currency === void 0 ? void 0 : _page$props$currency.symbol) !== null && _page$props$currency$ !== void 0 ? _page$props$currency$ : "₹";
+    });
     return {
       paginatorResponse: paginatorResponse,
       paginatorPageMeta: paginatorPageMeta,
       pageMeta: pageMeta,
-      monthly_roi_bonuses: monthly_roi_bonuses
+      monthly_roi_bonuses: monthly_roi_bonuses,
+      currencySymbol: currencySymbol
     };
   }
 });
@@ -1010,7 +1016,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "class": "img-fluid icon",
       src: "/user-panel/assets-panel/assets/images/wallet-svg-fill.svg",
       alt: "tether"
-    })], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, [_cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Package Amount : ")), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_10, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat(bonus.subscription.amount).toFixed(2)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_11, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat(bonus.income).toFixed(2)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(bonus.closing_date), 1 /* TEXT */)]), _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+    })], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, [_cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Package Amount : ")), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_10, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat(bonus.subscription.amount).toFixed(2)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.currencySymbol) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(bonus.income_display), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(bonus.closing_date), 1 /* TEXT */)]), _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
       "class": "success-color"
     }, "Credited", -1 /* HOISTED */))])])])])]);
   }), 256 /* UNKEYED_FRAGMENT */))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Paginator, {

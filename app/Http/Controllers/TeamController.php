@@ -6,6 +6,7 @@ use App\Models\Tree;
 use App\Models\User;
 use App\Methods\UserLevelMethods;
 use App\Models\UserLevelStat;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -35,9 +36,27 @@ class TeamController extends Controller
     public function getDirectPartners()
     {
         $user = auth()->user();
-        $directDownlind = Tree::with(['user.team','user.subscriptions','user.userBusiness'])->where('sponsor_id', $user->id)->simplePaginate(10);
-        return response()->json($directDownlind);
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        $direct = Tree::with(['user.team','user.subscriptions','user.userBusiness'])
+            ->where('sponsor_id', $user->id)
+            ->simplePaginate(10);
+
+        $direct->getCollection()->transform(function ($row) use ($displayCurrency) {
+            if ($row->user && $row->user->userBusiness) {
+                $row->user->userBusiness->amount_display =
+                    CurrencyService::convert(
+                        (string) $row->user->userBusiness->amount,
+                        'INR',
+                        $displayCurrency
+                    );
+            }
+            return $row;
+        });
+
+        return response()->json($direct);
     }
+
 
     public function showActiveDirectPartner()
     {
@@ -66,9 +85,30 @@ class TeamController extends Controller
     public function getActiveTeamByLevel($level = 1)
     {
         $user = auth()->user();
-        $userByLevel = UserLevelStat::with(['downlineUser:id,name,email,username,created_at','downlineUser.team','downlineUser.subscriptions','downlineUser.userBusiness'])->where('user_id', $user->id)->where('level', $level)->whereRelation('downlineUser.subscriptions','is_active',true)->simplePaginate(10);
+
+        $userByLevel = UserLevelStat::with([
+            'downlineUser:id,name,email,username,created_at',
+            'downlineUser.team',
+            'downlineUser.subscriptions',
+            'downlineUser.userBusiness'
+        ])
+            ->where('user_id', $user->id)
+            ->where('level', $level)
+            ->whereRelation('downlineUser.subscriptions', 'is_active', true)
+            ->simplePaginate(10);
+
+        $userByLevel->getCollection()->transform(function ($row) use ($user) {
+            $business = $row->downlineUser->userBusiness?->amount ?? 0;
+
+            $row->downlineUser->business_display =
+                $this->displayAmount($business, $user);
+
+            return $row;
+        });
+
         return response()->json($userByLevel);
     }
+
 
     public function showTeamByLevel()
     {
@@ -82,9 +122,38 @@ class TeamController extends Controller
     public function getTeamByLevel($level = 1)
     {
         $user = auth()->user();
-        $userByLevel = UserLevelStat::with(['downlineUser:id,name,email,username,created_at','downlineUser.team','downlineUser.subscriptions','downlineUser.userBusiness','downlineUser.tree.sponsor'])->where('user_id', $user->id)->where('level', $level)->simplePaginate(10);
+
+        $userByLevel = UserLevelStat::with([
+            'downlineUser:id,name,email,username,created_at',
+            'downlineUser.team',
+            'downlineUser.subscriptions',
+            'downlineUser.userBusiness',
+            'downlineUser.tree.sponsor',
+        ])
+            ->where('user_id', $user->id)
+            ->where('level', $level)
+            ->simplePaginate(10);
+
+        $userByLevel->getCollection()->transform(function ($row) use ($user) {
+
+            // ✅ SAFE: fallback to 0 if null
+            $businessBase = $row->downlineUser->userBusiness?->amount ?? 0;
+            $subscriptionBase = $row->downlineUser->total_subscription_amount ?? 0;
+
+            // ✅ Attach computed display values on USER model
+            $row->downlineUser->business_display =
+                $this->displayAmount($businessBase, $user);
+
+            $row->downlineUser->subscription_display =
+                $this->displayAmount($subscriptionBase, $user);
+
+            return $row;
+        });
+
         return response()->json($userByLevel);
     }
+
+
 
     public function showGenealogy(Request $request, $user = null, $position = null)
     {
@@ -171,5 +240,21 @@ class TeamController extends Controller
     protected function getDirectMember(User $user, $position)
     {
         return Tree::with(['user.team', 'user.userBusiness','user.subscriptions'])->where('sponsor_id', $user->id)->where('position', $position)->first();
+    }
+
+    private function displayAmount($amount, $user)
+    {
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        if ($displayCurrency === $baseCurrency) {
+            return number_format((float)$amount, 2);
+        }
+
+        return CurrencyService::convert(
+            (string) $amount,
+            $baseCurrency,
+            $displayCurrency
+        );
     }
 }

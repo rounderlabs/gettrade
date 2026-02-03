@@ -47,9 +47,9 @@
 <script>
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import EarningWidget from "@/components/EarningWidget";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import Paginator from "@/components/xino/Paginator.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, usePage} from "@inertiajs/vue3";
 import VueFeather from "vue-feather";
 
 export default {
@@ -71,8 +71,13 @@ export default {
             pageMeta.value = data
         }
 
+        const page = usePage()
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
         return {
-            paginatorResponse, paginatorPageMeta, pageMeta, reward_bonuses
+            paginatorResponse, paginatorPageMeta, pageMeta, reward_bonuses, currencySymbol
         }
     }
 }

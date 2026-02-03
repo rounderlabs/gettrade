@@ -79,9 +79,9 @@ class UserUsdWalletAdminUpdateController extends Controller
         ]);
 
         $amount = $request->amount;
-        $walletType = 'USDT Wallet';
-        $currency = 'USDT';
-        $remark = 'Amount $' . $request->amount . ' has been ' . $txn_type . 'ed ';
+        $walletType = 'Fund Wallet';
+        $currency = 'INR';
+        $remark = 'Amount ' . $request->amount . ' has been ' . $txn_type . 'ed ';
         CreateUserWalletLedgerJob::dispatch($user, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
 
 

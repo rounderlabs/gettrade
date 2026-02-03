@@ -18,7 +18,7 @@
 
                             </div>
                             <div>
-                                <h6 class="time fw-normal  text-white mt-1">₹ {{ plan.amount }}</h6>
+                                <h6 class="time fw-normal  text-white mt-1">{{ currencySymbol }} {{ plan.display_amount }}</h6>
                                 <h6 class="time fw-normal  text-white mt-1"> {{ plan.monthly_roi_amount }} %</h6>
                                 <h6 class="time fw-normal  text-white mt-1">{{plan.tenure}} Months</h6>
                                 <h6 class="time fw-normal  text-white mt-1">20 Level</h6>
@@ -40,14 +40,14 @@
 
 <script>
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
-import {ref} from "vue";
-import {Link} from "@inertiajs/vue3";
+import {computed, ref} from "vue";
+import {Link, usePage} from "@inertiajs/vue3";
 
 export default {
     name: "Pricing",
     props: {
         plans: Array,
-
+        display_currency: String
     },
     layout: UserLayout,
     components: {Link},
@@ -60,11 +60,18 @@ export default {
             "info"
         ]);
 
+        const page = usePage()
+
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
+
         function getBgColor(planId) {
             return panelColor.value[parseInt(planId) - 1];
         }
 
-        return {getBgColor};
+        return {currencySymbol, getBgColor};
     }
 
 };

@@ -113,7 +113,7 @@ class CreateRankRoiIncomeJob implements ShouldQueue
             'INR',
             'Credit',
             $credited,
-            "Rank ROI bonus ₹{$credited}"
+            "Rank bonus Extra Systematic Bonus Credited"
         )->delay(now()->addSecond());
     }
 }

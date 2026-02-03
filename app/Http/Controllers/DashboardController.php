@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 
 use App\Jobs\CreateUserRefundJob;
+use App\Models\Currency;
 use App\Models\WithdrawalHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\CurrencyService;
 
 class DashboardController extends Controller
 {
@@ -17,27 +19,151 @@ class DashboardController extends Controller
         return Inertia::render('Menu/Menu');
     }
 
+//    public function showDashboard()
+//    {
+//        $baseCurrency = 'INR';
+//
+//        $investmentInInr = auth()->user()->subscriptions()->where('is_active', 1)->sum('amount');
+//
+//        $totalWithdrawalInInr = WithdrawalHistory::where('user_id', auth()->id())->where('status', 'success')->sum('amount');
+//
+//        $displayCurrency = auth()->user()->preferred_currency ?? 'INR';
+//
+//        $investment = CurrencyService::convert((string) $investmentInInr, 'INR', $displayCurrency);
+//
+//        $totalWithdrawal = CurrencyService::convert((string) $totalWithdrawalInInr, 'INR', $displayCurrency);
+//
+//        $qr_url= route('register', ['ref_code' => auth()->user()->username]);
+//        $totalWithdrawal = WithdrawalHistory::where('user_id', auth()->id())->where('status', '=','success')->sum('amount');
+//        return Inertia::render('Dashboards/UserDashboard', [
+//            'team' => auth()->user()->team,
+//            'user_income_stats' => userIncomeStat(auth()->user()),
+//            'user_income_on_hold' => userIncomeOnHold(auth()->user()),
+//            'user_income_wallet' => userIncomeWallet(auth()->user()),
+//            'user_usd_wallet' => userUsdWallet(auth()->user()),
+//            'user' => auth()->user(),
+//            'subscriptions' => auth()->user()->subscriptions()->where('is_active', 1)->with('plan')->orderByDesc('id')->first(),
+//            'investment' => $investment,
+//            'total_withdrawal' => $totalWithdrawal,
+//            'active_subscription' => auth()->user()->subscriptions()->with('plan:id,name')->where('is_active', 1)->orderByDesc('id')->first(),
+//            'ref_qr' => base64_encode(QrCode::size(250)->generate($qr_url)),
+//            'showWelcomeModal' => $this->shouldShowWelcomeModal(auth()->user()),
+//            'welcomeMode' => auth()->user()->welcome_mode,
+//            'display_currency' => $displayCurrency,
+//        ]);
+//    }
+
+    private function convertIncomeStats(
+        array $stats,
+        string $from,
+        string $to
+    ): array {
+        $keys = [
+            'total',
+            'roi',
+            'direct',
+            'roi_on_roi',
+            'rank',
+            'bonanza',
+            'reward',
+        ];
+
+        foreach ($keys as $key) {
+            if (isset($stats[$key])) {
+                $stats[$key] = CurrencyService::convert(
+                    (string) $stats[$key],
+                    $from,
+                    $to
+                );
+            }
+        }
+
+        return $stats;
+    }
+
+
+
     public function showDashboard()
     {
+        $user = auth()->user();
 
-        $qr_url= route('register', ['ref_code' => auth()->user()->username]);
-        $totalWithdrawal = WithdrawalHistory::where('user_id', auth()->id())->where('status', '=','success')->sum('amount');
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        // -------------------------
+        // Raw INR values
+        // -------------------------
+        $investmentInInr = $user->subscriptions()
+            ->where('is_active', 1)
+            ->sum('amount');
+
+        $withdrawalInInr = WithdrawalHistory::where('user_id', $user->id)
+            ->where('status', 'success')
+            ->sum('amount');
+
+        // -------------------------
+        // Converted values
+        // -------------------------
+        $investment = CurrencyService::convert(
+            (string) $investmentInInr,
+            $baseCurrency,
+            $displayCurrency
+        );
+
+        $totalWithdrawal = CurrencyService::convert(
+            (string) $withdrawalInInr,
+            $baseCurrency,
+            $displayCurrency
+        );
+
+        // -------------------------
+        // Convert income stats
+        // -------------------------
+        $incomeStats = userIncomeStat($user)->toArray();
+
+        $convertedIncomeStats = $this->convertIncomeStats(
+            $incomeStats,
+            $baseCurrency,
+            $displayCurrency
+        );
+
+        $qr_url = route('register', ['ref_code' => $user->username]);
+
         return Inertia::render('Dashboards/UserDashboard', [
-            'team' => auth()->user()->team,
-            'user_income_stats' => userIncomeStat(auth()->user()),
-            'user_income_on_hold' => userIncomeOnHold(auth()->user()),
-            'user_income_wallet' => userIncomeWallet(auth()->user()),
-            'user_usd_wallet' => userUsdWallet(auth()->user()),
-            'user' => auth()->user(),
-            'subscriptions' => auth()->user()->subscriptions()->where('is_active', 1)->with('plan')->orderByDesc('id')->first(),
-            'investment' => auth()->user()->subscriptions()->where('is_active', 1)->sum('amount'),
+            'user' => $user,
+            'team' => $user->team,
+
+            // ✅ converted values
+            'investment'       => $investment,
             'total_withdrawal' => $totalWithdrawal,
-            'active_subscription' => auth()->user()->subscriptions()->with('plan:id,name')->where('is_active', 1)->orderByDesc('id')->first(),
-            'ref_qr' => base64_encode(QrCode::size(250)->generate($qr_url)),
-            'showWelcomeModal' => $this->shouldShowWelcomeModal(auth()->user()),
-            'welcomeMode' => auth()->user()->welcome_mode,
+            'user_income'      => $convertedIncomeStats,
+
+            // other data
+            'user_income_wallet'  => userIncomeWallet($user),
+            'user_income_on_hold' => userIncomeOnHold($user),
+
+            'subscriptions' => $user->subscriptions()
+                ->where('is_active', 1)
+                ->with('plan')
+                ->latest()
+                ->first(),
+
+            'active_subscription' => $user->subscriptions()
+                ->with('plan:id,name')
+                ->where('is_active', 1)
+                ->latest()
+                ->first(),
+
+            'ref_qr' => base64_encode(
+                QrCode::size(250)->generate($qr_url)
+            ),
+
+            'display_currency' => $displayCurrency,
+            'showWelcomeModal' => $this->shouldShowWelcomeModal($user),
+            'welcomeMode' => $user->welcome_mode,
         ]);
     }
+
 
     public function maintenance()
     {
@@ -78,6 +204,8 @@ class DashboardController extends Controller
             default => false,
         };
     }
+
+
 
 
 }

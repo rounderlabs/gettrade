@@ -14,71 +14,54 @@ class CreateUserWalletLedgerJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public function __construct(
+        public User   $user,
+        public string $wallet_type,   // Fund Wallet | Income Wallet
+        public string $currency,      // ALWAYS INR
+        public string $txnType,       // Credit | Debit
+        public string $amount,        // BASE amount (INR)
+        public string $remarks,
+        public int    $status = 1
+    ) {}
 
-    public User $user;
-    public string $amount;
-    public string $wallet_type;
-    public string $txnType;
-    public string $currency;
-    public string $remarks;
-    public int $is_fund_transfer;
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(User $user, $wallet_type, $currency, $txnType, $amount, $remarks, $is_fund_transfer = 0)
-    {
-        $this->user = $user;
-        $this->wallet_type = $wallet_type;
-        $this->currency = $currency;
-        $this->txnType = $txnType;
-        $this->amount = $amount;
-        $this->remarks = $remarks;
-        $this->is_fund_transfer = $is_fund_transfer;
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $user = $this->user;
-        $walletType = $this->wallet_type;
-        $currency = $this->currency;
-        if ($this->amount <= 0) {
+        if (bccomp($this->amount, '0', 2) <= 0) {
             return;
         }
-        $last_amount = '0.0';
-        $new_amount = '0.0';
 
-
-        if ($walletType == 'USDT Wallet') {
-            $userWallet = userUsdWallet($user);
-            $last_amount = $userWallet->balance;
-            $new_amount = addDecimalStrings($userWallet->balance, $this->amount);
+        /** ---------------------------------
+         * Resolve Wallet
+         * --------------------------------- */
+        if (in_array($this->wallet_type, ['USDT Wallet', 'Fund Wallet'])) {
+            $wallet = userUsdWallet($this->user);
+        } else {
+            $wallet = userIncomeWallet($this->user);
         }
 
-        if ($walletType == 'Income Wallet') {
-            $userWallet = userIncomeWallet($user);
-            $last_amount = $userWallet->balance;
-            $new_amount = addDecimalStrings($userWallet->balance, $this->amount);
-        }
+        $lastAmount = $wallet->balance;
 
+        /** ---------------------------------
+         * Calculate new balance (CORRECT)
+         * --------------------------------- */
+        $newAmount = $this->txnType === 'Debit'
+            ? subDecimalStrings($lastAmount, $this->amount, 2)
+            : addDecimalStrings($lastAmount, $this->amount, 2);
+
+        /** ---------------------------------
+         * Store Ledger
+         * --------------------------------- */
         UserWalletLedger::create([
-            'user_id' => $user->id,
+            'user_id'     => $this->user->id,
             'wallet_type' => $this->wallet_type,
-            'last_amount' => $last_amount,
-            'currency' => $currency,
-            'txn_type' => $this->txnType,
-            'amount' => $this->amount,
-            'new_amount' => $new_amount,
-            'remarks' => $this->remarks,
+            'currency'    => $this->currency, // INR
+            'txn_type'    => $this->txnType,
+            'last_amount' => $lastAmount,
+            'amount'      => $this->amount,
+            'new_amount'  => $newAmount,
+            'remarks'     => $this->remarks,
+            'status' => $this->status,
         ]);
-
-
     }
 }
+

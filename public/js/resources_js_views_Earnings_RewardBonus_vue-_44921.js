@@ -458,11 +458,17 @@ __webpack_require__.r(__webpack_exports__);
     function paginatorPageMeta(data) {
       pageMeta.value = data;
     }
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_4__.usePage)();
+    var currencySymbol = (0,vue__WEBPACK_IMPORTED_MODULE_2__.computed)(function () {
+      var _page$props$currency$, _page$props$currency;
+      return (_page$props$currency$ = (_page$props$currency = page.props.currency) === null || _page$props$currency === void 0 ? void 0 : _page$props$currency.symbol) !== null && _page$props$currency$ !== void 0 ? _page$props$currency$ : "₹";
+    });
     return {
       paginatorResponse: paginatorResponse,
       paginatorPageMeta: paginatorPageMeta,
       pageMeta: pageMeta,
-      reward_bonuses: reward_bonuses
+      reward_bonuses: reward_bonuses,
+      currencySymbol: currencySymbol
     };
   }
 });

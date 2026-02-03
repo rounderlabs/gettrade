@@ -9,15 +9,15 @@ use Illuminate\Console\Command;
 class FetchCryptoPrices extends Command
 {
     protected $signature = 'crypto:fetch-prices';
-    protected $description = 'Fetch crypto prices';
+    protected $description = 'Fetch crypto prices (USD + INR)';
 
-    public function handle(CryptoPriceProvider $provider)
+    public function handle(CryptoPriceProvider $provider): int
     {
         foreach ($provider->fetchPrices() as $item) {
             CryptoPrice::updateOrCreate(
                 [
                     'symbol' => $item['symbol'],
-                    'pair' => 'USD',
+                    'pair'   => $item['pair'],
                 ],
                 [
                     'price' => $item['price'],
@@ -26,7 +26,7 @@ class FetchCryptoPrices extends Command
             );
         }
 
-        $this->info('Crypto prices updated');
+        $this->info('Crypto prices updated (USD & INR)');
+        return self::SUCCESS;
     }
 }
-

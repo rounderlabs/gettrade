@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Currency;
 use App\Models\SiteSetting;
 use App\Services\CommissionService;
 use App\Services\Crypto\CoinGeckoProvider;
@@ -48,14 +49,24 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share([
 
             'currency' => fn () => Auth::check()
-                ? [
-                    'preferred' => Auth::user()->preferred_currency ?? 'INR',
-                    'base' => 'INR',
-                ]
+                ? (function () {
+                    $currency = Currency::where(
+                        'code',
+                        Auth::user()->preferred_currency ?? 'INR'
+                    )->first();
+
+                    return [
+                        'code' => $currency->code,
+                        'symbol' => $currency->symbol,
+                        'name' => $currency->name,
+                    ];
+                })()
                 : [
-                    'preferred' => 'INR',
-                    'base' => 'INR',
+                    'code' => 'INR',
+                    'symbol' => '₹',
+                    'name' => 'Indian Rupee',
                 ],
+
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => url()->current(),

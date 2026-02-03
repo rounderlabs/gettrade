@@ -6,10 +6,12 @@
     <UserLoginDetailsComponent :user="user"></UserLoginDetailsComponent>
     <InstantOperationComponent></InstantOperationComponent>
     <ReferralLinkComponent :ref_qr="ref_qr" :user="user"></ReferralLinkComponent>
-    <BalanceInfoComponent :investment="investment" :total_withdrawal="total_withdrawal"
-                          :user_income_stats="user_income_stats"></BalanceInfoComponent>
+    <BalanceInfoComponent :currency="currencySymbol" :investment="investment" :total_withdrawal="total_withdrawal"
+                          :user_income="user_income">
 
-    <UserIncomeComponent :user_income_stats="user_income_stats"></UserIncomeComponent>
+    </BalanceInfoComponent>
+
+    <UserIncomeComponent :user_income="user_income" :currency="currencySymbol" />
 
     <team-widget :team="team"></team-widget>
 
@@ -29,7 +31,7 @@ import LatestChampionComponent from "@/components/LatestChampionComponent.vue";
 import ValidatorStatGraphWidget from "@/components/ValidatorStatGraphWidget.vue";
 import IncomeGraphWidget from "@/components/IncomeGraphWidget.vue";
 import TokenPriceComponent from "@/components/TokenPriceComponent.vue";
-import {onMounted} from "vue";
+import {computed, onMounted} from "vue";
 import {toast} from "@/utils/toast";
 import UserIncomeComponent from "@/components/UserIncomeComponent.vue";
 import UserWalletsComponent from "@/components/UserWalletsComponent.vue"
@@ -37,7 +39,7 @@ import InstantOperationComponent from "@/components/SunLotusInfra/InstantOperati
 import BalanceInfoComponent from "@/components/SunLotusInfra/BalanceInfoComponent.vue";
 import SliderComponent from "@/components/SunLotusInfra/SliderComponent.vue";
 import WelcomeModal from "@/components/WelcomeModal.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, usePage} from "@inertiajs/vue3";
 import UserLoginDetailsComponent from "@/components/UserLoginDetailsComponent.vue";
 
 export default {
@@ -71,7 +73,7 @@ export default {
         user: Object,
         user_income_wallet: Object,
         user_usd_wallet: Object,
-        user_income_stats: Object,
+        user_income: Object,
         user_income_on_hold: Object,
         active_subscription: Object,
         subscriptions: Object,
@@ -83,9 +85,13 @@ export default {
         total_income: String,
         showWelcomeModal: Boolean,
         welcomeMode: String,
+        display_currency: String
 
     },
     setup() {
+        const page = usePage()
+        const currencySymbol = computed(() => page.props.currency.symbol)
+
         onMounted(() => {
             window.copyText = function (value) {
                 var s = document.createElement('input');
@@ -113,6 +119,9 @@ export default {
                 s.remove();
             };
         })
+        return {
+            currencySymbol,
+        }
     },
     methods: {
         copy(text) {

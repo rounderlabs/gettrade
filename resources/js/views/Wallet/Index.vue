@@ -73,23 +73,25 @@
             <div class="title">
                 <h2>Wallet Balance</h2>
             </div>
+
             <div class="row">
                 <div class="col-6">
                     <div class="saving-plan-box">
                         <h3>Investment Wallet</h3>
                         <h6>Current Balance</h6>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <h5 class="theme-color">₹ {{ user_usd_wallet.balance }}</h5>
-                        </div>
+                        <h5 class="theme-color">
+                            {{ currencySymbol }} {{ user_usd_wallet.balance_display }}
+                        </h5>
                     </div>
                 </div>
+
                 <div class="col-6">
                     <div class="saving-plan-box">
                         <h3>Withdrawal Wallet</h3>
                         <h6>Current Balance</h6>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <h5 class="theme-color">₹ {{ user_income_wallet.balance }}</h5>
-                        </div>
+                        <h5 class="theme-color">
+                            {{ currencySymbol }} {{ user_income_wallet.balance_display }}
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -102,36 +104,29 @@
                 <h2>Deposit History</h2>
             </div>
 
-            <div class="row gy-3">
-                <div v-if="!deposit_histories.length" class="col-12">
-                    <div class="transaction-box">
-                        <a href="#transaction-detail"  class="d-flex gap-3">
+            <div v-if="!deposit_histories.length" class="transaction-box">
+                <h5 class="light-text">No Deposit History Found</h5>
+            </div>
 
-                            <div class="transaction-details">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="light-text">No Deposit History Found</h5>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div v-for="deposit in deposit_histories" class="col-12">
-                    <div class="transaction-box">
-                        <a href="#transaction-detail" data-bs-toggle="modal" class="d-flex gap-3">
+            <div
+                v-for="deposit in deposit_histories"
+                :key="deposit.id"
+                class="transaction-box"
+            >
+                <div class="transaction-details">
+                    <h5>
+                        {{ currencySymbol }} {{ deposit.amount_display }}
+                    </h5>
 
-                            <div class="transaction-details">
-                                <div class="transaction-name">
-                                    <h5>₹ {{deposit.amount}}</h5>
-                                    <h3 class="error-color">{{deposit.payment_type}}</h3>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <h5><span class="badge" :class="statusBadgeClass(deposit.status)">
-                                        {{ formatStatus(deposit.status) }}
-                                    </span></h5>
-                                    <h5 class="light-text">{{deposit.created_at}}</h5>
-                                </div>
-                            </div>
-                        </a>
+                    <span
+                        class="badge"
+                        :class="statusBadgeClass(deposit.status)"
+                    >
+                        {{ deposit.status }}
+                    </span>
+
+                    <div class="light-text mt-1">
+                        {{ deposit.payment_type }} • {{ deposit.created_at }}
                     </div>
                 </div>
             </div>
@@ -141,39 +136,80 @@
     <section class="panel-space"></section>
 </template>
 
-<script>
+<script setup>
+import UserLayout from "@/layouts/UserLayouts/UserLayout.vue"
+import { Link, usePage } from "@inertiajs/vue3"
+import { computed } from "vue"
 
-import UserLayout from "@/layouts/UserLayouts/UserLayout";
-
-import {toast} from "@/utils/toast";
-import {Link} from "@inertiajs/vue3";
-
-export default {
-    name: "Index",
-    components: {
-        toast, Link
-    },
+defineOptions({
     layout: UserLayout,
-    props: {
-        user_usd_wallet: Object,
-        user_income_wallet: Object,
-        deposit_histories: Array,
+})
+
+/**
+ * --------------------------------------------------
+ * PROPS (must be Objects, NOT Arrays)
+ * --------------------------------------------------
+ */
+const props = defineProps({
+    user_usd_wallet: {
+        type: Object,
+        required: true,
     },
-    methods: {
-        statusBadgeClass(status) {
-            return {
-                pending: 'badge bg-warning',
-                accepted: 'badge bg-success',
-                rejected: 'badge bg-danger'
-            }[status] || 'badge bg-secondary';
-        },
-        formatStatus(status) {
-            return status.charAt(0).toUpperCase() + status.slice(1);
-        }
+    user_income_wallet: {
+        type: Object,
+        required: true,
+    },
+    deposit_histories: {
+        type: Array,
+        default: () => [],
+    },
+    display_currency: {
+        type: String,
+        default: "INR",
+    },
+})
+
+/**
+ * --------------------------------------------------
+ * PAGE GLOBALS (SAFE USAGE)
+ * --------------------------------------------------
+ */
+const page = usePage()
+
+/**
+ * --------------------------------------------------
+ * CURRENCY SYMBOL
+ * Priority:
+ * 1. page.props.currency.symbol (from backend)
+ * 2. fallback by display_currency
+ * --------------------------------------------------
+ */
+const currencySymbol = computed(() => {
+    if (page.props.currency?.symbol) {
+        return page.props.currency.symbol
     }
 
-};
+    return {
+        INR: "₹",
+        USD: "$",
+        EUR: "€",
+    }[props.display_currency] ?? "₹"
+})
+
+/**
+ * --------------------------------------------------
+ * STATUS BADGE CLASS
+ * --------------------------------------------------
+ */
+function statusBadgeClass(status) {
+    return {
+        pending: "badge bg-warning",
+        accepted: "badge bg-success",
+        rejected: "badge bg-danger",
+    }[status] ?? "badge bg-secondary"
+}
 </script>
+
 
 <style scoped>
 

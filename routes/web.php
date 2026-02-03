@@ -117,10 +117,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('purchase')->name('purchase.')->group(function () {
         Route::get('pricing', [PurchaseController::class, 'showPricing'])->name('pricing');
-        //   Route::get('pricing', [DashboardController::class, 'maintenance'])->name('pricing');
-        Route::get('subscription/{planId}', [PurchaseController::class, 'showTopUpForm'])
-            ->where(['planId' => '[0-9]+'])->name('topup.form');
-
+        Route::get('subscription/{plan}', [PurchaseController::class, 'showTopUpForm'])
+            ->name('topup.form');
+       // Route::get('subscription/{planId}', [PurchaseController::class, 'showTopUpForm'])->whereNumber('planId')->name('topup.form');
         Route::post('plan', [PurchaseController::class, 'planActivate'])->name('plan.activate');
     });
 

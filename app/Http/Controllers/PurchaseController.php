@@ -12,6 +12,7 @@ use App\Models\UserIncomeWallet;
 use App\Models\UserRoiCompounding;
 use App\Models\UserUsdWallet;
 use App\Models\UserUsdWalletTransaction;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -20,7 +21,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use function userTokenWallet;
 
 class PurchaseController extends Controller
 {
@@ -69,56 +69,83 @@ class PurchaseController extends Controller
 
     public function planActivate(Request $request)
     {
+       // return $request;
         $request->validate([
             'plan_id' => ['required', 'numeric', 'exists:plans,id'],
-            'amount' => ['required', 'numeric'],
+            'amount'  => ['required', 'numeric'], // INR amount (base)
         ]);
+
         $user = auth()->user();
         $plan = Plan::where('id', $request->plan_id)->first();
-        $amount = castDecimalString($request->amount, 2);
-        $userID = auth()->user()->id;
+
+        /**
+         * ------------------------------------------------
+         * BASE VALUES (INR)
+         * ------------------------------------------------
+         */
+        $amountInInr = castDecimalString($plan->amount, 2);
+
+        if ($amountInInr != $plan->amount) {
+            return back()->with('notification', [
+                'Entered amount is invalid',
+                'danger'
+            ]);
+        }
+
+
 
         DB::beginTransaction();
-        $userUsdWallet = UserUsdWallet::where('user_id', $userID)->lockForUpdate()->first();
-        if (is_null($userUsdWallet)) {
+
+        $wallet = UserUsdWallet::where('user_id', $user->id)
+            ->lockForUpdate()
+            ->first();
+
+        if (! $wallet || bccomp($wallet->balance, $amountInInr, 2) < 0) {
             DB::rollBack();
-            return redirect()->back()->with('notification', ['Insufficient Balance', 'danger']);
+            return back()->with('notification', [
+                'Insufficient wallet balance',
+                'danger'
+            ]);
         }
 
-
-
-        if ($amount != $plan->amount) {
-            DB::rollBack();
-            return redirect()->back()->with('notification', ['Entered Amount is not in valid.', 'danger']);
-        }
-        if ($userUsdWallet->balance < $amount) {
-            DB::rollBack();
-            return redirect()->back()->with('notification', ['Insufficient Balance', 'danger']);
-        }
-
+        /**
+         * ------------------------------------------------
+         * WALLET TRANSACTION (UNCHANGED STRUCTURE ✅)
+         * ------------------------------------------------
+         */
         $walletTransaction = UserUsdWalletTransaction::create([
-            'user_id' => $request->user()->id,
+            'user_id'          => $user->id,
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['DEBIT'],
-            'amount_in_usd' => $amount,
-            'last_amount' => $userUsdWallet->balance,
-            'summary' => 'Investment',
-            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
-            'txn_time' => now()
+            'amount_in_usd'    => $amountInInr,
+            'last_amount'      => $wallet->balance,
+            'summary'          => 'Investment',
+            'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+            'txn_time'         => now(),
         ]);
 
-        $userUsdWallet->decrement('balance', $amount);
+        $wallet->decrement('balance', $amountInInr);
 
-        if (is_null($walletTransaction)) {
-            DB::rollBack();
-            return redirect()->back()->with('notification', ['Please try again later', 'danger']);
-        }
         DB::commit();
 
-        CreateSubscriptionJob::dispatch($plan, $request->user(), $walletTransaction)->delay(now()->addSecond());
+        /**
+         * ------------------------------------------------
+         * SUBSCRIPTION JOB (PLAN IS INR-BASED)
+         * ------------------------------------------------
+         */
+        CreateSubscriptionJob::dispatch(
+            $plan,
+            $user,
+            $walletTransaction
+        )->delay(now()->addSecond());
 
-        return redirect()->route('dashboard')->with('notification', ['Package subscribed successfully', 'success']);
-
+        return redirect()
+            ->route('dashboard')
+            ->with('notification', [
+                'Package subscribed successfully',
+                'success'
+            ]);
     }
+
 
     function isMultipleOfFifty($number){
         $result = $number % 50;
@@ -132,19 +159,66 @@ class PurchaseController extends Controller
 
     public function showPricing()
     {
+        $user = auth()->user();
+
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        $plans = Plan::where('is_active', 1)
+            ->where('allow_to_user', 1)
+            ->orderBy('id', 'ASC')
+            ->get()
+            ->map(function ($plan) use ($baseCurrency, $displayCurrency) {
+
+                $plan->display_amount = CurrencyService::convert(
+                    (string) $plan->amount,
+                    $baseCurrency,
+                    $displayCurrency
+                );
+
+                return $plan;
+            });
+
         return Inertia::render('Purchase/Pricing', [
-            'plans' => Plan::where('is_active', 1)->where('allow_to_user', 1)->orderBy('id', 'ASC')->get(),
+            'plans' => $plans,
+            'display_currency' => $displayCurrency,
         ]);
     }
 
 
-    public function showTopUpForm(Request $request, Plan $planId)
+    public function showTopUpForm(Request $request, $planId)
     {
+        $plan = Plan::find($planId);
+        $user = auth()->user();
+        $baseCurrency = 'INR'; // wallet + plans stored in USD
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
         return Inertia::render('Purchase/Buy', [
-            'plan' => $planId,
-            'available_coin_balance' => userUsdWallet(auth()->user()),
+            'plan' => [
+                'id' => $plan->id,
+                'amount_base' => $plan->amount, // ✅ NEVER converted
+                'amount_display' => CurrencyService::convert(
+                    (string) $plan->amount,
+                    $baseCurrency,
+                    $displayCurrency
+                ),
+                'monthly_roi_amount' => $plan->monthly_roi_amount,
+                'tenure' => $plan->tenure,
+            ],
+
+            'available_coin_balance' => [
+                'balance_base' => userUsdWallet($user)->balance,
+                'balance_display' => CurrencyService::convert(
+                    (string) userUsdWallet($user)->balance,
+                    $baseCurrency,
+                    $displayCurrency
+                ),
+            ],
+
+            'display_currency' => $displayCurrency,
         ]);
     }
+
 
     public function showPaymentForm(Request $request, Invoice $invoice)
     {

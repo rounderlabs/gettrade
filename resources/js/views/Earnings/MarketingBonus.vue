@@ -26,11 +26,15 @@
                                 </div>
                                 <div class="transaction-name">
                                     <h5 class="theme-color">Package</h5>
-                                    <h5><span class="success-color">₹ {{parseFloat(bonus.subscription.amount).toFixed(2)}}</span></h5>
+                                    <h5>
+                                        <span class="success-color">
+                                            {{ currencySymbol }} {{ bonus.subscription.amount_display }}
+                                        </span>
+                                    </h5>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h6 class="theme-color">Direct Bonus</h6>
-                                    <h5 class="success-color">₹ {{parseFloat(bonus.income).toFixed(2)}}</h5>
+                                    <h5 class="success-color">{{ currencySymbol }} {{ bonus.income_display }}</h5>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h6 class="success-color">Credited</h6>
@@ -56,6 +60,8 @@ import {ref} from "vue";
 import Paginator from "@/components/xino/Paginator.vue";
 import {Link} from "@inertiajs/vue3";
 import VueFeather from "vue-feather";
+import { usePage } from "@inertiajs/vue3"
+import { computed } from "vue"
 
 export default {
     name: "MarketingBonus",
@@ -85,8 +91,13 @@ export default {
             })
         }
 
+        const page = usePage()
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
         return {
-            paginatorResponse, paginatorPageMeta, pageMeta, direct_bonuses, formatDate
+            paginatorResponse, paginatorPageMeta, pageMeta, direct_bonuses, formatDate, currencySymbol
         }
     }
 }

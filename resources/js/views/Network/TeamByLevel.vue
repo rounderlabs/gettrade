@@ -37,13 +37,12 @@
                                     <h5 class="fw-semibold dark-text">Package</h5>
                                     <h5 v-if="!partner.downline_user.subscriptions.length " class="fw-semibold error-color mt-2">Not
                                         Active</h5>
-                                    <h5 v-else class="fw-semibold success-color mt-2">₹ {{partner.downline_user?partner.downline_user.total_subscription_amount:'0.00'}}</h5>
-
-                                    <!--                                    <h6 class="fw-normal light-text mt-2">{{ partner.user.username }}</h6>-->
+                                    <h5 v-else class="fw-semibold success-color mt-2"> {{ currencySymbol }} {{ partner.downline_user.subscription_display }}</h5>
                                 </div>
                                 <div>
                                     <h5 class="fw-semibold dark-text">Total Business </h5>
-                                    <h5 class="fw-semibold dark-text mt-2">₹ {{ partner.downline_user.user_business?partner.downline_user.user_business.amount:'0.00' }}</h5>
+                                    <h5 class="fw-semibold dark-text mt-2">{{ currencySymbol }} {{ partner.downline_user.business_display }}
+                                    </h5>
                                 </div>
                                 <div>
                                     <h5 class="fw-semibold dark-text">Joined On </h5>
@@ -55,41 +54,6 @@
                                     <h5 v-if="partner.downline_user.subscriptions.length" class="fw-semibold dark-text mt-2"> {{ formatDate(partner.downline_user.subscriptions[0].created_at) }}</h5>
                                     <h5 v-else class="fw-semibold dark-text mt-2">--</h5>
                                 </div>
-<!--&lt;!&ndash;                                <div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <h5 class="fw-semibold dark-text">Total Team :&ndash;&gt;-->
-<!--&lt;!&ndash;                                        {{ partner.downline_user.team.total }}</h5>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <h5 class="fw-semibold success-color">Active Team :&ndash;&gt;-->
-<!--&lt;!&ndash;                                        {{ partner.downline_user.team.active_total }}</h5>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--                                <div>-->
-<!--                                    <h5 class="fw-semibold dark-text">Total Business</h5>-->
-<!--                                    <h5 class="fw-semibold success-color">-->
-<!--                                        ₹ {{ partner.downline_user.user_business?partner.downline_user.user_business.usd:'0.00' }}</h5>-->
-<!--                                </div>-->
-
-<!--                                <div class="dropdown">-->
-<!--                                    <a aria-expanded="false" class="" data-bs-toggle="dropdown" href="#" role="button">-->
-<!--                                        <VueFeather type="eye"></VueFeather>-->
-<!--                                    </a>-->
-
-<!--                                    <ul class="dropdown-menu" style="">-->
-<!--                                        <li><h5 class="dropdown-item w-100">Sponsor Name: {{-->
-<!--                                                partner.downline_user.tree.sponsor.name-->
-<!--                                            }}</h5></li>-->
-
-<!--                                        <li><h5 class="dropdown-item w-100">Sponsor ID: {{-->
-<!--                                                partner.downline_user.tree.sponsor.username-->
-<!--                                            }}</h5></li>-->
-<!--                                        <li><h5 class="dropdown-item w-100">Total Investment: ₹ {{-->
-<!--                                                partner.downline_user?partner.downline_user.total_subscription_amount:'0.00'-->
-<!--                                            }}</h5></li>-->
-<!--                                        <li><h5 class="dropdown-item w-100">Joined On: {{-->
-<!--                                                partner.downline_user.created_at-->
-<!--                                            }}</h5></li>-->
-<!--                                        <li v-if="partner.downline_user.subscriptions.length"><h5 class="dropdown-item w-100">-->
-<!--                                            Active On: {{ partner.downline_user.subscriptions[0].created_at }}</h5></li>-->
-<!--                                    </ul>-->
-<!--                                </div>-->
                             </div>
                         </div>
                     </li>
@@ -119,6 +83,8 @@
 import TeamWidget from "@/components/xino/TeamWidget";
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import VueFeather from "vue-feather";
+import { usePage } from "@inertiajs/vue3"
+import { computed } from "vue"
 
 export default {
     name: "TeamByLevel",
@@ -130,6 +96,15 @@ export default {
     props: {
         team: Object,
         allLevel: Array,
+    },
+    setup(){
+        const page = usePage()
+
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
+        return {currencySymbol}
     },
     data() {
         return {

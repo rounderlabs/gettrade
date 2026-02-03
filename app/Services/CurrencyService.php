@@ -9,9 +9,6 @@ use RuntimeException;
 
 class CurrencyService
 {
-    /**
-     * Convert amount between currencies (display only)
-     */
     public static function convert(
         string $amount,
         string $from,
@@ -24,34 +21,19 @@ class CurrencyService
         $fromCurrency = Currency::where('code', $from)->firstOrFail();
         $toCurrency   = Currency::where('code', $to)->firstOrFail();
 
-        // ===============================
         // FIAT → FIAT
-        // ===============================
-        if (
-            $fromCurrency->currency_type === 'fiat' &&
-            $toCurrency->currency_type === 'fiat'
-        ) {
+        if ($fromCurrency->currency_type === 'fiat' && $toCurrency->currency_type === 'fiat') {
             return self::fiatToFiat($amount, $from, $to);
         }
 
-        // ===============================
-        // FIAT → CRYPTO (DISPLAY)
-        // ===============================
-        if (
-            $fromCurrency->currency_type === 'fiat' &&
-            $toCurrency->currency_type === 'crypto'
-        ) {
-            return self::fiatToCrypto($amount, $to);
+        // FIAT → CRYPTO (INR → BTC)
+        if ($fromCurrency->currency_type === 'fiat' && $toCurrency->currency_type === 'crypto') {
+            return self::fiatToCrypto($amount, $from, $to);
         }
 
-        // ===============================
-        // CRYPTO → FIAT (DISPLAY)
-        // ===============================
-        if (
-            $fromCurrency->currency_type === 'crypto' &&
-            $toCurrency->currency_type === 'fiat'
-        ) {
-            return self::cryptoToFiat($amount, $from);
+        // CRYPTO → FIAT (BTC → INR)
+        if ($fromCurrency->currency_type === 'crypto' && $toCurrency->currency_type === 'fiat') {
+            return self::cryptoToFiat($amount, $from, $to);
         }
 
         throw new RuntimeException("Conversion not supported: {$from} → {$to}");
@@ -60,11 +42,8 @@ class CurrencyService
     // --------------------------------------------------
     // FIAT → FIAT
     // --------------------------------------------------
-    protected static function fiatToFiat(
-        string $amount,
-        string $from,
-        string $to
-    ): string {
+    protected static function fiatToFiat(string $amount, string $from, string $to): string
+    {
         $rate = ExchangeRate::where('from_currency', $from)
             ->where('to_currency', $to)
             ->latest('effective_at')
@@ -74,56 +53,42 @@ class CurrencyService
             throw new RuntimeException("Exchange rate missing: {$from} → {$to}");
         }
 
-        return bcmul($amount, (string) $rate, self::fiatScale());
+        return bcmul($amount, (string)$rate, 2);
     }
 
     // --------------------------------------------------
-    // FIAT → CRYPTO
-    // amount INR → BTC
-    // formula: amount / BTC_price
+    // FIAT → CRYPTO (INR → BTC)
+    // amount / crypto_price_in_fiat
     // --------------------------------------------------
-    protected static function fiatToCrypto(
-        string $amount,
-        string $cryptoCode
-    ): string {
-        $price = CryptoPrice::where('symbol', $cryptoCode)
+    protected static function fiatToCrypto(string $amount, string $fiat, string $crypto): string
+    {
+        $price = CryptoPrice::where('symbol', $crypto)
+            ->where('pair', $fiat)
             ->latest('fetched_at')
             ->value('price');
 
         if (! $price) {
-            throw new RuntimeException("Crypto price missing: {$cryptoCode}");
+            throw new RuntimeException("Crypto price missing: {$crypto}/{$fiat}");
         }
 
-        return bcdiv($amount, (string) $price, self::cryptoScale());
+        return bcdiv($amount, (string)$price, 8);
     }
 
     // --------------------------------------------------
-    // CRYPTO → FIAT
-    // amount BTC → INR
-    // formula: amount × BTC_price
+    // CRYPTO → FIAT (BTC → INR)
+    // amount × crypto_price_in_fiat
     // --------------------------------------------------
-    protected static function cryptoToFiat(
-        string $amount,
-        string $cryptoCode
-    ): string {
-        $price = CryptoPrice::where('symbol', $cryptoCode)
+    protected static function cryptoToFiat(string $amount, string $crypto, string $fiat): string
+    {
+        $price = CryptoPrice::where('symbol', $crypto)
+            ->where('pair', $fiat)
             ->latest('fetched_at')
             ->value('price');
 
         if (! $price) {
-            throw new RuntimeException("Crypto price missing: {$cryptoCode}");
+            throw new RuntimeException("Crypto price missing: {$crypto}/{$fiat}");
         }
 
-        return bcmul($amount, (string) $price, self::fiatScale());
-    }
-
-    protected static function fiatScale(): int
-    {
-        return 2;
-    }
-
-    protected static function cryptoScale(): int
-    {
-        return 8;
+        return bcmul($amount, (string)$price, 2);
     }
 }

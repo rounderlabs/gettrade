@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserFundAddRequest;
 use App\Models\UserUsdWalletTransaction;
 use App\Models\UserWalletLedger;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,155 +22,368 @@ class WalletController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $depositHistory = UserFundAddRequest::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
-        return Inertia::render('Wallet/Index', [
-            'user_usd_wallet' => userUsdWallet($user),
-            'user_income_wallet' => userIncomeWallet($user),
-            'deposit_histories' => $depositHistory,
 
+        $baseCurrency    = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        $investmentWallet = userUsdWallet($user);
+        $incomeWallet     = userIncomeWallet($user);
+
+        $depositHistory = UserFundAddRequest::where('user_id', $user->id)
+            ->orderBy('id', 'DESC')
+            ->get()
+            ->map(function ($row) use ($baseCurrency, $displayCurrency) {
+                return [
+                    'amount_base'    => $row->amount,
+                    'amount_display' => CurrencyService::convert(
+                        (string) $row->amount,
+                        $baseCurrency,
+                        $displayCurrency
+                    ),
+                    'payment_type' => $row->payment_type,
+                    'status'       => $row->status,
+                    'created_at'   => $row->created_at->format('d M Y H:i'),
+                ];
+            });
+
+        return Inertia::render('Wallet/Index', [
+            'user_usd_wallet' => [
+                'balance_base'    => $investmentWallet->balance,
+                'balance_display' => CurrencyService::convert(
+                    (string) $investmentWallet->balance,
+                    $baseCurrency,
+                    $displayCurrency
+                ),
+            ],
+
+            'user_income_wallet' => [
+                'balance_base'    => $incomeWallet->balance,
+                'balance_display' => CurrencyService::convert(
+                    (string) $incomeWallet->balance,
+                    $baseCurrency,
+                    $displayCurrency
+                ),
+            ],
+
+            'deposit_histories' => $depositHistory,
+            'display_currency'  => $displayCurrency,
         ]);
     }
 
+
     public function showFundTransferForm()
     {
-        return Inertia::render('Wallet/FundTransferFrom');
+        $user = auth()->user();
+
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        $wallet = userUsdWallet($user); // stored in INR
+
+        return Inertia::render('Wallet/FundTransferFrom', [
+            'user_usd_wallet' => [
+                'balance_base' => $wallet->balance, // INR
+                'balance_display' => CurrencyService::convert(
+                    (string) $wallet->balance,
+                    $baseCurrency,
+                    $displayCurrency
+                ),
+            ],
+            'display_currency' => $displayCurrency,
+        ]);
     }
+
+
+//    public function submitFundTransferFrom(Request $request)
+//    {
+//        $request->validate([
+//            'amount' => ['required', 'numeric', 'gte:20'],
+//            'username' => ['required', 'string', 'exists:users,username',]
+//        ]);
+//        $fromUser = auth()->user();
+//        $toUser = User::where('username', $request->username)->first();
+//        $fromUserUsdWallet = userUsdWallet($fromUser);
+//        $toUserUsdWallet = userUsdWallet($toUser);
+//        if ($request->amount > $fromUserUsdWallet->balance) {
+//            return redirect()->back()->with('notification', ['Insufficient Fund.', 'danger']);
+//        }
+//        $fromUserUsdWallet->decrement('balance', $request->amount);
+//        $summaryFrom = '₹ ' . $request->amount . ' Fund Transferred To ' . $toUser->username;
+//        $fromWalletTransaction = UserUsdWalletTransaction::create([
+//            'user_id' => $fromUser->id,
+//            'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['DEBIT'],
+//            'amount_in_usd' => $request->amount,
+//            'last_amount' => $toUserUsdWallet->balance,
+//            'summary' => $summaryFrom,
+//            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+//            'txn_time' => now()
+//        ]);
+//        $amount = $request->amount;
+//        $walletType = 'USDT Wallet';
+//        $currency = 'INR';
+//        $txn_type = 'Debit';
+//        $remark = $summaryFrom;
+//
+//        CreateUserWalletLedgerJob::dispatch($fromUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+//
+//
+//        $summaryTo = '₹ ' . $request->amount . ' Fund Received From ' . $fromUser->username;
+//        $toWalletTransaction = UserUsdWalletTransaction::create([
+//            'user_id' => $request->user()->id,
+//            'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['CREDIT'],
+//            'amount_in_usd' => $request->amount,
+//            'last_amount' => $toUserUsdWallet->balance,
+//            'summary' => $summaryTo,
+//            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+//            'txn_time' => now()
+//        ]);
+//        $toUserUsdWallet->increment('balance', $request->amount);
+//        $txn_type = 'Credit';
+//        $remark = $summaryTo;
+//
+//        CreateUserWalletLedgerJob::dispatch($fromUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+//
+//
+//        return redirect()->back()->with('notification', ['Funds Transferred Successfully.', 'success']);
+//    }
 
     public function submitFundTransferFrom(Request $request)
     {
         $request->validate([
-            'amount' => ['required', 'numeric', 'gte:20'],
-            'username' => ['required', 'string', 'exists:users,username',]
+            'amount'   => ['required', 'numeric', 'gt:0'],
+            'username' => ['required', 'exists:users,username'],
         ]);
+
         $fromUser = auth()->user();
-        $toUser = User::where('username', $request->username)->first();
-        $fromUserUsdWallet = userUsdWallet($fromUser);
-        $toUserUsdWallet = userUsdWallet($toUser);
-        if ($request->amount > $fromUserUsdWallet->balance) {
-            return redirect()->back()->with('notification', ['Insufficient Fund.', 'danger']);
+        $toUser   = User::where('username', $request->username)->firstOrFail();
+
+        /**
+         * ------------------------------------
+         * STEP 1: Resolve BASE amount (INR)
+         * ------------------------------------
+         */
+        $displayCurrency = $fromUser->preferred_currency ?? 'INR';
+
+        if ($displayCurrency === 'INR') {
+            $amountInInr = castDecimalString($request->amount, 2);
+        } else {
+            $amountInInr = CurrencyService::convert(
+                (string) $request->amount,
+                $displayCurrency,
+                'INR'
+            );
         }
-        $fromUserUsdWallet->decrement('balance', $request->amount);
-        $summaryFrom = '₹ ' . $request->amount . ' Fund Transferred To ' . $toUser->username;
-        $fromWalletTransaction = UserUsdWalletTransaction::create([
-            'user_id' => $fromUser->id,
+
+        /**
+         * ------------------------------------
+         * STEP 2: Wallet (stored in INR)
+         * ------------------------------------
+         */
+        $fromWallet = userUsdWallet($fromUser); // your wallet table (INR based)
+
+        if (bccomp($fromWallet->balance, $amountInInr, 2) < 0) {
+            return back()->with('notification', [
+                'Insufficient balance',
+                'danger'
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        /**
+         * ------------------------------------
+         * STEP 3: Debit sender
+         * ------------------------------------
+         */
+        $fromWallet->decrement('balance', $amountInInr);
+
+        UserUsdWalletTransaction::create([
+            'user_id'          => $fromUser->id,
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['DEBIT'],
-            'amount_in_usd' => $request->amount,
-            'last_amount' => $toUserUsdWallet->balance,
-            'summary' => $summaryFrom,
-            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
-            'txn_time' => now()
+            'amount_in_usd'    => $amountInInr, // ⚠️ column name legacy, value INR
+            'last_amount'      => $fromWallet->balance + $amountInInr,
+            'summary'          => 'Fund Transfer',
+            'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+            'txn_time'         => now(),
         ]);
-        $amount = $request->amount;
-        $walletType = 'USDT Wallet';
-        $currency = 'INR';
-        $txn_type = 'Debit';
-        $remark = $summaryFrom;
 
-        CreateUserWalletLedgerJob::dispatch($fromUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+        /**
+         * ------------------------------------
+         * STEP 4: Credit receiver
+         * ------------------------------------
+         */
+        $toWallet = userUsdWallet($toUser);
+        $toWallet->increment('balance', $amountInInr);
 
-
-        $summaryTo = '₹ ' . $request->amount . ' Fund Received From ' . $fromUser->username;
-        $toWalletTransaction = UserUsdWalletTransaction::create([
-            'user_id' => $request->user()->id,
+        UserUsdWalletTransaction::create([
+            'user_id'          => $toUser->id,
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['CREDIT'],
-            'amount_in_usd' => $request->amount,
-            'last_amount' => $toUserUsdWallet->balance,
-            'summary' => $summaryTo,
-            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
-            'txn_time' => now()
+            'amount_in_usd'    => $amountInInr,
+            'last_amount'      => $toWallet->balance - $amountInInr,
+            'summary'          => 'Fund Received',
+            'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+            'txn_time'         => now(),
         ]);
-        $toUserUsdWallet->increment('balance', $request->amount);
-        $txn_type = 'Credit';
-        $remark = $summaryTo;
 
-        CreateUserWalletLedgerJob::dispatch($fromUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+        /**
+         * ------------------------------------
+         * STEP 5: Ledger (always INR)
+         * ------------------------------------
+         */
+        CreateUserWalletLedgerJob::dispatch(
+            $fromUser,
+            'Fund Wallet',
+            'INR',            // ✅ FIXED, no variable needed
+            'Debit',
+            $amountInInr,
+            'Fund Transfer'
+        );
 
+        CreateUserWalletLedgerJob::dispatch(
+            $toUser,
+            'Fund Wallet',
+            'INR',
+            'Credit',
+            $amountInInr,
+            'Fund Received'
+        );
 
-        return redirect()->back()->with('notification', ['Funds Transferred Successfully.', 'success']);
+        DB::commit();
+
+        return back()->with('notification', [
+            'Funds transferred successfully',
+            'success'
+        ]);
     }
+
 
 
     public function showActivateMemberForm()
     {
-        $plans = Plan::where('is_active', 1)->orderBy('id', 'ASC')->get();
+        $user = auth()->user();
+
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        $plans = Plan::where('is_active', 1)
+            ->orderBy('id', 'ASC')
+            ->get()
+            ->map(function ($plan) use ($baseCurrency, $displayCurrency) {
+                return [
+                    'id' => $plan->id,
+                    'name' => $plan->name,
+                    'amount_base' => $plan->amount, // INR
+                    'amount_display' => CurrencyService::convert(
+                        (string) $plan->amount,
+                        $baseCurrency,
+                        $displayCurrency
+                    ),
+                ];
+            });
+
         return Inertia::render('Wallet/ActivateMemberFrom', [
-            'plans' => $plans
+            'plans' => $plans,
+            'display_currency' => $displayCurrency,
         ]);
     }
+
 
     public function submitActivationForm(Request $request)
     {
         $request->validate([
-            'username' => ['required', 'string', 'exists:users,username',],
-            'plan_id' => ['required'],
-            'amount' => ['required', 'numeric', 'gte:50'],
+            'username' => ['required', 'exists:users,username'],
+            'plan_id'  => ['required', 'exists:plans,id'],
         ]);
-        $plan = Plan::find($request->plan_id);
-        $amount = $plan->amount;
 
-        $fromUser = auth()->user();
-        $toUser = User::where('username', $request->username)->first();
-        $fromUserUsdWallet = userUsdWallet($fromUser);
-        $toUserUsdWallet = userUsdWallet($toUser);
+        $user   = auth()->user();
+        $toUser = User::where('username', $request->username)->firstOrFail();
+        $plan   = Plan::findOrFail($request->plan_id);
 
-        if ($amount > $fromUserUsdWallet->balance) {
+        $baseCurrency = 'INR';
+
+        /**
+         * -----------------------------------
+         * BASE AMOUNT (INR ONLY)
+         * -----------------------------------
+         */
+        $amountBase = castDecimalString($plan->amount, 2);
+
+        $fromWallet = userUsdWallet($user);
+        $toWallet   = userUsdWallet($toUser);
+
+        if (bccomp($fromWallet->balance, $amountBase, 2) < 0) {
             return back()->withErrors([
                 'amount' => 'Insufficient wallet balance'
             ]);
         }
 
+        DB::beginTransaction();
 
-        $fromUserUsdWallet->decrement('balance', $amount);
-        $summaryFrom = '₹ ' . $amount . ' Fund Transferred To ' . $toUser->username . ' Used for Subscription';
-        $fromWalletTransaction = UserUsdWalletTransaction::create([
-            'user_id' => $fromUser->id,
+        // 🔴 Debit sender
+        $fromWallet->decrement('balance', $amountBase);
+
+        UserUsdWalletTransaction::create([
+            'user_id'          => $user->id,
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['DEBIT'],
-            'amount_in_usd' => $amount,
-            'last_amount' => $fromUserUsdWallet->balance,
-            'summary' => $summaryFrom,
-            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
-            'txn_time' => now()
+            'amount_in_usd'    => $amountBase, // BASE (INR)
+            'last_amount'      => $fromWallet->balance,
+            'summary'          => 'Team member activation',
+            'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+            'txn_time'         => now(),
         ]);
-        $walletType = 'USDT Wallet';
-        $currency = 'INR';
-        $txn_type = 'Debit';
-        $remark = $summaryFrom;
 
-        CreateUserWalletLedgerJob::dispatch($fromUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+        CreateUserWalletLedgerJob::dispatch(
+            $user,
+            'Fund Wallet',
+            $baseCurrency,
+            'Debit',
+            $amountBase,
+            'Team member activation'
+        );
 
+        // 🟢 Credit receiver
+        $toWallet->increment('balance', $amountBase);
 
-        $summaryTo = '₹ ' . $amount . ' Fund Received From ' . $fromUser->username . 'Used for Subscription';
-        $toWalletTransaction = UserUsdWalletTransaction::create([
-            'user_id' => $toUser->id,
+        UserUsdWalletTransaction::create([
+            'user_id'          => $toUser->id,
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['CREDIT'],
-            'amount_in_usd' => $amount,
-            'last_amount' => $toUserUsdWallet->balance,
-            'summary' => $summaryTo,
-            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
-            'txn_time' => now()
+            'amount_in_usd'    => $amountBase,
+            'last_amount'      => $toWallet->balance,
+            'summary'          => 'Activation fund received',
+            'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+            'txn_time'         => now(),
         ]);
-        $toUserUsdWallet->increment('balance', $amount);
-        $txn_type = 'Credit';
-        $remark = $summaryTo;
 
-        CreateUserWalletLedgerJob::dispatch($toUser, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
+        CreateUserWalletLedgerJob::dispatch(
+            $toUser,
+            'Fund Wallet',
+            $baseCurrency,
+            'Credit',
+            $amountBase,
+            'Activation fund received'
+        );
 
-        $summary = UserUsdWalletTransaction::TXN_SUMMARY['ACTIVE PLAN'];
-        $walletTransaction = UserUsdWalletTransaction::create([
-            'user_id' => $toUser->id,
+        // 🔴 Activate subscription
+        $toWallet->decrement('balance', $amountBase);
+
+        $subscriptionTxn = UserUsdWalletTransaction::create([
+            'user_id'          => $toUser->id,
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['DEBIT'],
-            'amount_in_usd' => $amount,
-            'last_amount' => $toUserUsdWallet->balance,
-            'summary' => $summary,
-            'status' => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
-            'txn_time' => now()
+            'amount_in_usd'    => $amountBase,
+            'last_amount'      => $toWallet->balance,
+            'summary'          => UserUsdWalletTransaction::TXN_SUMMARY['ACTIVE PLAN'],
+            'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
+            'txn_time'         => now(),
         ]);
 
-        $toUserUsdWallet->decrement('balance', $amount);
-        CreateSubscriptionJob::dispatch($plan, $toUser, $walletTransaction)->delay(now()->addSecond());
-        return redirect()->back()->with('notification', ['Package subscribed successfully', 'success']);
+        CreateSubscriptionJob::dispatch($plan, $toUser, $subscriptionTxn);
 
+        DB::commit();
 
+        return back()->with('notification', [
+            'Package subscribed successfully',
+            'success'
+        ]);
     }
 
 
@@ -178,22 +392,40 @@ class WalletController extends Controller
         return Inertia::render('Wallet/WalletLedger', []);
     }
 
+
     public function getLedger(Request $request)
     {
-//        $ledgers = UserWalletLedger::where('user_id', auth()->user()->id)->orderByDesc('id')->simplePaginate(10);
-//        return response()->json($ledgers);
+        $user = auth()->user();
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
 
-        $query = UserWalletLedger::where('user_id', auth()->id())
+        $query = UserWalletLedger::where('user_id', $user->id)
             ->orderByDesc('id');
 
         if ($request->filled('type')) {
             $query->where('txn_type', $request->type); // Credit / Debit
         }
 
-        return response()->json(
-            $query->simplePaginate(10)
-        );
+        $ledgers = $query->simplePaginate(10);
+
+        // 🔁 Append display amount
+        $ledgers->getCollection()->transform(function ($ledger) use ($baseCurrency, $displayCurrency) {
+
+            $ledger->amount_base = $ledger->amount; // INR stored
+            $ledger->amount_display = $baseCurrency === $displayCurrency
+                ? $ledger->amount
+                : CurrencyService::convert(
+                    (string) $ledger->amount,
+                    $baseCurrency,
+                    $displayCurrency
+                );
+
+            return $ledger;
+        });
+
+        return response()->json($ledgers);
     }
+
 
 //    public function showInrRequest()
 //    {

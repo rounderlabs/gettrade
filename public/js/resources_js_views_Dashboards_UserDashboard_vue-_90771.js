@@ -327,9 +327,10 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.Link
   },
   props: {
-    user_income_stats: Object,
-    investment: Number,
-    total_withdrawal: Number
+    user_income: Object,
+    investment: [String, Number],
+    total_withdrawal: [String, Number],
+    currency: String
   }
 });
 
@@ -679,7 +680,8 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_0__.Link
   },
   props: {
-    user_income_stats: Object
+    user_income: Object,
+    currency: String
   }
 });
 
@@ -1078,7 +1080,7 @@ __webpack_require__.r(__webpack_exports__);
     user: Object,
     user_income_wallet: Object,
     user_usd_wallet: Object,
-    user_income_stats: Object,
+    user_income: Object,
     user_income_on_hold: Object,
     active_subscription: Object,
     subscriptions: Object,
@@ -1089,9 +1091,14 @@ __webpack_require__.r(__webpack_exports__);
     compound: Object,
     total_income: String,
     showWelcomeModal: Boolean,
-    welcomeMode: String
+    welcomeMode: String,
+    display_currency: String
   },
   setup: function setup() {
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_21__.usePage)();
+    var currencySymbol = (0,vue__WEBPACK_IMPORTED_MODULE_13__.computed)(function () {
+      return page.props.currency.symbol;
+    });
     (0,vue__WEBPACK_IMPORTED_MODULE_13__.onMounted)(function () {
       window.copyText = function (value) {
         var s = document.createElement('input');
@@ -1115,6 +1122,9 @@ __webpack_require__.r(__webpack_exports__);
         s.remove();
       };
     });
+    return {
+      currencySymbol: currencySymbol
+    };
   },
   methods: {
     copy: function copy(text) {
@@ -1639,21 +1649,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, "My Portfolio"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     alt: "ellipse",
     src: "/user-panel/assets-panel/assets/images/ellipse.svg"
-  })], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", _hoisted_5, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.total).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  })], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.user_income.total), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "d-flex align-items-center justify-content-start"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     alt: "down",
     "class": "img-fluid icon",
     src: "/user-panel/assets-panel/assets/images/arrow-down-right.svg"
-  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Investment")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_8, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.investment).toFixed(2)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Investment")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.investment), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "d-flex align-items-center justify-content-end"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     alt: "up",
     "class": "img-fluid icon",
     src: "/user-panel/assets-panel/assets/images/arrow-up-right.svg"
-  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Withdrawn")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_10, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.total_withdrawal).toFixed(2)), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-    "class": "add-money theme-color",
-    href: _ctx.route('deposit.add.fund')
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Withdrawn")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.total_withdrawal), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+    href: _ctx.route('deposit.add.fund'),
+    "class": "add-money theme-color"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return _cache[3] || (_cache[3] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("+ Add Fund")]);
@@ -2173,12 +2183,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "dark-text"
   }, "Trading Income"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
-  }, "Monthly")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.roi).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  }, "Monthly")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.user_income.roi), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: _ctx.route('earnings.monthly.trading.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return _cache[0] || (_cache[0] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Details")]);
+      return _cache[0] || (_cache[0] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Details ")]);
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["href"])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
@@ -2189,7 +2199,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "dark-text"
   }, "Market Earnings"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
-  }, "Referral Bonus")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.direct).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  }, "Referral Bonus")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.user_income.direct), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: _ctx.route('earnings.direct.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
@@ -2205,12 +2215,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "dark-text"
   }, "Systematic trading income"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
-  }, "Monthly")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.roi_on_roi).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  }, "Monthly")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.user_income.roi_on_roi), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: _ctx.route('earnings.systematic.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return _cache[4] || (_cache[4] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Details")]);
+      return _cache[4] || (_cache[4] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Details ")]);
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["href"])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
@@ -2221,7 +2231,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "dark-text"
   }, "Rank Profit"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", {
     "class": "light-text mt-2"
-  }, "On Team Business")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "₹ " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(parseFloat($props.user_income_stats.rank).toFixed(2)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  }, "On Team Business")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.user_income.rank), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: _ctx.route('earnings.rank.bonus'),
     "class": "btn bill-pay bill-paid"
   }, {
@@ -2853,12 +2863,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     ref_qr: $props.ref_qr,
     user: $props.user
   }, null, 8 /* PROPS */, ["ref_qr", "user"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BalanceInfoComponent, {
+    currency: $setup.currencySymbol,
     investment: $props.investment,
     total_withdrawal: $props.total_withdrawal,
-    user_income_stats: $props.user_income_stats
-  }, null, 8 /* PROPS */, ["investment", "total_withdrawal", "user_income_stats"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_UserIncomeComponent, {
-    user_income_stats: $props.user_income_stats
-  }, null, 8 /* PROPS */, ["user_income_stats"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_team_widget, {
+    user_income: $props.user_income
+  }, null, 8 /* PROPS */, ["currency", "investment", "total_withdrawal", "user_income"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_UserIncomeComponent, {
+    user_income: $props.user_income,
+    currency: $setup.currencySymbol
+  }, null, 8 /* PROPS */, ["user_income", "currency"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_team_widget, {
     team: $props.team
   }, null, 8 /* PROPS */, ["team"])], 64 /* STABLE_FRAGMENT */);
 }

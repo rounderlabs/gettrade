@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RankIncome;
-use App\Models\RankIncomeStat;
 use App\Models\Subscription;
 use App\Models\UserLevelIncome;
 use App\Models\UserLevelIncomeStat;
 use App\Models\UserLevelRoiIncome;
-use App\Models\UserNlitenPoolIncome;
 use App\Models\UserRank;
-use App\Models\UserRoiCompoundedIncomes;
 use Inertia\Inertia;
+
+use App\Http\Controllers\Concerns\DisplaysCurrency;
 
 class EarningController extends Controller
 {
-
+    use DisplaysCurrency;
     public function showMonthlyTradingBonus()
     {
         return Inertia::render('Earnings/TradingBonus', []);
@@ -23,14 +21,22 @@ class EarningController extends Controller
 
     public function getMonthlyTradingBonus()
     {
-        $monthlyRoi = auth()->user()
-            ->userRoiIncomes()
-            ->with('subscription.user') // ✅ singular
+        $user = auth()->user();
+
+        $monthlyRoi = $user->userRoiIncomes()
+            ->with('subscription.user')
             ->orderByDesc('id')
             ->simplePaginate(10);
 
+        $monthlyRoi->getCollection()->transform(function ($row) use ($user) {
+            $row->income_display = $this->displayAmount($row->income ?? 0, $user);
+            return $row;
+        });
+
         return response()->json($monthlyRoi);
     }
+
+
 
     public function showDirectBonus()
     {
@@ -39,14 +45,23 @@ class EarningController extends Controller
 
     public function getDirectBonus()
     {
-        $monthlyRoi = auth()->user()
-            ->userDirectIncomes()
-            ->with('subscription.user') // ✅ singular
+        $user = auth()->user();
+
+        $direct = $user->userDirectIncomes()
+            ->with('subscription.user')
             ->orderByDesc('id')
             ->simplePaginate(10);
 
-        return response()->json($monthlyRoi);
+        $direct->getCollection()->transform(function ($row) use ($user) {
+            $row->subscription->amount_display = $this->displayAmount($row->subscription->amount ?? 0, $user);
+            $row->income_display = $this->displayAmount($row->income ?? 0, $user);
+            return $row;
+        });
+
+        return response()->json($direct);
     }
+
+
 
     public function showSystematicBonus()
     {
@@ -57,17 +72,22 @@ class EarningController extends Controller
 
     public function getSystematicBonus()
     {
-        $levelRoi = auth()->user()
-            ->userLevelRoiIncomes()
-            ->with([
-                'userRoiIncome.user',
-                'userRoiIncome.subscription',
-            ])
+        $user = auth()->user();
+
+        $levelRoi = $user->userLevelRoiIncomes()
+            ->with(['userRoiIncome.user','userRoiIncome.subscription'])
             ->orderByDesc('id')
             ->simplePaginate(10);
 
+        $levelRoi->getCollection()->transform(function ($row) use ($user) {
+            $row->income_display = $this->displayAmount($row->income_usd ?? 0, $user);
+            return $row;
+        });
+
         return response()->json($levelRoi);
     }
+
+
 
 
 
@@ -83,12 +103,22 @@ class EarningController extends Controller
 
     public function getRankBonus()
     {
-        $magicBonus = auth()->user()->userRankRoiIncomes()->with([
-            'userRoiIncome.user',
-            'userRoiIncome.subscription',
-        ])->orderby('id', 'desc')->orderByDesc('id')->simplePaginate(10);
-        return response()->json($magicBonus);
+        $user = auth()->user();
+
+        $rank = $user->userRankRoiIncomes()
+            ->with(['userRoiIncome.user','userRoiIncome.subscription'])
+            ->orderByDesc('id')
+            ->simplePaginate(10);
+
+        $rank->getCollection()->transform(function ($row) use ($user) {
+            $row->income_display = $this->displayAmount($row->income ?? 0, $user);
+            return $row;
+        });
+
+        return response()->json($rank);
     }
+
+
 
     public function showRewardBonus()
     {
@@ -97,9 +127,21 @@ class EarningController extends Controller
 
     public function getRewardBonus()
     {
-        $rewardBonus = auth()->user()->userRewardIncomeStats()->orderby('id', 'desc')->orderByDesc('id')->simplePaginate(10);
-        return response()->json($rewardBonus);
+        $user = auth()->user();
+
+        $reward = $user->userRewardIncomeStats()
+            ->orderByDesc('id')
+            ->simplePaginate(10);
+
+        $reward->getCollection()->transform(function ($row) use ($user) {
+            $row->income_display = $this->displayAmount($row->income ?? 0, $user);
+            return $row;
+        });
+
+        return response()->json($reward);
     }
+
+
 
 
 }

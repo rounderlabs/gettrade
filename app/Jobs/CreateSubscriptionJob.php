@@ -70,10 +70,10 @@ class CreateSubscriptionJob implements ShouldQueue
         ]);
         $amount = $this->userUsdWalletTransaction->amount_in_usd;
 
-        $walletType = 'USDT Wallet';
+        $walletType = 'Fund Wallet';
         $currency = 'INR';
         $txn_type = 'Debit';
-        $remark = 'Investment of ₹' . $amount . ' for Package Activation has been Debited';
+        $remark = 'Package Activation Done. Fund Debited';
         CreateUserWalletLedgerJob::dispatch($this->user, $walletType, $currency, $txn_type, $amount, $remark)->delay(now()->addSecond());
         UpdateUserDailyBusinessJob::dispatch($this->user, 'self_business', $amount)->delay(now()->addSecond());
 

@@ -25,7 +25,7 @@
                                 <div class="transaction-name">
                                     <h5>Package Amount : <span class="success-color">₹ {{parseFloat(bonus.subscription.amount).toFixed(2)}}</span></h5>
 
-                                    <h3 class="dark-text">₹ {{parseFloat(bonus.income).toFixed(2)}}</h3>
+                                    <h3 class="dark-text">{{currencySymbol}} {{bonus.income_display}}</h3>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h5 class="light-text"><span class="light-text">{{bonus.closing_date}}</span></h5>
@@ -46,9 +46,9 @@
 <script>
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import EarningWidget from "@/components/EarningWidget";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import Paginator from "@/components/xino/Paginator.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, usePage} from "@inertiajs/vue3";
 import VueFeather from "vue-feather";
 
 export default {
@@ -70,8 +70,13 @@ export default {
             pageMeta.value = data
         }
 
+        const page = usePage()
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹"
+        })
+
         return {
-            paginatorResponse, paginatorPageMeta, pageMeta, monthly_roi_bonuses
+            paginatorResponse, paginatorPageMeta, pageMeta, monthly_roi_bonuses, currencySymbol
         }
     }
 }

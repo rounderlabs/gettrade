@@ -55,16 +55,19 @@
                     <div class="transaction-box">
                         <a class="d-flex gap-3" href="">
                             <div class="transaction-image color5">
-                                <img v-if="ledger.wallet_type === 'USDT Wallet'" alt="tether" class="img-fluid icon"
+                                <img v-if="ledger.wallet_type === 'Fund Wallet'" alt="tether" class="img-fluid icon"
                                      src="/user-panel/assets-panel/assets/images/fund-wallet.svg">
                                 <img v-if="ledger.wallet_type === 'Income Wallet'" alt="tether" class="img-fluid icon"
                                      src="/user-panel/assets-panel/assets/images/income-wallet.svg">
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-name">
-                                    <h5 v-if="ledger.wallet_type === 'USDT Wallet'">Fund Wallet</h5>
+                                    <h5 v-if="ledger.wallet_type === 'Fund Wallet'">Fund Wallet</h5>
                                     <h5 v-if="ledger.wallet_type === 'Income Wallet'">Earning Wallet</h5>
-                                    <h3 class="dark-text">₹ {{ parseFloat(ledger.amount).toFixed(2) }}</h3>
+                                    <h3 class="dark-text">
+                                        {{ currencySymbol }} {{ Number(ledger.amount_display).toFixed(2) }}
+                                    </h3>
+
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h5 :class="{'error-color': ledger.txn_type === 'Debit','success-color': ledger.txn_type === 'Credit'}">
@@ -94,6 +97,10 @@ import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import { ref, computed } from "vue";
 import Paginator from "@/components/xino/Paginator.vue";
 import VueFeather from "vue-feather";
+import { usePage } from "@inertiajs/vue3";
+
+
+
 
 export default {
     name: "WalletLedger",
@@ -127,6 +134,12 @@ export default {
             return url;
         });
 
+        const page = usePage();
+
+        const currencySymbol = computed(() => {
+            return page.props.currency?.symbol ?? "₹";
+        });
+
         return {
             ledgers,
             pageMeta,
@@ -135,7 +148,7 @@ export default {
             applyFilter,
             baseUrl,
             filterType,
-            loading
+            loading,currencySymbol
         };
     }
 };
