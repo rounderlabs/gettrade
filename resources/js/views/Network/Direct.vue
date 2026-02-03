@@ -26,7 +26,7 @@
                                 <div>
                                     <h5 class="fw-semibold dark-text">Total Business</h5>
 
-                                    <h6 class="fw-normal success-color mt-2">{{ currencySymbol }} {{ partner.user.user_business.amount_display }}
+                                    <h6 class="fw-normal success-color mt-2">{{ currencySymbol }} {{ partner.user.user_business?partner.user.user_business.amount_display:'0.00' }}
                                     </h6>
                                 </div>
                                 <div>
