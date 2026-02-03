@@ -70,7 +70,7 @@ class RunAdminScheduledJobs extends Command
                 DB::table('scheduled_job_logs')->insert([
                     'scheduled_job_id' => $job->id,
                     'status' => 'success',
-                    'message' => 'Executed successfully',
+                    'output' => 'Executed successfully',
                     'ran_at' => $now,
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -86,7 +86,7 @@ class RunAdminScheduledJobs extends Command
                 DB::table('scheduled_job_logs')->insert([
                     'scheduled_job_id' => $job->id,
                     'status' => 'failed',
-                    'message' => $e->getMessage(),
+                    'output' => $e->getMessage(),
                     'ran_at' => $now,
                     'created_at' => now(),
                     'updated_at' => now(),
