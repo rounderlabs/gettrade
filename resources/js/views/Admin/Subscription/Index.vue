@@ -3,33 +3,31 @@
         <div class="col">
             <div class="card">
 
-                <!-- ================= FILTER FORM ================= -->
+                <!-- FILTER FORM -->
                 <div class="card-header">
                     <form @submit.prevent="applyFilter">
                         <div class="row">
 
                             <!-- FROM DATE -->
-                            <div class="col-12 col-md-3 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label>From Date</label>
-                                <datepicker
+                                <Datepicker
                                     v-model="filters.from_date"
                                     class="form-control"
-                                    placeholder="From Date"
                                 />
                             </div>
 
                             <!-- TO DATE -->
-                            <div class="col-12 col-md-3 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label>To Date</label>
-                                <datepicker
+                                <Datepicker
                                     v-model="filters.to_date"
                                     class="form-control"
-                                    placeholder="To Date"
                                 />
                             </div>
 
                             <!-- USER ID -->
-                            <div class="col-12 col-md-3 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label>User ID</label>
                                 <input
                                     v-model="filters.plan_id"
@@ -39,7 +37,7 @@
                             </div>
 
                             <!-- BUTTONS -->
-                            <div class="col-12 col-md-3 mt-4 d-flex gap-2">
+                            <div class="col-md-3 mt-4 d-flex gap-2">
                                 <button class="btn btn-info btn-sm w-50">
                                     Filter
                                 </button>
@@ -57,13 +55,13 @@
                     </form>
                 </div>
 
-                <!-- ================= TABLE ================= -->
+                <!-- TABLE -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped text-center">
                             <thead>
                             <tr>
-                                <th>Sr.No</th>
+                                <th>#</th>
                                 <th>User</th>
                                 <th>Plan</th>
                                 <th>Amount</th>
@@ -83,7 +81,7 @@
                                 <td>{{ index + pageMeta.from }}</td>
 
                                 <td>
-                                    {{ sub.user.username }} <br />
+                                    <b>{{ sub.user.username }}</b><br>
                                     <small>{{ sub.user.name }}</small>
                                 </td>
 
@@ -94,11 +92,11 @@
                                 <td>₹ {{ sub.earned_so_far }}</td>
 
                                 <td>
-                                        <span
-                                            :class="sub.is_active ? 'text-success' : 'text-danger'"
-                                        >
-                                            {{ sub.is_active ? "Active" : "Inactive" }}
-                                        </span>
+                                    <span
+                                        :class="sub.is_active ? 'text-success' : 'text-danger'"
+                                    >
+                                        {{ sub.is_active ? "Active" : "Inactive" }}
+                                    </span>
                                 </td>
 
                                 <td>{{ sub.created_at }}</td>
@@ -107,7 +105,7 @@
                         </table>
                     </div>
 
-                    <!-- ================= PAGINATOR ================= -->
+                    <!-- PAGINATOR -->
                     <AdminPaginator
                         :key="paginatorKey"
                         :base-url="baseUrl"
@@ -115,6 +113,7 @@
                         @pageMeta="paginatorMeta"
                     />
                 </div>
+
             </div>
         </div>
     </div>
@@ -136,41 +135,43 @@ export default {
     },
 
     setup() {
-        const subscriptions = ref([])
-        const pageMeta = ref({})
 
-        /* ================= FILTER STATE ================= */
+        const subscriptions = ref([])
+        const pageMeta = ref({ from: 1 })
+
+        /* FILTER STATE */
         const filters = ref({
             plan_id: null,
             from_date: null,
             to_date: null,
         })
 
-        /* ================= KEY TO FORCE PAGINATOR RELOAD ================= */
+        /* Force paginator reload */
         const paginatorKey = ref(Date.now())
 
-        /* ================= FORMAT DATE ================= */
-        const formatDate = (date) => {
+        /* Format Date */
+        function formatDate(date) {
             if (!date) return "noDate"
+
             const tzOffset = date.getTimezoneOffset() * 60000
             return new Date(date - tzOffset).toISOString().split("T")[0]
         }
 
-        /* ================= BASE URL ================= */
+        /* Base URL */
         const baseUrl = computed(() => {
-            const plan = filters.value.plan_id ?? "noId"
+            const plan = filters.value.plan_id || "noId"
             const from = formatDate(filters.value.from_date)
             const to = formatDate(filters.value.to_date)
 
             return route("admin.subscriptions.get", [plan, from, to])
         })
 
-        /* ================= APPLY FILTER ================= */
+        /* Apply Filter */
         function applyFilter() {
             paginatorKey.value = Date.now()
         }
 
-        /* ================= RESET FILTER ================= */
+        /* Reset Filter */
         function resetFilter() {
             filters.value.plan_id = null
             filters.value.from_date = null
@@ -179,7 +180,7 @@ export default {
             paginatorKey.value = Date.now()
         }
 
-        /* ================= PAGINATOR CALLBACKS ================= */
+        /* Paginator Callbacks */
         function paginatorResponse(data) {
             subscriptions.value = data
         }
