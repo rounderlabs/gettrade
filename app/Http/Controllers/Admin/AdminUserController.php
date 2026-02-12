@@ -55,24 +55,24 @@ class AdminUserController extends Controller
     public function filterUsers(Request $request)
     {
         if ($request->status == 'active') {
-            $users = User::whereHas('subscriptions')->with(['team', 'tree.sponsor', 'subscriptions', 'userStop', 'userInvestment'])
+            $users = User::whereHas('subscriptions')->with(['team', 'tree.sponsor', 'subscriptions', 'userStop'])
                 ->withCasts(['created_at' => 'date:Y-m-d'])
                 ->orderByDesc('id')->paginate(10);
         } else if ($request->status == 'inactive') {
-            $users = User::whereDoesntHave('subscriptions')->with(['team', 'tree.sponsor', 'subscriptions', 'userStop', 'userInvestment'])
+            $users = User::whereDoesntHave('subscriptions')->with(['team', 'tree.sponsor', 'subscriptions', 'userStop'])
                 ->withCasts(['created_at' => 'date:Y-m-d'])
                 ->orderByDesc('id')->paginate(10);
         } else {
             if (is_numeric($request->filter)) {
                 return response()->json(
-                    User::with(['team', 'tree.sponsor', 'subscriptions', 'userStop', 'userInvestment'])
+                    User::with(['team', 'tree.sponsor', 'subscriptions', 'userStop'])
                         ->where('id', $request->filter)
                         ->orWhere('username', 'like', '%' . $request->filter)
                         ->withCasts(['created_at' => 'date:Y-m-d'])
                         ->orderByDesc('id')->paginate(50)
                 );
             }
-            $users = User::with(['team', 'tree.sponsor', 'subscriptions', 'userStop', 'userInvestment'])
+            $users = User::with(['team', 'tree.sponsor', 'subscriptions', 'userStop'])
                 ->where('name', 'like', '%' . $request->filter . '%')
                 ->orWhere('email', 'like', '%' . $request->filter . '%')
                 ->orWhere('username', 'like', '%' . $request->filter . '%')
