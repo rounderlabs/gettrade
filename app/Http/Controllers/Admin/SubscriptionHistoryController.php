@@ -18,27 +18,32 @@ class SubscriptionHistoryController extends Controller
         return Inertia::render('Admin/Subscription/Index');
     }
 
-    public function getSubscriptionHistory($plan, $from_date, $to_date)
+    public function getSubscriptionHistory(Request $request)
     {
-        $where = [];
-        if (is_numeric($plan)) {
-            $where = ['plan_id' => strtolower($plan)];
+        $query = Subscription::with(['user', 'plan'])
+            ->orderByDesc('id');
+
+        // ✅ User Filter
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
-        if ($from_date != 'noDate' && $to_date != 'noDate') {
-            $fromDateNew = Carbon::createFromFormat('Y-m-d', $from_date)->format('Y-m-d');
-            $fromToNew = Carbon::createFromFormat('Y-m-d', $to_date)->format('Y-m-d');
-            $subscriptions = Subscription::with('user', 'plan')
-                ->whereDate('created_at', '>=', $fromDateNew)->whereDate('created_at', '<=', $fromToNew)
-                ->where($where)
-                ->withCasts(['created_at' => 'datetime:Y-m-d'])
-                ->orderByDesc('id')->simplePaginate(200);
-        } else {
-            $subscriptions = Subscription::with('user', 'plan')
-                ->where($where)
-                ->withCasts(['created_at' => 'datetime:Y-m-d'])
-                ->orderByDesc('id')->simplePaginate(200);
+
+        // ✅ Plan Filter
+        if ($request->filled('plan_id')) {
+            $query->where('plan_id', $request->plan_id);
         }
-        return response()->json($subscriptions);
+
+        // ✅ Date Filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('created_at', [
+                $request->from_date . " 00:00:00",
+                $request->to_date . " 23:59:59",
+            ]);
+        }
+
+        return response()->json(
+            $query->simplePaginate(10)
+        );
     }
 
 
