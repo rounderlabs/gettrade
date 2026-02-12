@@ -3,92 +3,88 @@
         <div class="col">
             <div class="card">
 
-                <!-- HEADER FILTER FORM -->
+                <!-- ================= FILTER FORM ================= -->
                 <div class="card-header">
                     <form @submit.prevent="applyFilter">
                         <div class="row">
 
                             <!-- FROM DATE -->
-                            <div class="col-md-3 mb-3">
+                            <div class="col-12 col-md-3 mb-3">
                                 <label>From Date</label>
                                 <datepicker
-                                    v-model="date_from"
+                                    v-model="filters.from_date"
                                     class="form-control"
-                                    placeholder="Select From Date"
+                                    placeholder="From Date"
                                 />
                             </div>
 
                             <!-- TO DATE -->
-                            <div class="col-md-3 mb-3">
+                            <div class="col-12 col-md-3 mb-3">
                                 <label>To Date</label>
                                 <datepicker
-                                    v-model="date_to"
+                                    v-model="filters.to_date"
                                     class="form-control"
-                                    placeholder="Select To Date"
+                                    placeholder="To Date"
                                 />
                             </div>
 
                             <!-- USER ID -->
-                            <div class="col-md-2 mb-3">
+                            <div class="col-12 col-md-3 mb-3">
                                 <label>User ID</label>
                                 <input
-                                    v-model="filterUserId"
-                                    type="text"
+                                    v-model="filters.plan_id"
                                     class="form-control"
                                     placeholder="Enter User ID"
                                 />
                             </div>
 
                             <!-- BUTTONS -->
-                            <div class="col-md-4 mb-3 d-flex align-items-end gap-2">
-                                <button class="btn btn-info btn-sm">
-                                    Apply Filter
+                            <div class="col-12 col-md-3 mt-4 d-flex gap-2">
+                                <button class="btn btn-info btn-sm w-50">
+                                    Filter
                                 </button>
 
                                 <button
                                     type="button"
-                                    class="btn btn-secondary btn-sm"
+                                    class="btn btn-secondary btn-sm w-50"
                                     @click="resetFilter"
                                 >
                                     Reset
                                 </button>
                             </div>
+
                         </div>
                     </form>
                 </div>
 
-                <!-- TABLE -->
+                <!-- ================= TABLE ================= -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped text-center">
                             <thead>
                             <tr>
-                                <th>Sr.No.</th>
+                                <th>Sr.No</th>
                                 <th>User</th>
                                 <th>Plan</th>
                                 <th>Amount</th>
                                 <th>Max Limit</th>
                                 <th>Earned</th>
                                 <th>Status</th>
-                                <th>Active Date</th>
+                                <th>Date</th>
                             </tr>
                             </thead>
 
                             <tbody>
                             <tr v-if="!subscriptions.length">
-                                <td colspan="8">No Subscription Found</td>
+                                <td colspan="8">No Subscriptions Found</td>
                             </tr>
 
-                            <tr
-                                v-for="(sub, index) in subscriptions"
-                                :key="sub.id"
-                            >
+                            <tr v-for="(sub, index) in subscriptions" :key="sub.id">
                                 <td>{{ index + pageMeta.from }}</td>
 
                                 <td>
-                                    {{ sub.user.id }} <br />
-                                    {{ sub.user.name }} <br />
-                                    <small>{{ sub.user.username }}</small>
+                                    {{ sub.user.username }} <br />
+                                    <small>{{ sub.user.name }}</small>
                                 </td>
 
                                 <td>{{ sub.plan.name }}</td>
@@ -97,10 +93,12 @@
                                 <td>₹ {{ sub.max_income_limit }}</td>
                                 <td>₹ {{ sub.earned_so_far }}</td>
 
-                                <td
-                                    :class="sub.is_active ? 'text-success' : 'text-danger'"
-                                >
-                                    {{ sub.is_active ? "Active" : "Inactive" }}
+                                <td>
+                                        <span
+                                            :class="sub.is_active ? 'text-success' : 'text-danger'"
+                                        >
+                                            {{ sub.is_active ? "Active" : "Inactive" }}
+                                        </span>
                                 </td>
 
                                 <td>{{ sub.created_at }}</td>
@@ -109,12 +107,12 @@
                         </table>
                     </div>
 
-                    <!-- PAGINATOR -->
-                    <Paginator
-                        :key="filterKey"
+                    <!-- ================= PAGINATOR ================= -->
+                    <AdminPaginator
+                        :key="paginatorKey"
                         :base-url="baseUrl"
                         @responseData="paginatorResponse"
-                        @pageMeta="paginatorPageMeta"
+                        @pageMeta="paginatorMeta"
                     />
                 </div>
             </div>
@@ -122,86 +120,86 @@
     </div>
 </template>
 
-<script setup>
+<script>
 import { ref, computed } from "vue"
-import Paginator from "@/components/xino/Paginator.vue"
 import Datepicker from "vue3-datepicker"
+import AdminPaginator from "@/components/AdminPaginator.vue";
+import MainAdminLayout from "@/layouts/Admin/MainAdminLayout.vue"
 
-/* --------------------------
-   FILTER STATES
--------------------------- */
-const date_from = ref(null)
-const date_to = ref(null)
-const filterUserId = ref(null)
+export default {
+    name: "SubscriptionIndex",
+    layout: MainAdminLayout,
 
-/* --------------------------
-   TABLE DATA
--------------------------- */
-const subscriptions = ref([])
-const pageMeta = ref({})
+    components: {
+        Datepicker,
+        AdminPaginator,
+    },
 
-/* --------------------------
-   FORMAT DATE FOR URL
--------------------------- */
-function formatDate(date) {
-    if (!date) return null
-    const tzOffset = date.getTimezoneOffset() * 60000
-    return new Date(date - tzOffset).toISOString().split("T")[0]
-}
+    setup() {
+        const subscriptions = ref([])
+        const pageMeta = ref({})
 
-/* --------------------------
-   FILTER APPLY
--------------------------- */
-const appliedFrom = ref("noDate")
-const appliedTo = ref("noDate")
-const appliedUserId = ref("noId")
+        /* ================= FILTER STATE ================= */
+        const filters = ref({
+            plan_id: null,
+            from_date: null,
+            to_date: null,
+        })
 
-function applyFilter() {
-    appliedFrom.value = date_from.value ? formatDate(date_from.value) : "noDate"
-    appliedTo.value = date_to.value ? formatDate(date_to.value) : "noDate"
-    appliedUserId.value = filterUserId.value ? filterUserId.value : "noId"
-}
+        /* ================= KEY TO FORCE PAGINATOR RELOAD ================= */
+        const paginatorKey = ref(Date.now())
 
-/* --------------------------
-   RESET FILTER
--------------------------- */
-function resetFilter() {
-    date_from.value = null
-    date_to.value = null
-    filterUserId.value = null
+        /* ================= FORMAT DATE ================= */
+        const formatDate = (date) => {
+            if (!date) return "noDate"
+            const tzOffset = date.getTimezoneOffset() * 60000
+            return new Date(date - tzOffset).toISOString().split("T")[0]
+        }
 
-    appliedFrom.value = "noDate"
-    appliedTo.value = "noDate"
-    appliedUserId.value = "noId"
-}
+        /* ================= BASE URL ================= */
+        const baseUrl = computed(() => {
+            const plan = filters.value.plan_id ?? "noId"
+            const from = formatDate(filters.value.from_date)
+            const to = formatDate(filters.value.to_date)
 
-/* --------------------------
-   PAGINATOR URL
--------------------------- */
-const baseUrl = computed(() => {
-    return route("admin.subscriptions.get", [
-        appliedUserId.value,
-        appliedFrom.value,
-        appliedTo.value,
-    ])
-})
+            return route("admin.subscriptions.get", [plan, from, to])
+        })
 
-/* --------------------------
-   FORCE REFRESH PAGINATOR
--------------------------- */
-const filterKey = computed(() => {
-    return `${appliedUserId.value}-${appliedFrom.value}-${appliedTo.value}`
-})
+        /* ================= APPLY FILTER ================= */
+        function applyFilter() {
+            paginatorKey.value = Date.now()
+        }
 
-/* --------------------------
-   PAGINATOR EVENTS
--------------------------- */
-function paginatorResponse(data) {
-    subscriptions.value = data
-}
+        /* ================= RESET FILTER ================= */
+        function resetFilter() {
+            filters.value.plan_id = null
+            filters.value.from_date = null
+            filters.value.to_date = null
 
-function paginatorPageMeta(meta) {
-    pageMeta.value = meta
+            paginatorKey.value = Date.now()
+        }
+
+        /* ================= PAGINATOR CALLBACKS ================= */
+        function paginatorResponse(data) {
+            subscriptions.value = data
+        }
+
+        function paginatorMeta(meta) {
+            pageMeta.value = meta
+        }
+
+        return {
+            subscriptions,
+            pageMeta,
+            filters,
+            baseUrl,
+            paginatorKey,
+            applyFilter,
+            resetFilter,
+            paginatorResponse,
+            paginatorMeta,
+        }
+    },
 }
 </script>
 
