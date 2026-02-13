@@ -43,7 +43,10 @@ class PurchaseController extends Controller
         if (is_null($cryptApiWallet)) {
             $cryptApiWallet = $this->generateNewAddress($invoice->coin, $invoice->id);
             if (is_null($cryptApiWallet)) {
-                return redirect()->back();
+                return back()->with('notification', [
+                    'Unable to generate deposit address. Please try again later.',
+                    'danger'
+                ]);
             }
         }
 
@@ -264,36 +267,109 @@ class PurchaseController extends Controller
 
     }
 
+//    private function generateNewAddress($coinName, $invoiceId): ?CryptApiWallet
+//    {
+//        $pwtFundWallet = AdminFundWallet::where('coin', $coinName)->first();
+//        //Log::info($pwtFundWallet);
+//        if (is_null($pwtFundWallet)) {
+//            return null;
+//        }
+//        if ($pwtFundWallet->address) {
+//            $fundWallet = $pwtFundWallet->address;
+//        } else {
+//            return null;
+//        }
+//        $callbackUrl = route('gateway.callback') . "/";
+//        $parameters = ['coin' => strtolower($coinName), 'invoice_id' => $invoiceId];
+//        $reqParameters = http_build_query($parameters);
+//        $callbackUrlComplete = "{$callbackUrl}?{$reqParameters}";
+//        $pgResponse = Http::post('https://gateway.eaglebattle.io/api/address/generate/' . $coinName, [
+//            'address_out' => $fundWallet,
+//            'callback_url' => $callbackUrlComplete,
+//        ]);
+//        Log::info($pgResponse);
+//        if ($pgResponse["status"] == "success") {
+//            return auth()->user()->cryptApiWallets()->create([
+//                'invoice_id' => $invoiceId,
+//                'crypto' => strtolower($coinName),
+//                'callback_url' => $callbackUrlComplete,
+//                'address_out' => $fundWallet,
+//                'address_in' => $pgResponse["address_in"]
+//            ]);
+//        }
+//        return null;
+//    }
+
     private function generateNewAddress($coinName, $invoiceId): ?CryptApiWallet
     {
         $pwtFundWallet = AdminFundWallet::where('coin', $coinName)->first();
-        //Log::info($pwtFundWallet);
-        if (is_null($pwtFundWallet)) {
+
+        if (!$pwtFundWallet || !$pwtFundWallet->address) {
+            Log::error("Fund wallet missing for coin: $coinName");
             return null;
         }
-        if ($pwtFundWallet->address) {
-            $fundWallet = $pwtFundWallet->address;
-        } else {
-            return null;
-        }
-        $callbackUrl = route('gateway.callback') . "/";
-        $parameters = ['coin' => strtolower($coinName), 'invoice_id' => $invoiceId];
-        $reqParameters = http_build_query($parameters);
-        $callbackUrlComplete = "{$callbackUrl}?{$reqParameters}";
-        $pgResponse = Http::post('https://gateway.eaglebattle.io/api/address/generate/' . $coinName, [
-            'address_out' => $fundWallet,
-            'callback_url' => $callbackUrlComplete,
-        ]);
-        Log::info($pgResponse);
-        if ($pgResponse["status"] == "success") {
-            return auth()->user()->cryptApiWallets()->create([
-                'invoice_id' => $invoiceId,
-                'crypto' => strtolower($coinName),
-                'callback_url' => $callbackUrlComplete,
-                'address_out' => $fundWallet,
-                'address_in' => $pgResponse["address_in"]
+
+        $fundWallet = $pwtFundWallet->address;
+
+        $callbackUrl = route('gateway.callback');
+        $callbackUrlComplete = $callbackUrl . "?" . http_build_query([
+                'coin' => strtolower($coinName),
+                'invoice_id' => $invoiceId
             ]);
+
+        try {
+
+            $pgResponse = Http::timeout(10)
+                ->post("https://gateway.eaglebattle.io/api/address/generate/$coinName", [
+                    'address_out' => $fundWallet,
+                    'callback_url' => $callbackUrlComplete,
+                ]);
+
+            // ✅ If API fails
+            if (!$pgResponse->successful()) {
+                Log::error("Gateway API failed", [
+                    "coin" => $coinName,
+                    "response" => $pgResponse->body()
+                ]);
+                return null;
+            }
+
+            $data = $pgResponse->json();
+
+            // ✅ If invalid JSON
+            if (!$data || !isset($data['status'])) {
+                Log::error("Invalid gateway response", [
+                    "coin" => $coinName,
+                    "response" => $pgResponse->body()
+                ]);
+                return null;
+            }
+
+            // ✅ Success
+            if ($data['status'] === "success") {
+
+                return auth()->user()->cryptApiWallets()->create([
+                    'invoice_id'   => $invoiceId,
+                    'crypto'       => strtolower($coinName),
+                    'callback_url' => $callbackUrlComplete,
+                    'address_out'  => $fundWallet,
+                    'address_in'   => $data["address_in"] ?? null,
+                ]);
+            }
+
+            Log::error("Gateway returned failure", $data);
+
+        } catch (\Exception $e) {
+
+            Log::error("Gateway exception", [
+                "coin" => $coinName,
+                "error" => $e->getMessage()
+            ]);
+
+            return null;
         }
+
         return null;
     }
+
 }
