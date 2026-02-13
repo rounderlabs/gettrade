@@ -9,7 +9,6 @@ use App\Models\Invoice;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\UserIncomeWallet;
-use App\Models\UserRoiCompounding;
 use App\Models\UserUsdWallet;
 use App\Models\UserUsdWalletTransaction;
 use App\Services\CurrencyService;
@@ -281,17 +280,18 @@ class PurchaseController extends Controller
         $parameters = ['coin' => strtolower($coinName), 'invoice_id' => $invoiceId];
         $reqParameters = http_build_query($parameters);
         $callbackUrlComplete = "{$callbackUrl}?{$reqParameters}";
-        $pgresponse = Http::post('https://gateway.eaglebattle.io/api/address/generate/' . $coinName, [
+        $pgResponse = Http::post('https://gateway.eaglebattle.io/api/address/generate/' . $coinName, [
             'address_out' => $fundWallet,
             'callback_url' => $callbackUrlComplete,
         ]);
-        if ($pgresponse["status"] == "success") {
+        Log::info($pgResponse);
+        if ($pgResponse["status"] == "success") {
             return auth()->user()->cryptApiWallets()->create([
                 'invoice_id' => $invoiceId,
                 'crypto' => strtolower($coinName),
                 'callback_url' => $callbackUrlComplete,
                 'address_out' => $fundWallet,
-                'address_in' => $pgresponse["address_in"]
+                'address_in' => $pgResponse["address_in"]
             ]);
         }
         return null;
