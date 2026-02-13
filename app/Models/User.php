@@ -38,7 +38,9 @@ class User extends Authenticatable
         'is_blocked',
         'welcome_seen_at',
         'welcome_mode',
-        'preferred_currency'
+        'preferred_currency',
+        'withdraw_mode',
+        'withdraw_type'
 
     ];
 
@@ -63,6 +65,12 @@ class User extends Authenticatable
         'created_at' => 'datetime',
         'placed_into_tree' => 'boolean'
     ];
+
+    const WITHDRAW_MODE_INR = "INR";
+    const WITHDRAW_MODE_CRYPTO = "CRYPTO";
+
+    const WITHDRAW_TYPE_MANUAL = "MANUAL";
+    const WITHDRAW_TYPE_AUTO = "AUTO";
 
     public function getJoinedOnAttribute($value)
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\UserIncomeSetting;
 use App\Models\UserInvestment;
@@ -15,7 +16,9 @@ class SubscriptionHistoryController extends Controller
 {
     public function Index()
     {
-        return Inertia::render('Admin/Subscription/Index');
+        return Inertia::render("Admin/Subscription/Index", [
+            "plans" => Plan::orderBy("amount", 'ASC')->get()
+        ]);
     }
 
     public function getSubscriptionHistory(Request $request)
@@ -23,28 +26,35 @@ class SubscriptionHistoryController extends Controller
         $query = Subscription::with(['user', 'plan'])
             ->orderByDesc('id');
 
-        // ✅ User Filter
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
-
-        // ✅ Plan Filter
+        /* ===========================
+           FILTER: PLAN
+        =========================== */
         if ($request->filled('plan_id')) {
             $query->where('plan_id', $request->plan_id);
         }
 
-        // ✅ Date Filter
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('created_at', [
-                $request->from_date . " 00:00:00",
-                $request->to_date . " 23:59:59",
-            ]);
+        /* ===========================
+           FILTER: USERNAME
+        =========================== */
+        if ($request->filled('username')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('username', 'like', '%' . $request->username . '%');
+            });
+        }
+
+        /* ===========================
+           FILTER: DATE RANGE
+        =========================== */
+        if ($request->filled('from') && $request->filled('to')) {
+            $query->whereDate('created_at', '>=', $request->from)
+                ->whereDate('created_at', '<=', $request->to);
         }
 
         return response()->json(
-            $query->simplePaginate(10)
+            $query->simplePaginate(20)
         );
     }
+
 
 
 }

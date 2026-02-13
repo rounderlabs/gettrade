@@ -1,22 +1,25 @@
 <script setup>
 import {computed, ref, watch} from "vue";
 import {useForm} from "@inertiajs/vue3";
+import {Inertia} from "@inertiajs/inertia";
+import {toast} from "@/utils/toast";
 
 /* Props */
 const props = defineProps({
     kyc: Object,
+    withdraw_address: String,
 });
-
-defineOptions({
-
-    name: "KycWizard",
-});
-
-/* Resume step */
-const step = ref(props.kyc?.current_step ?? 1);
 
 /* ===============================
-   STEP 1 – AADHAAR
+   STEP CONTROL (KYC Wizard)
+================================ */
+const step = ref(props.kyc?.current_step ?? 1);
+
+/* Progress */
+const progress = computed(() => (step.value / 3) * 100);
+
+/* ===============================
+   STEP 1 – AADHAAR FORM
 ================================ */
 const aadhaarForm = useForm({
     aadhaar_number: props.kyc?.aadhaar_number ?? "",
@@ -27,12 +30,13 @@ const aadhaarForm = useForm({
 function submitStep1() {
     aadhaarForm.post(route("kyc.step1"), {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => (step.value = 2),
     });
 }
 
 /* ===============================
-   STEP 2 – PAN
+   STEP 2 – PAN FORM
 ================================ */
 const panForm = useForm({
     pan_number: props.kyc?.pan_number ?? "",
@@ -42,12 +46,13 @@ const panForm = useForm({
 function submitStep2() {
     panForm.post(route("kyc.step2"), {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => (step.value = 3),
     });
 }
 
 /* ===============================
-   STEP 3 – BANK
+   STEP 3 – BANK FORM
 ================================ */
 const bankForm = useForm({
     bank_name: props.kyc?.bank_name ?? "",
@@ -57,10 +62,16 @@ const bankForm = useForm({
 });
 
 function submitStep3() {
-    bankForm.post(route("kyc.step3"));
+    bankForm.post(route("kyc.step3"), {
+        preserveScroll: true,
+        forceFormData: true,
+        onSuccess: () => toast("KYC Submitted Successfully!", "success"),
+    });
 }
 
-/* IFSC Auto-Lookup */
+/* ===============================
+   IFSC AUTO LOOKUP
+================================ */
 const bankLookup = ref({
     bank: "",
     branch: "",
@@ -70,7 +81,6 @@ const bankLookup = ref({
 const bankLoading = ref(false);
 const bankError = ref(null);
 
-/* Watch IFSC */
 watch(
     () => bankForm.ifsc_code,
     async (ifsc) => {
@@ -103,196 +113,205 @@ watch(
     }
 );
 
-/* Helpers */
 const isBankValid = computed(() => {
     return !!bankForm.bank_name && !bankError.value && !bankLoading.value;
 });
 
-const progress = computed(() => (step.value / 3) * 100);
+/* ===============================
+   USDT OTP WALLET FORM
+================================ */
+const sending = ref(false);
+const otpSent = ref(false);
+
+const usdtForm = useForm({
+    address: props.withdraw_address ?? "",
+    otp: null,
+});
+
+function sendOtpEmail() {
+    sending.value = true;
+
+    Inertia.post(route("withdraw.sendOtp"), {}, {
+        onSuccess: () => {
+            otpSent.value = true;
+            toast("OTP Sent Successfully!", "success");
+        },
+        onFinish: () => {
+            sending.value = false;
+        },
+    });
+}
+
+function submitWallet() {
+    sendOtpEmail();
+}
+
+function updateWallet() {
+    usdtForm.post(route("withdraw.update.usdt.wallet"), {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast("Wallet Updated Successfully!", "success");
+            usdtForm.reset("otp");
+            otpSent.value = false;
+        },
+        onError: (errors) => {
+            Object.values(errors).forEach((err) =>
+                toast(err, "danger")
+            );
+        },
+    });
+}
 </script>
 
 <template>
+    <section class="section-b-space">
+        <div class="custom-container">
+            <!-- FULL TEMPLATE EXACTLY -->
+            <div class="auth-header">
+                <a href="/dashboard">
+                    <svg class="feather feather-arrow-left back-btn"
+                         fill="none" height="24"
+                         stroke="currentColor"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         stroke-width="2"
+                         viewBox="0 0 24 24"
+                         width="24">
+                        <line x1="19" x2="5" y1="12" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </a>
 
-    <div class="auth-header">
-        <a href="/dashboard">
-            <svg class="feather feather-arrow-left back-btn" fill="none" height="24" stroke="currentColor"
-                 stroke-linecap="round"
-                 stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"
-                 xmlns="http://www.w3.org/2000/svg">
-                <line x1="19" x2="5" y1="12" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-        </a>
+                <img alt="v1" class="img-fluid img"
+                     src="/user-panel/assets-panel/assets/images/login1.svg">
 
-        <img alt="v1" class="img-fluid img" src="/user-panel/assets-panel/assets/images/login1.svg">
-        <div class="auth-content">
-            <div>
-                <h2>KYC Verification !!</h2>
-                <h4 class="p-0">Fill up the form</h4>
+                <div class="auth-content">
+                    <div>
+                        <h2>KYC Verification !!</h2>
+                        <h4 class="p-0">Fill up the form</h4>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <!-- ================= STEP 1 – AADHAAR ================= -->
-    <div class="custom-container auth-form">
-        <div class=" mb-5 mt-3">
-            <div class="progress mt-2">
-                <div
-                    :style="{ width: progress + '%' }"
-                    class="progress-bar"
-                    role="progressbar"
-                ></div>
-            </div>
-            <div class="d-flex justify-content-between mt-2 small">
-                <span class="text-white fs" :class="{ 'fw-bold': step === 1 }">Aadhaar</span>
-                <span class="text-white" :class="{ 'fw-bold': step === 2 }">PAN</span>
-                <span class="text-white" :class="{ 'fw-bold': step === 3 }">Bank</span>
-            </div>
-        </div>
 
-        <form v-if="step === 1" @submit.prevent="submitStep1">
+            <!-- Progress -->
+            <div class="custom-container auth-form">
+                <div class="mb-5 mt-3">
+                    <div class="progress mt-2">
+                        <div
+                            :style="{ width: progress + '%' }"
+                            class="progress-bar"
+                            role="progressbar"
+                        ></div>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Aadhaar Number</label>
-                    <input
-                        v-model="aadhaarForm.aadhaar_number"
-                        class="form-control"
-                        maxlength="12"
-                        type="text"
-                    />
-                    <div v-if="aadhaarForm.errors.aadhaar_number" class="text-danger small">
-                        {{ aadhaarForm.errors.aadhaar_number }}
+                    <div class="d-flex justify-content-between mt-2 small">
+                        <span :class="{ 'fw-bold': step === 1 }" class="text-white fs">Aadhaar</span>
+                        <span :class="{ 'fw-bold': step === 2 }" class="text-white">PAN</span>
+                        <span :class="{ 'fw-bold': step === 3 }" class="text-white">Bank</span>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Aadhaar Front</label>
-                    <input
-                        accept=".jpg,.jpeg,.png,.pdf"
-                        class="form-control"
-                        type="file"
-                        @change="e => aadhaarForm.aadhaar_front = e.target.files[0]"
-                    />
-                </div>
+                <!-- STEP 1 Aadhaar -->
+                <form v-if="step === 1" @submit.prevent="submitStep1">
+                    <div class="form-group">
+                        <label class="form-label">Aadhaar Number</label>
+                        <input v-model="aadhaarForm.aadhaar_number"
+                               class="form-control"
+                               maxlength="12"
+                               type="text"/>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Aadhaar Back</label>
-                    <input accept=".jpg,.jpeg,.png,.pdf" class="form-control" type="file"
-                           @change="e => aadhaarForm.aadhaar_back = e.target.files[0]"/>
-                </div>
+                    <div class="form-group">
+                        <label class="form-label">Aadhaar Front</label>
+                        <input accept=".jpg,.jpeg,.png,.pdf"
+                               class="form-control"
+                               type="file"
+                               @change="e => aadhaarForm.aadhaar_front = e.target.files[0]"/>
+                    </div>
 
-                <button :disabled="aadhaarForm.processing" class="btn theme-btn w-100">
-                    Save & Continue
-                </button>
+                    <div class="form-group">
+                        <label class="form-label">Aadhaar Back</label>
+                        <input accept=".jpg,.jpeg,.png,.pdf"
+                               class="form-control"
+                               type="file"
+                               @change="e => aadhaarForm.aadhaar_back = e.target.files[0]"/>
+                    </div>
 
-        </form>
+                    <button class="btn theme-btn w-100">
+                        Save & Continue
+                    </button>
+                </form>
 
-        <!-- ================= STEP 2 – PAN ================= -->
-        <form v-if="step === 2" @submit.prevent="submitStep2">
+                <!-- STEP 2 PAN -->
+                <form v-if="step === 2" @submit.prevent="submitStep2">
+                    <div class="form-group">
+                        <label class="form-label">PAN Number</label>
+                        <input v-model="panForm.pan_number"
+                               class="form-control text-uppercase"
+                               maxlength="10"
+                               type="text"
+                               @input="panForm.pan_number = panForm.pan_number.toUpperCase()"/>
+                    </div>
 
-            <div class="form-group">
-                <label class="form-label">PAN Number</label>
-                <input
-                    v-model="panForm.pan_number"
-                    class="form-control text-uppercase"
-                    maxlength="10"
-                    type="text"
-                    @input="panForm.pan_number = panForm.pan_number.toUpperCase()"
-                />
-                <div v-if="panForm.errors.pan_number" class="text-danger small">
-                    {{ panForm.errors.pan_number }}
-                </div>
+                    <div class="form-group">
+                        <label class="form-label">PAN File</label>
+                        <input accept=".jpg,.jpeg,.png,.pdf"
+                               class="form-control"
+                               type="file"
+                               @change="e => panForm.pan_file = e.target.files[0]"/>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-secondary"
+                                type="button"
+                                @click="step = 1">
+                            Back
+                        </button>
+
+                        <button class="btn theme-btn w-100">
+                            Save & Continue
+                        </button>
+                    </div>
+                </form>
+
+                <!-- STEP 3 BANK -->
+                <form v-if="step === 3" @submit.prevent="submitStep3">
+                    <div class="form-group">
+                        <label class="form-label">IFSC Code</label>
+                        <input v-model="bankForm.ifsc_code"
+                               class="form-control text-uppercase"
+                               maxlength="11"
+                               placeholder="e.g. SBIN0000062"
+                               @input="bankForm.ifsc_code = bankForm.ifsc_code.toUpperCase()"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Bank Name</label>
+                        <input v-model="bankForm.bank_name"
+                               class="form-control"
+                               readonly/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Account Number</label>
+                        <input v-model="bankForm.account_number"
+                               class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Cancelled Cheque</label>
+                        <input accept=".jpg,.jpeg,.png,.pdf"
+                               class="form-control"
+                               type="file"
+                               @change="e => bankForm.cancel_cheque = e.target.files[0]"/>
+                    </div>
+
+                    <button :disabled="!isBankValid"
+                            class="btn theme-btn w-100">
+                        Submit KYC
+                    </button>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label class="form-label">PAN File</label>
-                <input
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    class="form-control"
-                    type="file"
-                    @change="e => panForm.pan_file = e.target.files[0]"
-                />
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <button class="btn btn-secondary" type="button" @click="step = 1">
-                    Back
-                </button>
-                <button :disabled="panForm.processing" class="btn theme-btn w-100">
-                    Save & Continue
-                </button>
-            </div>
-        </form>
-
-        <!-- ================= STEP 3 – BANK ================= -->
-        <form v-if="step === 3" @submit.prevent="submitStep3">
-
-            <div class="form-group">
-                <label class="form-label">IFSC Code</label>
-                <input
-                    v-model="bankForm.ifsc_code"
-                    class="form-control text-uppercase"
-                    maxlength="11"
-                    placeholder="e.g. SBIN0000062"
-                    type="text"
-                    @input="bankForm.ifsc_code = bankForm.ifsc_code.toUpperCase()"
-                />
-                <small v-if="bankLoading" class="text-muted">
-                    Verifying IFSC…
-                </small>
-                <small v-if="bankError" class="text-danger">
-                    {{ bankError }}
-                </small>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Bank Name</label>
-                <input
-                    v-model="bankForm.bank_name"
-                    class="form-control"
-                    readonly
-                    type="text"
-                />
-                <small class="text-muted">Auto-filled from IFSC</small>
-            </div>
-
-            <div v-if="bankLookup.branch" class="form-group">
-                <label class="form-label">Branch</label>
-                <input
-                    :value="bankLookup.branch"
-                    class="form-control"
-                    readonly
-                    type="text"
-                />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Account Number</label>
-                <input
-                    v-model="bankForm.account_number"
-                    class="form-control"
-                    type="text"
-                />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Cancelled Cheque</label>
-                <input
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    class="form-control"
-                    type="file"
-                    @change="e => bankForm.cancel_cheque = e.target.files[0]"
-                />
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <button class="btn btn-secondary" type="button" @click="step = 2">
-                    Back
-                </button>
-                <button :disabled="bankForm.processing || !isBankValid" class="btn theme-btn w-100">
-                    Submit KYC
-                </button>
-            </div>
-        </form>
-
-    </div>
+        </div>
+    </section>
 </template>

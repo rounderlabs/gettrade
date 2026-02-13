@@ -3,41 +3,46 @@
         <div class="col">
             <div class="card">
 
-                <!-- FILTER FORM -->
+                <!-- FILTERS -->
                 <div class="card-header">
                     <form @submit.prevent="applyFilter">
                         <div class="row">
 
-                            <!-- FROM DATE -->
-                            <div class="col-md-3 mb-3">
-                                <label>From Date</label>
-                                <Datepicker
-                                    v-model="filters.from_date"
+                            <!-- PLAN DROPDOWN -->
+                            <div class="col-md-3 mb-2">
+                                <label>Plan</label>
+                                <select v-model="filters.plan_id" class="form-control">
+                                    <option value="">All Plans</option>
+                                    <option v-for="p in plans"  :value="p.id">
+                                        {{ p.name }} (₹{{ p.amount }})
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- USERNAME SEARCH -->
+                            <div class="col-md-3 mb-2">
+                                <label>Username</label>
+                                <input
+                                    v-model="filters.username"
                                     class="form-control"
+                                    placeholder="Search GTxxxx"
                                 />
+                            </div>
+
+                            <!-- FROM DATE -->
+                            <div class="col-md-2 mb-2">
+                                <label>From</label>
+                                <datepicker v-model="filters.from" class="form-control" />
                             </div>
 
                             <!-- TO DATE -->
-                            <div class="col-md-3 mb-3">
-                                <label>To Date</label>
-                                <Datepicker
-                                    v-model="filters.to_date"
-                                    class="form-control"
-                                />
-                            </div>
-
-                            <!-- USER ID -->
-                            <div class="col-md-3 mb-3">
-                                <label>User ID</label>
-                                <input
-                                    v-model="filters.plan_id"
-                                    class="form-control"
-                                    placeholder="Enter User ID"
-                                />
+                            <div class="col-md-2 mb-2">
+                                <label>To</label>
+                                <datepicker v-model="filters.to" class="form-control" />
                             </div>
 
                             <!-- BUTTONS -->
-                            <div class="col-md-3 mt-4 d-flex gap-2">
+                            <div class="col-md-2 mt-4 d-flex gap-2">
                                 <button class="btn btn-info btn-sm w-50">
                                     Filter
                                 </button>
@@ -65,8 +70,6 @@
                                 <th>User</th>
                                 <th>Plan</th>
                                 <th>Amount</th>
-                                <th>Max Limit</th>
-                                <th>Earned</th>
                                 <th>Status</th>
                                 <th>Date</th>
                             </tr>
@@ -74,29 +77,27 @@
 
                             <tbody>
                             <tr v-if="!subscriptions.length">
-                                <td colspan="8">No Subscriptions Found</td>
+                                <td colspan="6">No Subscriptions Found</td>
                             </tr>
 
                             <tr v-for="(sub, index) in subscriptions" :key="sub.id">
-                                <td>{{ index + pageMeta.from }}</td>
+                                <td>{{ index + meta.from }}</td>
 
                                 <td>
-                                    <b>{{ sub.user.username }}</b><br>
-                                    <small>{{ sub.user.name }}</small>
+                                    <b>{{ sub.user?.username ?? "N/A" }}</b><br>
+                                    <small>{{ sub.user?.name }}</small>
                                 </td>
 
-                                <td>{{ sub.plan.name }}</td>
+                                <td>{{ sub.plan?.name }}</td>
 
                                 <td>₹ {{ sub.amount }}</td>
-                                <td>₹ {{ sub.max_income_limit }}</td>
-                                <td>₹ {{ sub.earned_so_far }}</td>
 
                                 <td>
-                                    <span
-                                        :class="sub.is_active ? 'text-success' : 'text-danger'"
-                                    >
-                                        {{ sub.is_active ? "Active" : "Inactive" }}
-                                    </span>
+                                        <span
+                                            :class="sub.is_active ? 'text-success' : 'text-danger'"
+                                        >
+                                            {{ sub.is_active ? "Active" : "Inactive" }}
+                                        </span>
                                 </td>
 
                                 <td>{{ sub.created_at }}</td>
@@ -109,11 +110,10 @@
                     <AdminPaginator
                         :key="paginatorKey"
                         :base-url="baseUrl"
-                        @responseData="paginatorResponse"
-                        @pageMeta="paginatorMeta"
+                        @responseData="handleResponse"
+                        @pageMeta="handleMeta"
                     />
                 </div>
-
             </div>
         </div>
     </div>
@@ -122,90 +122,80 @@
 <script>
 import { ref, computed } from "vue"
 import Datepicker from "vue3-datepicker"
-import AdminPaginator from "@/components/AdminPaginator.vue";
+import AdminPaginator from "@/components/AdminPaginator.vue"
 import MainAdminLayout from "@/layouts/Admin/MainAdminLayout.vue"
 
 export default {
-    name: "SubscriptionIndex",
     layout: MainAdminLayout,
+
+    props: {
+        plans: Array
+    },
 
     components: {
         Datepicker,
-        AdminPaginator,
+        AdminPaginator
     },
 
-    setup() {
-
+    setup(props) {
         const subscriptions = ref([])
-        const pageMeta = ref({ from: 1 })
+        const meta = ref({ from: 1 })
 
-        /* FILTER STATE */
         const filters = ref({
-            plan_id: null,
-            from_date: null,
-            to_date: null,
+            plan_id: "",
+            username: "",
+            from: null,
+            to: null
         })
 
-        /* Force paginator reload */
         const paginatorKey = ref(Date.now())
 
-        /* Format Date */
         function formatDate(date) {
-            if (!date) return "noDate"
-
+            if (!date) return ""
             const tzOffset = date.getTimezoneOffset() * 60000
             return new Date(date - tzOffset).toISOString().split("T")[0]
         }
 
-        /* Base URL */
         const baseUrl = computed(() => {
-            const plan = filters.value.plan_id || "noId"
-            const from = formatDate(filters.value.from_date)
-            const to = formatDate(filters.value.to_date)
-
-            return route("admin.subscriptions.get", [plan, from, to])
+            return route("admin.subscriptions.get") +
+                `?plan_id=${filters.value.plan_id}` +
+                `&username=${filters.value.username}` +
+                `&from=${formatDate(filters.value.from)}` +
+                `&to=${formatDate(filters.value.to)}`
         })
 
-        /* Apply Filter */
         function applyFilter() {
             paginatorKey.value = Date.now()
         }
 
-        /* Reset Filter */
         function resetFilter() {
-            filters.value.plan_id = null
-            filters.value.from_date = null
-            filters.value.to_date = null
-
+            filters.value.plan_id = ""
+            filters.value.username = ""
+            filters.value.from = null
+            filters.value.to = null
             paginatorKey.value = Date.now()
         }
 
-        /* Paginator Callbacks */
-        function paginatorResponse(data) {
-            subscriptions.value = data
+        function handleResponse(res) {
+            subscriptions.value = res.data
         }
 
-        function paginatorMeta(meta) {
-            pageMeta.value = meta
+        function handleMeta(m) {
+            meta.value = m
         }
 
         return {
+            plans: props.plans,
             subscriptions,
-            pageMeta,
+            meta,
             filters,
             baseUrl,
             paginatorKey,
             applyFilter,
             resetFilter,
-            paginatorResponse,
-            paginatorMeta,
+            handleResponse,
+            handleMeta
         }
-    },
+    }
 }
 </script>
-
-<style scoped>
-.card {
-    box-shadow: none !important;
-}
-</style>

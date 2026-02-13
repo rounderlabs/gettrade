@@ -30,7 +30,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     kyc: Object
   },
   setup: function setup(__props, _ref) {
-    var _props$kyc$current_st, _props$kyc, _props$kyc$aadhaar_nu, _props$kyc2, _props$kyc$pan_number, _props$kyc3, _props$kyc$bank_name, _props$kyc4, _props$kyc$ifsc_code, _props$kyc5, _props$kyc$account_nu, _props$kyc6;
+    var _props$kyc$current_st, _props$kyc, _props$kyc$aadhaar_nu, _props$kyc2, _props$kyc$pan_number, _props$kyc3, _props$kyc$bank_name, _props$kyc4, _props$kyc$ifsc_code, _props$kyc5, _props$kyc$account_nu, _props$kyc6, _props$user$user_with, _props$user;
     var __expose = _ref.expose;
     __expose();
     var props = __props;
@@ -165,6 +165,26 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     var progress = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(function () {
       return step.value / 3 * 100;
     });
+
+    /* ===========================
+       CRYPTO FORM (No KYC)
+    =========================== */
+    var cryptoForm = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.useForm)({
+      withdrawal_method: "BEP20_USDT",
+      user_withdrawal_address: (_props$user$user_with = (_props$user = props.user) === null || _props$user === void 0 ? void 0 : _props$user.user_withdrawal_address) !== null && _props$user$user_with !== void 0 ? _props$user$user_with : ""
+    });
+    function submitCryptoAddress() {
+      cryptoForm.post(route("withdrawal.crypto.address.save"), {
+        onSuccess: function onSuccess() {
+          toast("Wallet Address Saved Successfully", "success");
+        },
+        onError: function onError(errors) {
+          Object.values(errors).forEach(function (err) {
+            return toast(err, "danger");
+          });
+        }
+      });
+    }
     var __returned__ = {
       props: props,
       step: step,
@@ -179,6 +199,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       bankError: bankError,
       isBankValid: isBankValid,
       progress: progress,
+      cryptoForm: cryptoForm,
+      submitCryptoAddress: submitCryptoAddress,
       computed: vue__WEBPACK_IMPORTED_MODULE_0__.computed,
       ref: vue__WEBPACK_IMPORTED_MODULE_0__.ref,
       watch: vue__WEBPACK_IMPORTED_MODULE_0__.watch,

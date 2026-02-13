@@ -112,7 +112,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // SUBSCRIPTIONS
         Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
             Route::get('/', [SubscriptionHistoryController::class, 'Index'])->name('show');
-            Route::get('/history/{plan}/{from_date}/{to_date}', [SubscriptionHistoryController::class, 'getSubscriptionHistory'])->name('get');
+            Route::get('/history', [SubscriptionHistoryController::class, 'getSubscriptionHistory'])->name('get');
         });
 
         Route::prefix('investment')->name('investment.')->group(function () {

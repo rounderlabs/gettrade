@@ -16,4 +16,9 @@ class WithdrawWallet extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function withdrawCoin()
+    {
+        return $this->belongsTo(WithdrawCoin::class, 'withdraw_coin_id');
+    }
 }

@@ -350,22 +350,23 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     currencies: Array
   },
-  setup: function setup(props) {
-    var form = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.useForm)({
+  setup: function setup() {
+    /* ---------------- INR FORM ---------------- */
+    var inrForm = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.useForm)({
       amount: "",
       payment_type: "UPI",
       txn_id: "",
       payment_proof: null
     });
-    function handleFile(e) {
-      form.payment_proof = e.target.files[0];
+    function handleINRFile(e) {
+      inrForm.payment_proof = e.target.files[0];
     }
-    function submit() {
-      form.post(route("deposit.fund.request.submit"), {
+    function submitINR() {
+      inrForm.post(route("deposit.fund.request.submit"), {
         forceFormData: true,
         onSuccess: function onSuccess() {
-          (0,_utils_toast__WEBPACK_IMPORTED_MODULE_2__.toast)("Fund request submitted successfully", "success");
-          form.reset();
+          (0,_utils_toast__WEBPACK_IMPORTED_MODULE_2__.toast)("INR Fund Request Submitted Successfully", "success");
+          inrForm.reset();
         },
         onError: function onError(errors) {
           Object.values(errors).forEach(function (err) {
@@ -374,10 +375,27 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     }
+
+    /* ---------------- CRYPTO QR FORM ---------------- */
+    var purchaseForm = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.useForm)({
+      currency: null,
+      amount: null
+    });
+    function saveInvoice() {
+      purchaseForm.post(route("deposit.invoice.create"), {
+        onError: function onError(errors) {
+          Object.values(errors).forEach(function (err) {
+            return (0,_utils_toast__WEBPACK_IMPORTED_MODULE_2__.toast)(err, "danger");
+          });
+        }
+      });
+    }
     return {
-      form: form,
-      handleFile: handleFile,
-      submit: submit
+      inrForm: inrForm,
+      handleINRFile: handleINRFile,
+      submitINR: submitINR,
+      purchaseForm: purchaseForm,
+      saveInvoice: saveInvoice
     };
   }
 });
@@ -705,53 +723,120 @@ var _hoisted_2 = {
   "class": "custom-container"
 };
 var _hoisted_3 = {
-  "class": "form-group"
+  "class": "tab-content",
+  id: "myTabContent"
 };
 var _hoisted_4 = {
-  "class": "form-group mt-2"
+  "class": "tab-pane fade show active p-2",
+  id: "inr-tab-pane",
+  role: "tabpanel",
+  "aria-labelledby": "inr-tab",
+  tabindex: "0"
 };
 var _hoisted_5 = {
-  "class": "form-group mt-2"
+  "class": "form-group"
 };
 var _hoisted_6 = {
   "class": "form-group mt-2"
 };
-var _hoisted_7 = ["disabled"];
+var _hoisted_7 = {
+  "class": "form-group mt-2"
+};
+var _hoisted_8 = {
+  "class": "form-group mt-2"
+};
+var _hoisted_9 = ["disabled"];
+var _hoisted_10 = {
+  "class": "tab-pane fade p-2",
+  id: "crypto-tab-pane",
+  role: "tabpanel",
+  "aria-labelledby": "crypto-tab",
+  tabindex: "0"
+};
+var _hoisted_11 = {
+  "class": "form-group"
+};
+var _hoisted_12 = {
+  "class": "form-input"
+};
+var _hoisted_13 = ["value"];
+var _hoisted_14 = {
+  "class": "form-group mt-3"
+};
+var _hoisted_15 = {
+  "class": "form-input"
+};
+var _hoisted_16 = {
+  "class": "col-12 col-md-6 mt-auto mb-4 text-center d-grid mt-4"
+};
+var _hoisted_17 = ["disabled"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  var _component_font_awesome_icon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("font-awesome-icon");
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Title "), _cache[18] || (_cache[18] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "title mb-3"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Add To Fund Wallet")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Add Funds to Wallet")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Tabs "), _cache[19] || (_cache[19] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", {
+    "class": "nav nav-pills tab-style3 w-100 mt-0",
+    id: "myTab",
+    role: "tablist"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" INR TAB "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", {
+    "class": "nav-item w-50",
+    role: "presentation"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "nav-link active",
+    id: "inr-tab",
+    "data-bs-toggle": "tab",
+    "data-bs-target": "#inr-tab-pane",
+    type: "button",
+    role: "tab",
+    "aria-controls": "inr-tab-pane",
+    "aria-selected": "true"
+  }, " INR Deposit ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" CRYPTO TAB "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", {
+    "class": "nav-item w-50",
+    role: "presentation"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "nav-link",
+    id: "crypto-tab",
+    "data-bs-toggle": "tab",
+    "data-bs-target": "#crypto-tab-pane",
+    type: "button",
+    role: "tab",
+    "aria-controls": "crypto-tab-pane",
+    "aria-selected": "false"
+  }, " USDT Deposit ")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Tab Content "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ===================== "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" INR FORM TAB "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ===================== "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
     "class": "mb-4 auth-form mt-3",
     enctype: "multipart/form-data",
     onSubmit: _cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
-      return $setup.submit && $setup.submit.apply($setup, arguments);
+      return $setup.submitINR && $setup.submitINR.apply($setup, arguments);
     }, ["prevent"]))
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Amount "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  }, [_cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+    "class": "mb-3"
+  }, "Deposit via UPI / Bank Transfer", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Amount "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
-  }, "Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, "Amount (₹)", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-      return $setup.form.amount = $event;
+      return $setup.inrForm.amount = $event;
     }),
     "class": "form-control",
     required: "",
-    type: "number"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Payment Type "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+    type: "number",
+    min: "1"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.inrForm.amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Payment Type "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
   }, "Payment Type", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $setup.form.payment_type = $event;
+      return $setup.inrForm.payment_type = $event;
     }),
     "class": "form-control"
-  }, _cache[6] || (_cache[6] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<option value=\"UPI\">UPI</option><option value=\"NEFT\">NEFT</option><option value=\"IMPS\">IMPS</option><option value=\"RTGS\">RTGS</option><option value=\"Cheque\">Cheque</option><option value=\"Cash\">Cash</option>", 6)]), 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.form.payment_type]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Transaction ID "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  }, _cache[9] || (_cache[9] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<option value=\"UPI\">UPI</option><option value=\"NEFT\">NEFT</option><option value=\"IMPS\">IMPS</option><option value=\"RTGS\">RTGS</option><option value=\"Cheque\">Cheque</option><option value=\"Cash\">Cash</option>", 6)]), 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.inrForm.payment_type]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Transaction ID "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
   }, "Transaction ID", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
-      return $setup.form.txn_id = $event;
+      return $setup.inrForm.txn_id = $event;
     }),
     "class": "form-control",
     placeholder: "Enter transaction id",
     type: "text"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.txn_id]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Payment Proof "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.inrForm.txn_id]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Payment Proof "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
   }, "Payment Proof", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     accept: "image/*,application/pdf",
@@ -759,13 +844,55 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     required: "",
     type: "file",
     onChange: _cache[3] || (_cache[3] = function () {
-      return $setup.handleFile && $setup.handleFile.apply($setup, arguments);
+      return $setup.handleINRFile && $setup.handleINRFile.apply($setup, arguments);
     })
   }, null, 32 /* NEED_HYDRATION */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Submit "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    disabled: $setup.form.processing,
+    disabled: $setup.inrForm.processing,
     "class": "btn theme-btn w-100 mt-3",
     type: "submit"
-  }, " Submit Request ", 8 /* PROPS */, _hoisted_7)], 32 /* NEED_HYDRATION */)])]);
+  }, " Submit INR Request ", 8 /* PROPS */, _hoisted_9)], 32 /* NEED_HYDRATION */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ===================== "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" CRYPTO FORM TAB (QR GENERATOR) "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" ===================== "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_cache[17] || (_cache[17] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "title mb-3 mt-3"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Add USDT To Fund Wallet")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+    "class": "mb-4 auth-form mt-3",
+    onSubmit: _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+      return $setup.saveInvoice && $setup.saveInvoice.apply($setup, arguments);
+    }, ["prevent"]))
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Select Token "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+    "class": "form-label"
+  }, "Select USDT Token", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+      return $setup.purchaseForm.currency = $event;
+    }),
+    "class": "form-control",
+    required: ""
+  }, [_cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+    selected: "",
+    value: ""
+  }, " Select USDT Type ", -1 /* HOISTED */)), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.currencies, function (currency) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+      key: currency.symbol,
+      value: currency.symbol
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(currency.symbol.toUpperCase()), 9 /* TEXT, PROPS */, _hoisted_13);
+  }), 128 /* KEYED_FRAGMENT */))], 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.purchaseForm.currency]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Amount "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+    "class": "form-label"
+  }, "Amount in USDT", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+      return $setup.purchaseForm.amount = $event;
+    }),
+    "class": "form-control",
+    placeholder: "Enter Amount in USDT",
+    required: "",
+    type: "text"
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.purchaseForm.amount]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Submit "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    disabled: $setup.purchaseForm.processing,
+    "class": "btn theme-btn",
+    type: "submit"
+  }, " Generate QR ", 8 /* PROPS */, _hoisted_17), $setup.purchaseForm.processing ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_font_awesome_icon, {
+    key: 0,
+    "class": "ml-1 mt-2",
+    icon: "spinner",
+    spin: ""
+  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])], 32 /* NEED_HYDRATION */)])])])]);
 }
 
 /***/ }),

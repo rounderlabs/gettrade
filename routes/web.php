@@ -134,8 +134,24 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('withdraw')->name('withdraw.')->group(function () {
+
+        Route::get("setup", [WithdrawController::class, "withdrawSetup"])->name("setup");
+
+        Route::post("setup/save", [WithdrawController::class, "saveWithdrawSetup"])->name("setup.save");
+
+        // Auto Redirect
+        Route::get("redirect", [WithdrawController::class, "redirectWithdraw"])->name("redirect");
+
+        Route::get('wallet-usdt', [WithdrawController::class, 'showUsdtAccountForm'])->name('wallet.usdt');
         Route::get('send-request', [WithdrawController::class, 'withdrawRequestForm'])->name('send.request');
         Route::post('submit-request', [WithdrawController::class, 'submitWithdrawRequestForm'])->name('submit.request');
+
+        Route::post('update-usdt-wallet', [WithdrawController::class, 'updateUsdtWallet'])->name('update.usdt.wallet');
+
+        Route::get('fund', [WithdrawController::class, 'withdrawUsdt'])->name('fund');
+        Route::post('usdt-attempt',[WithdrawController::class, 'withdrawUsdtAttempt'])->name('usdt.attempt');
+        Route::post('send-otp', [WithdrawController::class, 'sendOtp'])->name('sendOtp');
+        Route::post('withdraw-verify', [WithdrawController::class, 'withdrawVerifyOtp'])->name('verify');
     });
 
 

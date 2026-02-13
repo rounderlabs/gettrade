@@ -16,7 +16,13 @@
 
                             <h5 class="mb-0">{{ user.name }}</h5>
                             <p class="text-muted">{{ user.username }}</p>
-
+                            <button
+                                class="btn btn-sm btn-primary mt-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editProfileModal"
+                            >
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </button>
                             <hr>
 
                             <div class="row text-left">
@@ -223,6 +229,94 @@
             </div>
 
         </div>
+        <!-- ================= EDIT PROFILE MODAL ================= -->
+        <div
+            class="modal fade"
+            id="editProfileModal"
+            tabindex="-1"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- HEADER -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Update User Profile
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+                    </div>
+
+                    <!-- FORM -->
+                    <form @submit.prevent="updateProfile">
+                        <div class="modal-body">
+
+                            <!-- NAME -->
+                            <div class="form-group mb-3">
+                                <label>Name</label>
+                                <input
+                                    v-model="profileForm.name"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Enter Name"
+                                    required
+                                />
+                            </div>
+
+                            <!-- EMAIL -->
+                            <div class="form-group mb-3">
+                                <label>Email</label>
+                                <input
+                                    v-model="profileForm.email"
+                                    type="email"
+                                    class="form-control"
+                                    placeholder="Enter Email"
+                                    required
+                                />
+                            </div>
+
+                            <!-- MOBILE -->
+                            <div class="form-group mb-3">
+                                <label>Mobile</label>
+                                <input
+                                    v-model="profileForm.mobile"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Enter Mobile"
+                                    required
+                                />
+                            </div>
+
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                :disabled="profileForm.processing"
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
     </section>
 </template>
 
@@ -316,14 +410,20 @@ export default {
         }
 
         function updateProfile() {
-            profileForm.post(route('admin.user.store'), {
+            profileForm.post(route("admin.user.store"), {
                 onSuccess: () => {
-                    toast('User details successfully updated !')
-                },
-                onError: errors => {
-                    for (const [key, value] of Object.entries(errors)) {
-                        toast(value, 'danger')
-                    }
+                  //  toast("Profile Updated Successfully")
+
+                    const modalEl = document.getElementById("editProfileModal")
+                    const modal = bootstrap.Modal.getInstance(modalEl)
+
+                    modal.hide()
+
+                    // Cleanup backdrop
+                    modalEl.addEventListener("hidden.bs.modal", () => {
+                        document.querySelectorAll(".modal-backdrop").forEach(el => el.remove())
+                        document.body.classList.remove("modal-open")
+                    }, { once: true })
                 }
             })
         }
