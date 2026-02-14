@@ -10,10 +10,10 @@
                         <input checked="" class="form-check-input" name="flexRadio" type="radio">
                         <img alt="balance-box"
                              class="img-fluid balance-box-img active"
-                             src="/sunlotusinfra/assets-panel/assets/images/svg/balance-box-bg-active.svg">
+                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
                         <img alt="balance-box"
                              class="img-fluid balance-box-img unactive"
-                             src="/sunlotusinfra/assets-panel/assets/images/svg/balance-box-bg.svg">
+                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
                             <h3>${{ withdrawable_balance }}</h3>

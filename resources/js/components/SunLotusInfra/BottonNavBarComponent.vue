@@ -68,7 +68,7 @@ const currentRoute = computed(() => page.url)
 
             <!-- KYC -->
             <li :class="{ active: currentRoute.includes('kyc') }">
-                <Link :href="route('kyc.index')">
+                <Link :href="route('withdraw.redirect')">
                     <div class="icon">
                         <img
                             class="unactive"
@@ -81,7 +81,7 @@ const currentRoute = computed(() => page.url)
                             alt="KYC"
                         />
                     </div>
-                    <h5>My KYC</h5>
+                    <h5>Withdraw</h5>
                 </Link>
             </li>
 
