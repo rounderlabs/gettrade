@@ -114,8 +114,8 @@
 
         <p style="margin-top:20px;font-size:12px;">
             Need help? Contact us at
-            <a href="mailto:{{ site_setting('support_email','info@gettrade.space') }}">
-                {{ site_setting('support_email','info@gettrade.space') }}
+            <a href="mailto:{{ site_setting('support_email','info@getwealth.live') }}">
+                {{ site_setting('support_email','info@getwealth.live') }}
             </a>
         </p>
     </div>
@@ -123,7 +123,7 @@
     <!-- Footer -->
     <div class="footer">
         <p>
-            © {{ date('Y') }} {{ site_setting('site_name','Get Trade') }}.
+            © {{ date('Y') }} {{ site_setting('site_name','Get Wealth') }}.
             All rights reserved.
         </p>
     </div>

@@ -12,7 +12,7 @@ background: linear-gradient(135deg,#0046fd,#00fafe);
     <table style="width: 100%;">
         <tr class="background-color: #222633;">
             <td>
-                <img alt="" src="{{asset('/panel-assets/img/soluminity_square.png')}}" style="width: 100px; padding: 10px">
+                <img alt="" src="{{asset('assets/images/logo.png')}}" style="width: 100px; padding: 10px">
             </td>
             <td style="padding-left: 50px; text-align: right; padding-right: 20px;">
                 <a href="{{route('login')}}" style="color: #000; text-decoration: underline; font-size: 14px; letter-spacing: 1px;">Sign In</a>
