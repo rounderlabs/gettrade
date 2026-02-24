@@ -17,11 +17,6 @@ class CreateWithdrawalHistoriesTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->string('txn_id')->nullable()->default(null);
-            $table->foreignId('withdraw_coin_id')->nullable()->default(null);
-            $table->string('address')->nullable()->default(null);
-            $table->decimal('tokens', 40, 8)->nullable()->default(null);
-            $table->decimal('token_price', 20, 4)->nullable()->default(null);
-            $table->decimal('withdrawal_crypto_price', 40, 8)->nullable()->default(null);
             $table->string('bank_name')->nullable()->default(null);
             $table->string('bank_ifsc')->nullable()->default(null);
             $table->string('bank_account_no')->nullable()->default(null);
