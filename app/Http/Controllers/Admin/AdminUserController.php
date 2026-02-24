@@ -595,5 +595,17 @@ class AdminUserController extends Controller
         return back()->with('notification', ['User stop settings updated successfully', 'success']);
     }
 
+    public function updateUserManualLevelCount(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'level_count' => 'required|numeric|min:1',
+        ]);
+        $user = User::findOrFail($request->user_id);
+        $user->update(['manual_unlocked_level'=>$request->level_count]);
+        return back()->with('notification', ['User Manual Level Opening updated successfully', 'success']);
+
+    }
+
 
 }

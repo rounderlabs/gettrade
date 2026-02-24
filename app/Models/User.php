@@ -40,7 +40,8 @@ class User extends Authenticatable
         'welcome_mode',
         'preferred_currency',
         'withdraw_mode',
-        'withdraw_type'
+        'withdraw_type',
+        'manual_unlocked_level'
 
     ];
 

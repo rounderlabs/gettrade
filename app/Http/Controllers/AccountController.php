@@ -93,7 +93,8 @@ class AccountController extends Controller
 
     public function showChangePassword()
     {
-        return Inertia::render('Account/ChangePassword');
+        $user = auth()->user();
+        return Inertia::render('Account/ChangePassword',['profile'=>$user]);
     }
 
     public function updatePassword(Request $request)

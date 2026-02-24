@@ -394,13 +394,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _layouts_UserLayouts_UserLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/layouts/UserLayouts/UserLayout.vue */ "./resources/js/layouts/UserLayouts/UserLayout.vue");
-/* harmony import */ var _layouts_AccountLayout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/layouts/AccountLayout */ "./resources/js/layouts/AccountLayout.vue");
-/* harmony import */ var _components_InputError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/components/InputError */ "./resources/js/components/InputError.vue");
-/* harmony import */ var _views_Account_ProfileLeft__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/views/Account/ProfileLeft */ "./resources/js/views/Account/ProfileLeft.vue");
-/* harmony import */ var _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/vue-fontawesome */ "./node_modules/@fortawesome/vue-fontawesome/index.es.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/vue3 */ "./node_modules/@inertiajs/vue3/dist/index.esm.js");
+/* harmony import */ var _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fortawesome/vue-fontawesome */ "./node_modules/@fortawesome/vue-fontawesome/index.es.js");
+/* harmony import */ var _layouts_UserLayouts_UserLayout_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/layouts/UserLayouts/UserLayout.vue */ "./resources/js/layouts/UserLayouts/UserLayout.vue");
+/* harmony import */ var _layouts_AccountLayout__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/layouts/AccountLayout */ "./resources/js/layouts/AccountLayout.vue");
+/* harmony import */ var _components_InputError__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/components/InputError */ "./resources/js/components/InputError.vue");
+/* harmony import */ var _views_Account_ProfileLeft__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/views/Account/ProfileLeft */ "./resources/js/views/Account/ProfileLeft.vue");
 
+ // <-- important
 
 
 
@@ -409,32 +411,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ChangePassword",
   components: {
-    FontAwesomeIcon: _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_4__.FontAwesomeIcon,
-    ProfileLeft: _views_Account_ProfileLeft__WEBPACK_IMPORTED_MODULE_3__["default"],
-    InputError: _components_InputError__WEBPACK_IMPORTED_MODULE_2__["default"]
+    FontAwesomeIcon: _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_2__.FontAwesomeIcon,
+    ProfileLeft: _views_Account_ProfileLeft__WEBPACK_IMPORTED_MODULE_6__["default"],
+    InputError: _components_InputError__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   props: {
     profile: Object
   },
   metaInfo: {
-    title: 'Change Password'
+    title: "Change Password"
   },
-  layout: [_layouts_UserLayouts_UserLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"], _layouts_AccountLayout__WEBPACK_IMPORTED_MODULE_1__["default"]],
-  data: function data() {
-    return {
-      form: this.$inertia.form({
-        current_password: null,
-        new_password: null,
-        new_password_confirmation: null
-      })
-    };
-  },
+  layout: [_layouts_UserLayouts_UserLayout_vue__WEBPACK_IMPORTED_MODULE_3__["default"], _layouts_AccountLayout__WEBPACK_IMPORTED_MODULE_4__["default"]],
   setup: function setup() {
-    var isShowPassword = (0,vue__WEBPACK_IMPORTED_MODULE_5__.ref)(false);
+    var isShowPassword = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+    var form = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.useForm)({
+      current_password: "",
+      new_password: "",
+      new_password_confirmation: ""
+    });
     function togglePassword() {
       isShowPassword.value = !isShowPassword.value;
     }
     return {
+      form: form,
       isShowPassword: isShowPassword,
       togglePassword: togglePassword
     };
@@ -598,7 +597,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       active: $setup.currentRoute.includes('kyc')
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Link"], {
-    href: _ctx.route('kyc.index')
+    href: _ctx.route('withdraw.redirect')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return _cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
@@ -611,7 +610,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "active",
         src: "/user-panel/assets-panel/assets/images/bar-chart-fill.svg",
         alt: "KYC"
-      })], -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "My KYC", -1 /* HOISTED */)]);
+      })], -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Withdraw", -1 /* HOISTED */)]);
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["href"])], 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" PROFILE "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", {
@@ -872,48 +871,48 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Change Password")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Inventory card "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
     "class": "auth-form",
     onSubmit: _cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
-      return $data.form.post(_ctx.route('account.update.password'));
+      return $setup.form.post(_ctx.route('account.update.password'));
     }, ["prevent"]))
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
   }, "Enter Current Password", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-      return $data.form.current_password = $event;
+      return $setup.form.current_password = $event;
     }),
     type: $setup.isShowPassword ? 'text' : 'password',
     "class": "form-control",
     placeholder: "Current Password",
     required: ""
-  }, null, 8 /* PROPS */, _hoisted_7), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelDynamic, $data.form.current_password], [_directive_input_error, $data.form.errors.current_password]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  }, null, 8 /* PROPS */, _hoisted_7), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelDynamic, $setup.form.current_password], [_directive_input_error, $setup.form.errors.current_password]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
   }, "Enter New Password", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $data.form.new_password = $event;
+      return $setup.form.new_password = $event;
     }),
     type: $setup.isShowPassword ? 'text' : 'password',
     "class": "form-control",
     placeholder: "Enter New Password",
     required: ""
-  }, null, 8 /* PROPS */, _hoisted_10), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelDynamic, $data.form.new_password], [_directive_input_error, $data.form.errors.current_password]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  }, null, 8 /* PROPS */, _hoisted_10), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelDynamic, $setup.form.new_password], [_directive_input_error, $setup.form.errors.current_password]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "form-label"
   }, "Re-Enter New Password", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
-      return $data.form.new_password_confirmation = $event;
+      return $setup.form.new_password_confirmation = $event;
     }),
     type: $setup.isShowPassword ? 'text' : 'password',
     "class": "form-control border-start-0",
     placeholder: "Confirm New Password",
     required: ""
-  }, null, 8 /* PROPS */, _hoisted_13), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelDynamic, $data.form.new_password_confirmation], [_directive_input_error, $data.form.errors.new_password_confirmation]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, " ", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  }, null, 8 /* PROPS */, _hoisted_13), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelDynamic, $setup.form.new_password_confirmation], [_directive_input_error, $setup.form.errors.new_password_confirmation]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, " ", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
     href: "#",
     onClick: _cache[3] || (_cache[3] = function ($event) {
       return $setup.togglePassword();
     })
   }, "show Password")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    disabled: $data.form.processing,
+    disabled: $setup.form.processing,
     "class": "btn theme-btn w-100",
     type: "submit"
-  }, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Update New Password ")), $data.form.processing ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_font_awesome_icon, {
+  }, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Update New Password ")), $setup.form.processing ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_font_awesome_icon, {
     key: 0,
     "class": "ml-1",
     icon: "spinner",

@@ -16,7 +16,7 @@
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
                         <div class="balance-content">
                             <h6>Balance</h6>
-                            <h3>${{ withdrawable_balance }}</h3>
+                            <h3>{{ currencySymbol }} {{ income_wallet.balance_display }}</h3>
                             <h5>Withdrawal Balance </h5>
                         </div>
                     </div>
@@ -233,6 +233,7 @@ export default {
         user_income_stats: Object,
         income_wallet: Object,
         withdrawable_balance: String,
+        currencySymbol:String,
     },
     setup() {
         const otpSent = ref(false)

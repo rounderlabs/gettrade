@@ -64,44 +64,43 @@
 </template>
 
 <script>
+import { ref } from "vue";
+import { useForm } from "@inertiajs/vue3"; // <-- important
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import AccountLayout from "@/layouts/AccountLayout";
 import InputError from "@/components/InputError";
 import ProfileLeft from "@/views/Account/ProfileLeft";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {ref} from "vue";
 
 export default {
     name: "ChangePassword",
-    components: {FontAwesomeIcon, ProfileLeft, InputError},
+    components: { FontAwesomeIcon, ProfileLeft, InputError },
     props: {
         profile: Object
     },
-    metaInfo: {title: 'Change Password'},
+    metaInfo: { title: "Change Password" },
     layout: [UserLayout, AccountLayout],
-    data() {
-        return {
-            form: this.$inertia.form({
-                current_password: null,
-                new_password: null,
-                new_password_confirmation: null
-            })
-        }
-    },
+
     setup() {
         const isShowPassword = ref(false);
 
+        const form = useForm({
+            current_password: "",
+            new_password: "",
+            new_password_confirmation: ""
+        });
+
         function togglePassword() {
-
             isShowPassword.value = !isShowPassword.value;
-
         }
 
         return {
-            isShowPassword, togglePassword
-        }
+            form,
+            isShowPassword,
+            togglePassword
+        };
     }
-}
+};
 </script>
 
 <style scoped>

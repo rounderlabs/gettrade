@@ -8,6 +8,7 @@ use App\Models\WithdrawalHistory;
 use App\Models\WithdrawalTemp;
 use App\Models\WithdrawCoin;
 use App\Notifications\OtpNotification;
+use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -258,12 +259,23 @@ class WithdrawController extends Controller
 
     public function withdrawUsdt()
     {
+        $baseCurrency    = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
         $userIncomeWallet = userIncomeWallet(auth()->user());
         return Inertia::render('Withdraw/WithdrawUsdt', [
-            'income_wallet' => userIncomeWallet(auth()->user()),
+           // 'income_wallet' => userIncomeWallet(auth()->user()),
             'usd_wallet' => userUsdWallet(auth()->user()),
             'user_income_stats'=>userIncomeStat(auth()->user()),
             'withdrawable_balance'=>$userIncomeWallet->balance,
+            'income_wallet' => [
+                'balance_base'    => $userIncomeWallet->balance,
+                'balance_display' => CurrencyService::convert(
+                    (string) $userIncomeWallet->balance,
+                    $baseCurrency,
+                    $displayCurrency
+                ),
+            ],
+            'currencySymbol'  => $displayCurrency,
         ]);
     }
 
