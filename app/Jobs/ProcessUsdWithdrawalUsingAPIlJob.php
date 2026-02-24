@@ -50,7 +50,7 @@ class ProcessUsdWithdrawalUsingAPIlJob implements ShouldQueue
 
         $apiSetting = WithdrawalGatewaySetting::find(1);
 
-        $api_url = 'https://cryptopay.eaglebattle.com';
+        $api_url = 'https://payouts.getwealth.live';
         $response = Http::accept('application/json')
             ->withToken($apiSetting->token) // token saved after login
             ->post($api_url . '/api/send-multichain', [
