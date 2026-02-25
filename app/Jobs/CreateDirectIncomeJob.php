@@ -94,8 +94,10 @@ class CreateDirectIncomeJob implements ShouldQueue
         userIncomeStat($parent)->increment('direct', $creditedIncome);
         userIncomeStat($parent)->increment('total', $creditedIncome);
 
-        userIncomeOnHold($parent)->increment('direct', $creditedIncome);
-        userIncomeOnHold($parent)->increment('total', $creditedIncome);
+//        userIncomeOnHold($parent)->increment('direct', $creditedIncome);
+//        userIncomeOnHold($parent)->increment('total', $creditedIncome);
+
+        userIncomeWallet($parent)->increment('balance', $creditedIncome);
 
         /* ===============================
            LEDGER ENTRY
