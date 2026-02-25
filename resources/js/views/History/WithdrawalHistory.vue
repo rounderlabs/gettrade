@@ -114,7 +114,9 @@ export default {
         history: Array,
         income_on_hold: Object,
         withdraw_totals: Object,
+        currencySymbol: String,
     }
+
 }
 </script>
 

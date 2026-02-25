@@ -102,7 +102,19 @@ class HistoryController extends Controller
                 'working_display'     => displayAmount($totalWorking, $user),
                 'non_working_display' => displayAmount($totalNonWorking, $user),
             ],
+            'currencySymbol' => $this->getCurrencySymbol(
+                $user->preferred_currency ?? 'INR'
+            ),
         ]);
+    }
+
+    public function getCurrencySymbol($currency)
+    {
+        return match ($currency) {
+            'INR'  => '₹',
+            'USDT' => '$',
+            default => $currency,
+        };
     }
 
     public function showWalletTxnHistory()
