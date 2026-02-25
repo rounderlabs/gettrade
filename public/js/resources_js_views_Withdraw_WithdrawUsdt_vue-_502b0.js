@@ -348,7 +348,8 @@ __webpack_require__.r(__webpack_exports__);
     income_wallet: Object,
     withdrawable_balance: String,
     display_currency: String,
-    currency_symbol: String
+    currency_symbol: String,
+    withdraw_mode: String // IMPORTANT
   },
   setup: function setup(props) {
     var otpSent = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)(false);
@@ -356,6 +357,14 @@ __webpack_require__.r(__webpack_exports__);
     var amount = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)("0.00");
     var fees = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)("0.00");
     var receivableAmount = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)("0.00");
+
+    /* ✅ FIXED CURRENCY LOGIC */
+    var withdrawCurrency = (0,vue__WEBPACK_IMPORTED_MODULE_2__.computed)(function () {
+      return props.withdraw_mode === "CRYPTO" ? "$ " : props.display_currency;
+    });
+    var withdrawSymbol = (0,vue__WEBPACK_IMPORTED_MODULE_2__.computed)(function () {
+      return props.withdraw_mode === "CRYPTO" ? "$ " : props.currency_symbol;
+    });
     var withdrawForm = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.useForm)({
       amount: null,
       otp: null,
@@ -419,7 +428,9 @@ __webpack_require__.r(__webpack_exports__);
       fees: fees,
       receivableAmount: receivableAmount,
       withdrawAttempt: withdrawAttempt,
-      submitWithdraw: submitWithdraw
+      submitWithdraw: submitWithdraw,
+      withdrawCurrency: withdrawCurrency,
+      withdrawSymbol: withdrawSymbol
     };
   }
 });
@@ -834,19 +845,19 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     alt: "balance-box",
     "class": "img-fluid balance-box-img unactive",
     src: "/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg"
-  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, "Balance", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency_symbol) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.income_wallet.balance_display), 1 /* TEXT */), _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+  }, null, -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, "Balance", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawSymbol) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.income_wallet.balance_display), 1 /* TEXT */), _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
     "class": "dark-text"
-  }, "Withdrawal Balance ", -1 /* HOISTED */))])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" STEP 1 "), !$setup.otpSent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
+  }, "Withdrawal Balance", -1 /* HOISTED */))])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" STEP 1 "), !$setup.otpSent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
     key: 0,
     onSubmit: _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $setup.withdrawAttempt && $setup.withdrawAttempt.apply($setup, arguments);
     }, ["prevent"]))
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_8, " Withdraw Amount in " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.display_currency), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_8, " Withdraw Amount in " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawCurrency), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $setup.withdrawForm.amount = $event;
     }),
     "class": "form-control",
-    placeholder: "Minimum ".concat($props.currency_symbol, "10"),
+    placeholder: "Minimum ".concat($setup.withdrawSymbol, "10"),
     type: "number",
     step: "0.01",
     required: "",
@@ -855,13 +866,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, null, 40 /* PROPS, NEED_HYDRATION */, _hoisted_10), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.withdrawForm.amount]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
     "class": "dark-text"
-  }, "Min Withdraw", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency_symbol) + "10.00", 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [_cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+  }, "Min Withdraw", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawSymbol) + "10.00", 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [_cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
     "class": "dark-text"
-  }, "Withdrawal Fees", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency_symbol) + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.fees), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+  }, "Withdrawal Fees", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawSymbol) + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.fees), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
     "class": "dark-text"
-  }, "Withdrawal Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency_symbol) + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.amount), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
+  }, "Withdrawal Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawSymbol) + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.amount), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", {
     "class": "dark-text"
-  }, "Receivable Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.currency_symbol) + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.receivableAmount), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, "Receivable Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawSymbol) + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.receivableAmount), 1 /* TEXT */)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     disabled: $setup.sending,
     "class": "btn theme-btn w-100 mt-3",
     type: "submit"
@@ -871,7 +882,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onSubmit: _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $setup.submitWithdraw && $setup.submitWithdraw.apply($setup, arguments);
     }, ["prevent"]))
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_26, " Withdraw Amount in " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.display_currency), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_26, " Withdraw Amount in " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.withdrawCurrency), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $setup.withdrawForm.amount = $event;
     }),

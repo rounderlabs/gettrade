@@ -32,7 +32,29 @@ class HistoryController extends Controller
 
         $incomeOnHold = $user->userIncomeOnHold;
 
-        $withdrawals = $user->withdrawalHistories()
+        $withdrawalsQuery = $user->withdrawalHistories();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate Totals By Type
+        |--------------------------------------------------------------------------
+        */
+
+        $totalWorking = (clone $withdrawalsQuery)
+            ->where('type', 'working')
+            ->sum('amount');
+
+        $totalNonWorking = (clone $withdrawalsQuery)
+            ->where('type', 'non_working')
+            ->sum('amount');
+
+        /*
+        |--------------------------------------------------------------------------
+        | History List
+        |--------------------------------------------------------------------------
+        */
+
+        $withdrawals = $withdrawalsQuery
             ->orderByDesc('id')
             ->get()
             ->map(function ($txn) use ($user) {
@@ -40,14 +62,13 @@ class HistoryController extends Controller
                 return [
                     'id'                   => $txn->id,
                     'status'               => $txn->status,
+                    'type'                 => $txn->type,
                     'created_at'           => $txn->created_at->format('d M Y'),
 
-                    // BASE values (INR)
                     'amount_base'          => $txn->amount,
                     'fees_base'            => $txn->fees,
                     'receivable_base'      => $txn->receivable_amount,
 
-                    // DISPLAY values (user currency)
                     'amount_display'       => displayAmount($txn->amount, $user),
                     'fees_display'         => displayAmount($txn->fees, $user),
                     'receivable_display'   => displayAmount($txn->receivable_amount, $user),
@@ -71,10 +92,18 @@ class HistoryController extends Controller
                     $user
                 ),
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | NEW TOTALS
+            |--------------------------------------------------------------------------
+            */
+            'withdraw_totals' => [
+                'working_display'     => displayAmount($totalWorking, $user),
+                'non_working_display' => displayAmount($totalNonWorking, $user),
+            ],
         ]);
     }
-
-
 
     public function showWalletTxnHistory()
     {

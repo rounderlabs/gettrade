@@ -4,43 +4,56 @@
             <div class="title">
                 <h2>withdraw Bonus</h2>
             </div>
-            <div class="d-flex gap-3">
-            <ul class="select-bank ">
-                <li>
-                    <div class="balance-box active">
-                        <img alt="balance-box"
-                             class="img-fluid balance-box-img active"
-                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
-                        <img alt="balance-box"
-                             class="img-fluid balance-box-img unactive"
-                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
-                        <div class="balance-content">
-                            <h6>Balance</h6>
-                            <h3>{{ currencySymbol }} {{ income_on_hold.direct_display }}</h3>
-                            <h5>Marketing Bonus</h5>
-                        </div>
-                    </div>
-                </li>
-            </ul>
 
-            <ul class="select-bank">
-                <li>
-                    <div class="balance-box active">
-                        <img alt="balance-box"
-                             class="img-fluid balance-box-img active"
-                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
-                        <img alt="balance-box"
-                             class="img-fluid balance-box-img unactive"
-                             src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
-                        <div class="balance-content">
-                            <h6>Balance</h6>
-                            <h3>{{ currencySymbol }} {{ income_on_hold.return_display }}</h3>
-                            <h5>Return Bonus </h5>
+            <div class="d-flex gap-3 flex-wrap">
+
+                <!-- ✅ Total Marketing Withdrawn -->
+                <ul class="select-bank">
+                    <li>
+                        <div class="balance-box active">
+                            <input checked class="form-check-input" name="flexRadio" type="radio">
+
+                            <img alt="balance-box"
+                                 class="img-fluid balance-box-img active"
+                                 src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
+
+                            <img alt="balance-box"
+                                 class="img-fluid balance-box-img unactive"
+                                 src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
+
+                            <div class="balance-content">
+                                <h6>Total Withdrawn</h6>
+                                <h3>{{ currencySymbol }} {{ withdraw_totals.working_display }}</h3>
+                                <h5 class="dark-text">Marketing Withdrawal</h5>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
+                    </li>
+                </ul>
+
+
+                <!-- ✅ Total Return Withdrawn -->
+                <ul class="select-bank">
+                    <li>
+                        <div class="balance-box active">
+                            <input checked class="form-check-input" name="flexRadio" type="radio">
+
+                            <img alt="balance-box"
+                                 class="img-fluid balance-box-img active"
+                                 src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
+
+                            <img alt="balance-box"
+                                 class="img-fluid balance-box-img unactive"
+                                 src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
+
+                            <div class="balance-content">
+                                <h6>Total Withdrawn</h6>
+                                <h3>{{ currencySymbol }} {{ withdraw_totals.non_working_display }}</h3>
+                                <h5 class="dark-text">Return Withdrawal</h5>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </section>
     <section>
@@ -100,6 +113,7 @@ export default {
     props: {
         history: Array,
         income_on_hold: Object,
+        withdraw_totals: Object,
     }
 }
 </script>
