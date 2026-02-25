@@ -67,6 +67,10 @@ class WalletController extends Controller
 
             'deposit_histories' => $depositHistory,
             'display_currency'  => $displayCurrency,
+            'permissions' => [
+                'can_transfer' => $user->can_transfer,
+                'can_activate_downline' => $user->can_activate_downline,
+            ]
         ]);
     }
 
@@ -74,6 +78,10 @@ class WalletController extends Controller
     public function showFundTransferForm()
     {
         $user = auth()->user();
+
+        if (!$user->canTransfer()) {
+            abort(403, 'Transfer permission denied.');
+        }
 
         $baseCurrency = 'INR';
         $displayCurrency = $user->preferred_currency ?? 'INR';
@@ -153,6 +161,12 @@ class WalletController extends Controller
             'amount'   => ['required', 'numeric', 'gt:0'],
             'username' => ['required', 'exists:users,username'],
         ]);
+
+        $user = auth()->user();
+
+        if (!$user->canTransfer()) {
+            abort(403, 'Transfer permission denied.');
+        }
 
         $fromUser = auth()->user();
         $toUser   = User::where('username', $request->username)->firstOrFail();
@@ -261,6 +275,9 @@ class WalletController extends Controller
     public function showActivateMemberForm()
     {
         $user = auth()->user();
+        if (!$user->canActivateDownline()) {
+            abort(403, 'Activation permission denied.');
+        }
 
         $baseCurrency = 'INR';
         $displayCurrency = $user->preferred_currency ?? 'INR';
@@ -296,6 +313,9 @@ class WalletController extends Controller
         ]);
 
         $user   = auth()->user();
+        if (!$user->canActivateDownline()) {
+            abort(403, 'Activation permission denied.');
+        }
         $toUser = User::where('username', $request->username)->firstOrFail();
         $plan   = Plan::findOrFail($request->plan_id);
 

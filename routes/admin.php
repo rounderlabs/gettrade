@@ -108,6 +108,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('export-team-package/{user}', [AdminDashboardController::class, 'getTeamSubscriptions'])->name('export.team.package');
             Route::get('show-team-overview/{user}', [AdminDashboardController::class, 'getTeamOverview'])->name('show.team.overview');
             Route::post('update-stops', [AdminUserController::class, 'updateUserStops'])->name('update.stops');
+            Route::post('update-manual-level', [AdminUserController::class, 'updateManualLevel'])->name('update.manual.level');
         });
 
         // SUBSCRIPTIONS

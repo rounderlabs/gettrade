@@ -9,8 +9,8 @@
 
                         <div class="card-body text-center">
                             <img
-                                src="/assets/img/avatar.png"
                                 class="img-circle elevation-2 mb-3"
+                                src="/assets/img/avatar.png"
                                 width="120"
                             />
 
@@ -18,8 +18,8 @@
                             <p class="text-muted">{{ user.username }}</p>
                             <button
                                 class="btn btn-sm btn-primary mt-2"
-                                data-bs-toggle="modal"
                                 data-bs-target="#editProfileModal"
+                                data-bs-toggle="modal"
                             >
                                 <i class="fas fa-edit"></i> Edit Profile
                             </button>
@@ -67,16 +67,16 @@
                                     <label>Amount (₹)</label>
                                     <input
                                         v-model="walletForm.amount"
-                                        type="number"
                                         class="form-control"
                                         required
+                                        type="number"
                                     />
                                 </div>
 
                             </div>
 
                             <div class="card-footer">
-                                <button class="btn btn-info" :disabled="walletForm.processing">
+                                <button :disabled="walletForm.processing" class="btn btn-info">
                                     Update Activation Wallet
                                 </button>
                             </div>
@@ -109,16 +109,16 @@
                                     <label>Amount (₹)</label>
                                     <input
                                         v-model="incomeWalletForm.amount"
-                                        type="number"
                                         class="form-control"
                                         required
+                                        type="number"
                                     />
                                 </div>
 
                             </div>
 
                             <div class="card-footer">
-                                <button class="btn btn-info" :disabled="incomeWalletForm.processing">
+                                <button :disabled="incomeWalletForm.processing" class="btn btn-info">
                                     Update Income Balance
                                 </button>
                             </div>
@@ -146,30 +146,62 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">User Control / Stop Settings</h3>
-                    </div>
+                <div class="col-md-3">
+                    <div class="card card-info">
+                        <div class="card-body text-center">
 
-                    <div class="card-body">
-                        <form @submit.prevent="submit">
+                            <h6>Unlocked Level</h6>
 
-                            <Toggle label="Block User" v-model="form.is_blocked" />
-                            <Toggle label="Direct Bonus" v-model="form.direct" />
-                            <Toggle label="Trading Bonus" v-model="form.roi" />
-                            <Toggle label="Systematic Bonus" v-model="form.roi_on_roi" />
-                            <Toggle label="Rank Bonus" v-model="form.rank" />
-                            <Toggle label="Bonanza" v-model="form.bonanza" />
-                            <Toggle label="Reward" v-model="form.reward" />
-                            <Toggle label="Withdrawal" v-model="form.withdrawal" />
+                            <h3 class="mb-2">
+                                {{ user.manual_unlocked_level > 0
+                                ? user.manual_unlocked_level
+                                : user.auto_unlocked_level }}
+                            </h3>
 
-                            <button class="btn btn-primary mt-3" :disabled="form.processing">
-                                Save Settings
+                            <small class="text-muted d-block mb-3">
+                                {{ user.manual_unlocked_level > 0
+                                ? 'Manual Override'
+                                : 'Auto Calculated' }}
+                            </small>
+
+                            <button
+                                class="btn btn-sm btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#manualLevelModal"
+                            >
+                                <i class="fas fa-edit"></i> Update Level
                             </button>
-                        </form>
+
+                        </div>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">User Control / Stop Settings</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <form @submit.prevent="submit">
+
+                                <Toggle v-model="form.is_blocked" label="Block User"/>
+                                <Toggle v-model="form.direct" label="Direct Bonus"/>
+                                <Toggle v-model="form.roi" label="Trading Bonus"/>
+                                <Toggle v-model="form.roi_on_roi" label="Systematic Bonus"/>
+                                <Toggle v-model="form.rank" label="Rank Bonus"/>
+                                <Toggle v-model="form.bonanza" label="Bonanza"/>
+                                <Toggle v-model="form.reward" label="Reward"/>
+                                <Toggle v-model="form.withdrawal" label="Withdrawal"/>
+                                <hr>
+                                <Toggle label="Allow Fund Transfer" v-model="form.can_transfer" />
+                                <Toggle label="Allow Downline Activation" v-model="form.can_activate_downline" />
+
+                                <button :disabled="form.processing" class="btn btn-primary mt-3">
+                                    Save Settings
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -196,7 +228,7 @@
 
                         <tbody>
                         <tr v-if="!subscriptions.length">
-                            <td colspan="7" class="text-center">
+                            <td class="text-center" colspan="7">
                                 No subscriptions found
                             </td>
                         </tr>
@@ -208,8 +240,8 @@
                             <td>₹ {{ subscription.earned_so_far }}</td>
                             <td>
                                 <span
-                                    class="badge"
                                     :class="subscription.is_active ? 'badge-success' : 'badge-secondary'"
+                                    class="badge"
                                 >
                                     {{ subscription.is_active ? 'Active' : 'Disabled' }}
                                 </span>
@@ -231,10 +263,10 @@
         </div>
         <!-- ================= EDIT PROFILE MODAL ================= -->
         <div
-            class="modal fade"
             id="editProfileModal"
-            tabindex="-1"
             aria-hidden="true"
+            class="modal fade"
+            tabindex="-1"
         >
             <div class="modal-dialog modal-md modal-dialog-centered">
                 <div class="modal-content">
@@ -245,9 +277,9 @@
                             Update User Profile
                         </h5>
                         <button
-                            type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
+                            type="button"
                         ></button>
                     </div>
 
@@ -260,10 +292,10 @@
                                 <label>Name</label>
                                 <input
                                     v-model="profileForm.name"
-                                    type="text"
                                     class="form-control"
                                     placeholder="Enter Name"
                                     required
+                                    type="text"
                                 />
                             </div>
 
@@ -272,10 +304,10 @@
                                 <label>Email</label>
                                 <input
                                     v-model="profileForm.email"
-                                    type="email"
                                     class="form-control"
                                     placeholder="Enter Email"
                                     required
+                                    type="email"
                                 />
                             </div>
 
@@ -284,10 +316,10 @@
                                 <label>Mobile</label>
                                 <input
                                     v-model="profileForm.mobile"
-                                    type="text"
                                     class="form-control"
                                     placeholder="Enter Mobile"
                                     required
+                                    type="text"
                                 />
                             </div>
 
@@ -296,17 +328,17 @@
                         <!-- FOOTER -->
                         <div class="modal-footer">
                             <button
-                                type="button"
                                 class="btn btn-secondary"
                                 data-bs-dismiss="modal"
+                                type="button"
                             >
                                 Cancel
                             </button>
 
                             <button
-                                type="submit"
-                                class="btn btn-primary"
                                 :disabled="profileForm.processing"
+                                class="btn btn-primary"
+                                type="submit"
                             >
                                 Save Changes
                             </button>
@@ -318,6 +350,82 @@
         </div>
 
     </section>
+    <!-- ================= MANUAL LEVEL MODAL ================= -->
+    <div
+        id="manualLevelModal"
+        aria-hidden="true"
+        class="modal fade"
+        tabindex="-1"
+    >
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Update Manual Unlocked Level
+                    </h5>
+                    <button
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        type="button"
+                    ></button>
+                </div>
+
+                <form @submit.prevent="updateManualLevel">
+                    <div class="modal-body">
+
+                        <div class="form-group mb-3">
+                            <label>Current Active Level</label>
+                            <input
+                                :value="user.manual_unlocked_level > 0
+                                ? user.manual_unlocked_level
+                                : user.auto_unlocked_level"
+                                class="form-control"
+                                disabled
+                                type="text"
+                            />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label>Manual Override Level</label>
+                            <input
+                                v-model="manualLevelForm.manual_unlocked_level"
+                                class="form-control"
+                                max="20"
+                                min="0"
+                                placeholder="Enter level (0 = auto)"
+                                required
+                                type="number"
+                            />
+                            <small class="text-muted">
+                                Set 0 to enable auto calculation
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                            type="button"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            :disabled="manualLevelForm.processing"
+                            class="btn btn-primary"
+                            type="submit"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </template>
 
 
@@ -359,8 +467,8 @@ export default {
         const userSubscriptionForm = useForm({
             amount: null,
             type: 'credit',
-            investment_type : null,
-            plan_id : 1,
+            investment_type: null,
+            plan_id: 1,
             user_id: props.user.id
         })
         const profileForm = useForm({
@@ -369,6 +477,39 @@ export default {
             name: props.user.name,
             mobile: props.user.mobile
         })
+
+        const manualLevelForm = useForm({
+            user_id: props.user.id,
+            manual_unlocked_level: props.user.manual_unlocked_level ?? 0
+        })
+
+        function updateManualLevel() {
+            manualLevelForm.post(route('admin.user.update.manual.level'), {
+                onSuccess: () => {
+                    const modalEl = document.getElementById("manualLevelModal")
+
+                    // Properly hide modal
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl)
+                    if (modalInstance) {
+                        modalInstance.hide()
+                    }
+
+                    // Force cleanup (important)
+                    document.body.classList.remove('modal-open')
+                    document.body.style.removeProperty('padding-right')
+
+                    document.querySelectorAll('.modal-backdrop')
+                        .forEach(el => el.remove())
+
+                    toast("Unlocked level updated successfully", "success")
+                },
+                onError: errors => {
+                    for (const [key, value] of Object.entries(errors)) {
+                        toast(value, 'danger')
+                    }
+                }
+            })
+        }
 
         function updateUsdWallet() {
             walletForm.post(route('admin.user.update.activation.wallet.balance'), {
@@ -412,7 +553,7 @@ export default {
         function updateProfile() {
             profileForm.post(route("admin.user.store"), {
                 onSuccess: () => {
-                  //  toast("Profile Updated Successfully")
+                    //  toast("Profile Updated Successfully")
 
                     const modalEl = document.getElementById("editProfileModal")
                     const modal = bootstrap.Modal.getInstance(modalEl)
@@ -423,7 +564,7 @@ export default {
                     modalEl.addEventListener("hidden.bs.modal", () => {
                         document.querySelectorAll(".modal-backdrop").forEach(el => el.remove())
                         document.body.classList.remove("modal-open")
-                    }, { once: true })
+                    }, {once: true})
                 }
             })
         }
@@ -434,6 +575,7 @@ export default {
         function paginatorResponse(data) {
             subscriptions.value = data
         }
+
         const form = useForm({
             user_id: props.user.id,
             is_blocked: props.user_stop?.is_blocked ?? false,
@@ -444,13 +586,31 @@ export default {
             bonanza: props.user_stop?.bonanza ?? false,
             reward: props.user_stop?.reward ?? false,
             withdrawal: props.user_stop?.withdrawal ?? false,
+
+            can_transfer: props.user.can_transfer ?? false,
+            can_activate_downline: props.user.can_activate_downline ?? false,
         });
 
         function submit() {
             form.post(route("admin.user.update.stops"));
         }
 
-        return {form,subscriptions, paginatorResponse, profileForm, updateProfile, walletForm,incomeWalletForm, updateUsdWallet, updateIncomeWallet, userSubscriptionForm, createUserSubscription, submit}
+        return {
+            manualLevelForm,
+            updateManualLevel,
+            form,
+            subscriptions,
+            paginatorResponse,
+            profileForm,
+            updateProfile,
+            walletForm,
+            incomeWalletForm,
+            updateUsdWallet,
+            updateIncomeWallet,
+            userSubscriptionForm,
+            createUserSubscription,
+            submit
+        }
     }
 }
 </script>

@@ -1095,7 +1095,8 @@ __webpack_require__.r(__webpack_exports__);
     total_income: String,
     showWelcomeModal: Boolean,
     welcomeMode: String,
-    display_currency: String
+    display_currency: String,
+    opened_level: Number
   },
   setup: function setup() {
     var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_21__.usePage)();
@@ -2853,6 +2854,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
+var _hoisted_1 = {
+  "class": "custom-container"
+};
+var _hoisted_2 = {
+  "class": "statistics-banner"
+};
+var _hoisted_3 = {
+  "class": "d-flex justify-content-center gap-3"
+};
+var _hoisted_4 = {
+  "class": "statistics-content"
+};
+var _hoisted_5 = {
+  "class": "dark-text"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_UserLoginDetailsComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("UserLoginDetailsComponent");
   var _component_InstantOperationComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("InstantOperationComponent");
@@ -2875,7 +2891,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     currency: $setup.currencySymbol
   }, null, 8 /* PROPS */, ["user_income", "currency"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_team_widget, {
     team: $props.team
-  }, null, 8 /* PROPS */, ["team"])], 64 /* STABLE_FRAGMENT */);
+  }, null, 8 /* PROPS */, ["team"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"statistics-image\" data-v-65abe250><svg fill=\"#ffffff\" height=\"24px\" width=\"24px\" version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 392.482 392.482\" xml:space=\"preserve\" stroke=\"#ffffff\" data-v-65abe250><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\" data-v-65abe250></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\" data-v-65abe250></g><g id=\"SVGRepo_iconCarrier\" data-v-65abe250><g data-v-65abe250><g data-v-65abe250><path d=\"M344.245,244.564v-34.521c0-6.012-4.849-10.925-10.925-10.925H207.453v-21.786h86.238c6.012,0,10.925-4.849,10.925-10.925 V35.303c0-6.012-4.849-10.925-10.925-10.925H159.809L148.366,5.308c-1.939-3.297-5.495-5.301-9.374-5.301H98.912 c-6.012,0-10.925,4.849-10.925,10.925v155.475c0,6.012,4.849,10.925,10.925,10.925h86.756v21.786H59.607 c-6.012,0-10.925,4.848-10.925,10.925v34.521c-13.382,4.59-23.014,17.261-23.014,32.065c0,18.683,15.192,33.939,34.004,33.939 c18.683,0,34.004-15.192,34.004-33.939c0-14.933-9.632-27.604-23.014-32.065v-23.661h115.135v23.661 c-13.382,4.59-23.014,17.261-23.014,32.065c0,18.683,15.192,33.939,34.004,33.939c18.683,0,34.004-15.192,34.004-33.939 c0-14.933-9.632-27.604-23.014-32.065v-23.661h114.489v23.661c-13.382,4.59-23.014,17.261-23.014,32.065 c0,18.683,15.192,33.939,34.004,33.939c18.683,0,34.004-15.192,34.004-33.939C367.259,261.695,357.627,249.025,344.245,244.564z M71.825,276.629c0,6.659-5.495,12.154-12.154,12.154c-6.659,0-12.154-5.43-12.154-12.154c-0.065-6.659,5.43-12.154,12.154-12.154 C66.395,264.475,71.825,269.906,71.825,276.629z M109.708,155.417v-21.786h16.356c6.012,0,10.925-4.849,10.925-10.925 c0-6.012-4.848-10.925-10.925-10.925h-16.356V89.994h43.572c6.012,0,10.925-4.849,10.925-10.925 c0-6.012-4.849-10.925-10.925-10.925h-43.572V21.792h23.014l11.507,19.071c1.939,3.297,5.495,5.301,9.374,5.301h129.228v109.253 H109.708z M208.746,276.629c0,6.723-5.43,12.154-12.154,12.154s-12.154-5.43-12.154-12.154c0-6.659,5.495-12.154,12.154-12.154 C203.316,264.475,208.746,269.906,208.746,276.629z M332.867,288.782c-6.723,0-12.154-5.43-12.154-12.154 c0-6.659,5.495-12.154,12.154-12.154c6.723,0,12.154,5.43,12.154,12.154C345.086,283.352,339.591,288.782,332.867,288.782z\" data-v-65abe250></path></g></g> <g data-v-65abe250><g data-v-65abe250><path d=\"M59.671,323.821c-32.194,0-58.44,25.212-59.669,57.406c-0.065,2.909,1.034,5.883,3.038,7.952 c2.069,2.133,4.848,3.297,7.887,3.297h97.422c2.909,0,5.818-1.228,7.887-3.297c2.069-2.133,3.168-5.042,3.038-7.952 C118.047,349.033,91.865,323.821,59.671,323.821z M23.922,370.754c5.172-14.739,19.135-25.083,35.685-25.083 c16.485,0,30.448,10.343,35.685,25.083H23.922z\" data-v-65abe250></path></g></g> <g data-v-65abe250><g data-v-65abe250><path d=\"M196.593,323.821c-32.194,0-58.44,25.212-59.669,57.406c-0.065,2.909,1.034,5.883,3.038,7.952 c2.069,2.133,4.849,3.297,7.887,3.297h97.422c2.909,0,5.818-1.228,7.887-3.297c2.069-2.133,3.168-5.042,3.038-7.952 C254.968,349.033,228.787,323.821,196.593,323.821z M160.908,370.754c5.172-14.739,19.135-25.083,35.685-25.083 c16.485,0,30.448,10.343,35.685,25.083H160.908z\" data-v-65abe250></path></g></g> <g data-v-65abe250><g data-v-65abe250><path d=\"M332.867,323.821c-32.194,0-58.44,25.212-59.669,57.406c-0.065,2.909,1.034,5.883,3.038,7.952 c2.069,2.133,4.848,3.297,7.887,3.297h97.422c2.909,0,5.818-1.228,7.887-3.297c2.069-2.133,3.168-5.042,3.038-7.952 C391.308,349.033,365.126,323.821,332.867,323.821z M297.247,370.754c5.172-14.739,19.135-25.083,35.685-25.083 c16.485,0,30.448,10.343,35.685,25.083H297.247z\" data-v-65abe250></path></g></g></g></svg></div><div class=\"statistics-content d-block\" data-v-65abe250><h5 data-v-65abe250>Level Achievement</h5><h6 data-v-65abe250>Level Opened</h6></div>", 2)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.opened_level), 1 /* TEXT */)])])])])])], 64 /* STABLE_FRAGMENT */);
 }
 
 /***/ }),

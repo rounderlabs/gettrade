@@ -366,4 +366,21 @@ if (!function_exists('displayAmount')) {
     }
 }
 
+if (!function_exists('getUnlockedLevel')) {
+
+    function getUnlockedLevel(User $user): int
+    {
+        // Manual override
+        if ($user->manual_unlocked_level > 0) {
+            return (int) $user->manual_unlocked_level;
+        }
+
+        // Get active directs safely
+        $directs = (int) ($user->team->active_direct ?? 0);
+
+        // Max 20 levels
+        return min($directs * 2, 20);
+    }
+}
+
 

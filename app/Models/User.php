@@ -37,6 +37,8 @@ class User extends Authenticatable
         'profile_picture',
         'is_blocked',
         'kyc_verified',
+        'can_transfer',
+        'can_activate_downline',
         'welcome_seen_at',
         'welcome_mode',
         'preferred_currency',
@@ -82,6 +84,16 @@ class User extends Authenticatable
     public function getCreatedAtAttribute($value)
     {
         return date('F j, Y', strtotime($value));
+    }
+
+    public function canTransfer(): bool
+    {
+        return $this->can_transfer;
+    }
+
+    public function canActivateDownline(): bool
+    {
+        return $this->can_activate_downline;
     }
 
     public function getActiveOnAttribute($value)

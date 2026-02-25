@@ -585,14 +585,39 @@ class AdminUserController extends Controller
             'bonanza' => 'boolean',
             'reward' => 'boolean',
             'withdrawal' => 'boolean',
+            'can_transfer' => 'boolean',
+            'can_activate_downline' => 'boolean',
         ]);
 
         UserStop::updateOrCreate(
             ['user_id' => $validated['user_id']],
-            $validated
+            [
+                'is_blocked' => $validated['is_blocked'] ?? false,
+                'direct' => $validated['direct'] ?? false,
+                'roi' => $validated['roi'] ?? false,
+                'roi_on_roi' => $validated['roi_on_roi'] ?? false,
+                'rank' => $validated['rank'] ?? false,
+                'bonanza' => $validated['bonanza'] ?? false,
+                'reward' => $validated['reward'] ?? false,
+                'withdrawal' => $validated['withdrawal'] ?? false,
+            ]
         );
 
-        return back()->with('notification', ['User stop settings updated successfully', 'success']);
+        // ==============================
+        // 2️⃣ Update User Permissions
+        // ==============================
+        $user = User::findOrFail($validated['user_id']);
+
+        $user->update([
+            'can_transfer' => $validated['can_transfer'] ?? false,
+            'can_activate_downline' => $validated['can_activate_downline'] ?? false,
+        ]);
+
+        return back()->with('notification', [
+            'User settings updated successfully',
+            'success'
+        ]);
+
     }
 
     public function updateUserManualLevelCount(Request $request)
@@ -605,6 +630,22 @@ class AdminUserController extends Controller
         $user->update(['manual_unlocked_level'=>$request->level_count]);
         return back()->with('notification', ['User Manual Level Opening updated successfully', 'success']);
 
+    }
+
+    public function updateManualLevel(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'manual_unlocked_level' => 'required|integer|min:0|max:20',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+
+        $user->update([
+            'manual_unlocked_level' => $request->manual_unlocked_level,
+        ]);
+
+        return back();
     }
 
 

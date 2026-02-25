@@ -18,7 +18,7 @@
                     </Link>
                 </div>
 
-                <div class="col-3">
+                <div v-if="permissions.can_transfer" class="col-3">
                     <a :href="route('wallet.fund.transfer')">
                         <div class="service-box">
                             <svg class="feather feather-repeat categories-icon" fill="none" height="24" stroke="currentColor"
@@ -34,7 +34,7 @@
                         <h5 class="mt-2 text-center dark-text">Transfer</h5>
                     </a>
                 </div>
-                <div class="col-3">
+                <div v-if="permissions.can_activate_downline" class="col-3">
                     <a :href="route('wallet.activate.user')">
                         <div class="service-box">
                             <svg class="feather feather-activity categories-icon" fill="none" height="24" stroke="currentColor"
@@ -167,6 +167,10 @@ const props = defineProps({
         type: String,
         default: "INR",
     },
+    permissions: {
+        type: Array,
+        required: true,
+    }
 })
 
 /**

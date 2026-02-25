@@ -141,7 +141,7 @@ class DashboardController extends Controller
             // other data
             'user_income_wallet'  => userIncomeWallet($user),
             'user_income_on_hold' => userIncomeOnHold($user),
-
+            'opened_level'=>getUnlockedLevel($user),
             'subscriptions' => $user->subscriptions()
                 ->where('is_active', 1)
                 ->with('plan')

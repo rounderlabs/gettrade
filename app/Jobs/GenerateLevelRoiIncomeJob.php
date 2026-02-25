@@ -124,18 +124,13 @@ class GenerateLevelRoiIncomeJob implements ShouldQueue
 
     private function getUnlockedLevel(User $user): int
     {
-        if (!is_null($user->manual_unlocked_level) || $user->manual_unlocked_level > 0){
-            return $user->manual_unlocked_level;
-        }
-        if (!$user->team || !isset($user->team->active_direct)) {
-            return 0;
+        if ($user->manual_unlocked_level > 0) {
+            return (int) $user->manual_unlocked_level;
         }
 
-        $directs = (int)$user->team->active_direct;
+        $directs = (int) ($user->team->active_direct ?? 0);
 
-        return $directs < 10
-            ? $directs * 2
-            : 20;
+        return min($directs * 2, 20);
     }
 }
 
