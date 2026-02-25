@@ -20,6 +20,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\UserUsdWalletAdminUpdateController;
+use App\Models\KycSubmission;
 use http\Client\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -130,11 +131,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{kyc}', [AdminKycController::class, 'show'])->name('show');
             Route::post('/{kyc}/approve', [AdminKycController::class, 'approve'])->name('approve');
             Route::post('/{kyc}/reject', [AdminKycController::class, 'reject'])->name('reject');
-            Route::get('/file', function (Request $request) {
-                abort_unless(auth()->user()->is_admin, 403);
+//            Route::get('/file', function (Request $request) {
+//                abort_unless(auth()->user()->is_admin, 403);
+//                return Storage::disk('public')->download($request->path);
+//            })->name('file');
+//            Route::get('/file/{submission}/{field}', function (KycSubmission $submission, $field) {
+//
+//                $allowedFields = [
+//                    'aadhaar_front',
+//                    'aadhaar_back',
+//                    'pan_file',
+//                    'cancel_cheque',
+//                ];
+//
+//                abort_unless(in_array($field, $allowedFields), 403);
+//
+//                $path = $submission->$field;
+//
+//                abort_unless($path && Storage::disk('private')->exists($path), 404);
+//
+//                return Storage::disk('private')->download($path);
+//
+//            })->name('file');
+//
 
-                return Storage::disk('private')->download($request->path);
-            })->name('file');
+        Route::get('/file/{submission}/{field}',
+            [AdminKycController::class, 'download']
+        )->name('file');
+
         });
 
         // REFUND

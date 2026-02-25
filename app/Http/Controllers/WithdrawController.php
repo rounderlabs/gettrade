@@ -60,53 +60,104 @@ class WithdrawController extends Controller
     {
         $user = auth()->user();
 
-        // If user never selected mode
+        /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ Withdraw Mode Not Selected
+        |--------------------------------------------------------------------------
+        */
         if (!$user->withdraw_mode) {
             return redirect()->route("withdraw.setup")
-                ->with("notification", ["Please select withdrawal mode first", "danger"]);
+                ->with("notification", [
+                    "Please select withdrawal mode first",
+                    "danger"
+                ]);
         }
 
-        /* =======================
-           INR MODE
-        ======================= */
+        $kyc = $user->kyc;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ Basic KYC Required (Aadhaar + PAN)
+        |--------------------------------------------------------------------------
+        */
+        if (
+            !$kyc ||
+            !$kyc->aadhaar_verified ||
+            !$kyc->pan_verified
+        ) {
+            return redirect()->route("kyc.index");
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ INR MODE FLOW
+        |--------------------------------------------------------------------------
+        */
         if ($user->withdraw_mode === "INR") {
 
-            if (!$user->kyc || $user->kyc->status !== "approved") {
-                return redirect()->route("kyc.index")
-                    ->with("notification", ["Complete KYC approval first", "danger"]);
+            if (!$kyc->bank_details_completed) {
+                return redirect()->route("kyc.index");
             }
 
             return redirect()->route("withdraw.send.request");
         }
 
-        /* =======================
-           CRYPTO MODE
-        ======================= */
+        /*
+        |--------------------------------------------------------------------------
+        | 4️⃣ CRYPTO MODE FLOW
+        |--------------------------------------------------------------------------
+        */
         if ($user->withdraw_mode === "CRYPTO") {
 
+            $defaultCoin = WithdrawCoin::where('is_active', 1)
+                ->where('is_default', 1)
+                ->first();
+
+            if (!$defaultCoin) {
+                return redirect()->route("withdraw.setup")
+                    ->with("notification", [
+                        "No crypto withdrawal method available",
+                        "danger"
+                    ]);
+            }
+
             $wallet = $user->withdrawWallets()
-                ->whereHas("withdrawCoin", function ($q) {
-                    $q->where("name", "bep20_usdt");
-                })
+                ->where('withdraw_coin_id', $defaultCoin->id)
                 ->first();
 
             if (!$wallet) {
-                return redirect()->route("withdraw.wallet.usdt")
-                    ->with("notification", ["Update your USDT wallet address first", "danger"]);
+                return redirect()->route("kyc.index");
             }
 
-            return redirect()->route("withdraw.fund");
+            return redirect()->route("withdraw.fund", $defaultCoin->id);
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Fallback
+        |--------------------------------------------------------------------------
+        */
         return redirect()->route("withdraw.setup");
     }
 
-
     public function withdrawRequestForm()
     {
-        $userIncomeWallet = userIncomeWallet(auth()->user());
+        $user = auth()->user();
+
+        $baseCurrency = 'INR';
+        $displayCurrency = $user->preferred_currency ?? 'INR';
+
+        $wallet = userIncomeWallet($user);
+
         return Inertia::render('Withdraw/WithdrawRequest', [
-            'available_balance'=>$userIncomeWallet->balance,
+            'available_balance_base' => $wallet->balance,
+            'available_balance_display' => CurrencyService::convert(
+                (string) $wallet->balance,
+                $baseCurrency,
+                $displayCurrency
+            ),
+            'display_currency' => $displayCurrency,
+            'currency_symbol' => $this->getCurrencySymbol($displayCurrency),
         ]);
     }
 
@@ -259,96 +310,261 @@ class WithdrawController extends Controller
 
     public function withdrawUsdt()
     {
-        $baseCurrency    = 'INR';
+        $user = auth()->user();
+
+        $baseCurrency = 'INR';
         $displayCurrency = $user->preferred_currency ?? 'INR';
-        $userIncomeWallet = userIncomeWallet(auth()->user());
+
+        $wallet = userIncomeWallet($user);
+
+        $incomeWallet = [
+            'balance_base' => $wallet->balance,
+            'balance_display' => CurrencyService::convert(
+                (string) $wallet->balance,
+                $baseCurrency,
+                $displayCurrency
+            ),
+        ];
+
         return Inertia::render('Withdraw/WithdrawUsdt', [
-           // 'income_wallet' => userIncomeWallet(auth()->user()),
-            'usd_wallet' => userUsdWallet(auth()->user()),
-            'user_income_stats'=>userIncomeStat(auth()->user()),
-            'withdrawable_balance'=>$userIncomeWallet->balance,
-            'income_wallet' => [
-                'balance_base'    => $userIncomeWallet->balance,
-                'balance_display' => CurrencyService::convert(
-                    (string) $userIncomeWallet->balance,
-                    $baseCurrency,
-                    $displayCurrency
-                ),
-            ],
-            'currencySymbol'  => $displayCurrency,
+            'income_wallet'    => $incomeWallet,
+            'withdrawable_balance' => $wallet->balance, // base value for validation
+            'display_currency' => $displayCurrency,
+            'currency_symbol' => $this->getCurrencySymbol($displayCurrency),
         ]);
     }
 
+    function getCurrencySymbol($currency)
+    {
+        return match ($currency) {
+            'INR' => '₹',
+            'USD' => '$',
+            'USDT' => '$',
+            default => $currency,
+        };
+    }
 
+
+//    public function withdrawUsdtAttempt(Request $request)
+//    {
+//        $request->validate([
+//            'amount' => ['required', 'numeric', 'gte:10',
+//                function ($attribute, $value, $fail) {
+//                    if (is_null(auth()->user()->userIncomeWallet) || userIncomeWallet(\auth()->user())->balance < $value) {
+//                        $fail('You dont have sufficient balance');
+//                    }
+//                    if (castDecimalString($value, 2) < '10.00') {
+//                        $fail('Minimum amount should be 10 ');
+//                    }
+//
+//                    if (WithdrawalHistory::where('user_id', auth()->user()->id)->whereDate('created_at', now()->format('Y-m-d'))->exists()) {
+//                        $fail('Only one withdrawal is allowed per day.');
+//                    }
+//
+////                    $amountToday = WithdrawalHistory::where('user_id', auth()->user()->id)->whereDate('created_at', now()->format('Y-m-d'))->sum('amount');
+////                    $userWithdrawalLimit = UserWithdrawalLimit::where('user_id', auth()->user()->id)->first();
+////                    if (!is_null($userWithdrawalLimit) && castDecimalString($userWithdrawalLimit->daily_limit, 4) > castDecimalString(0, 4)) {
+////                        if (castDecimalString($amountToday ?? 0, 2) >= castDecimalString($userWithdrawalLimit->daily_limit, 2) || (castDecimalString($amountToday ?? 0, 2) + castDecimalString($value, 2)) > castDecimalString($userWithdrawalLimit->daily_limit, 2)) {
+////                            $fail('Maximum Withdrawal limit is $' . $userWithdrawalLimit->daily_limit . ' per day!');
+////                        }
+////                    } else {
+////                        if (castDecimalString($amountToday ?? 0, 2) >= castDecimalString(100, 2) || (castDecimalString($amountToday ?? 0, 2) + castDecimalString($value, 2)) > castDecimalString(100, 2)) {
+////                            $fail('Maximum Withdrawal limit is $100 per day!');
+////                        }
+////                    }
+//
+//                    if (userStop(\auth()->user())->withdrawal) {
+//                        $fail('Unable to process request at this time');
+//                    }
+//                },
+////                function ($attribute, $value, $fail) {
+////                    $fail("Unable to process at thi time.");
+////                }
+//            ],
+//
+//        ]);
+//        $userIncomeWallet = userIncomeWallet(\auth()->user());
+//        $userIncomeStats = userIncomeStat(\auth()->user());
+//        $withdrawable_amount = $userIncomeWallet->balance;
+//        $withdrawWallet = auth()->user()->withdrawWallets()->where('withdraw_coin_id', 1)->first();
+//        if (!$withdrawWallet){
+//            return redirect()->route('account.withdraw.wallet')->with('notification', ['Withdraw Address not yet updated', 'danger']);
+//        }
+//
+//        if ($withdrawable_amount < $request->amount){
+//            return redirect()->back()->with('notification', ['You dont have sufficient balance', 'danger']);
+//        }
+//
+//        $usdAmount = castDecimalString($request->amount, 2);
+//        $fees = multipleDecimalStrings($usdAmount, '0.10', 2);
+//        $withdrawAddress = $withdrawWallet->address;
+//
+//        $withdrawalTemp = auth()->user()->withdrawalTemps()->create([
+//            'withdraw_coin_id' => 1,
+//            'address' => $withdrawAddress,
+//            'tokens' => castDecimalString('0', 8),
+//            'token_price' => castDecimalString('0', 4),
+//            'withdrawal_crypto_price' => castDecimalString('1', 8),
+//            'fees' => $fees,
+//            'amount' => $usdAmount,
+//            'receivable_amount' => subDecimalStrings($usdAmount, $fees, 8),
+//            'status' => 'pending'
+//        ]);
+//        $otpModel = OtpMethod::init()->create()->save($request->user(), 30);
+//        $request->user()->notify(new OtpNotification($otpModel->code));
+//        return back()->with('message', ['withdraw_id' => $withdrawalTemp->id]);
+//    }
+
+//    public function withdrawUsdtAttempt(Request $request)
+//    {
+//        $user = auth()->user();
+//
+//        $defaultCoin = WithdrawCoin::where('is_active', 1)
+//            ->firstOrFail();
+//
+//        $request->validate([
+//            'amount' => ['required', 'numeric', 'gte:10'],
+//        ]);
+//
+//        /*
+//        |--------------------------------------------------------------------------
+//        | Get User USDT Wallet
+//        |--------------------------------------------------------------------------
+//        */
+//        $wallet = userIncomeWallet($user); // USDt wallet
+//
+//        if (bccomp($wallet->balance, $request->amount, 8) < 0) {
+//            return back()->with('notification', [
+//                'Insufficient wallet balance',
+//                'danger'
+//            ]);
+//        }
+//
+//        /*
+//        |--------------------------------------------------------------------------
+//        | Calculate Fees (In USDT)
+//        |--------------------------------------------------------------------------
+//        */
+//        $feePercent = $defaultCoin->withdraw_fee_percent ?? 10;
+//
+//        $fee = multipleDecimalStrings(
+//            $request->amount,
+//            bcdiv($feePercent, 100, 8),
+//            8
+//        );
+//
+//        $receivable = subDecimalStrings($request->amount, $fee, 8);
+//
+//        /*
+//        |--------------------------------------------------------------------------
+//        | Create Withdrawal Temp
+//        |--------------------------------------------------------------------------
+//        */
+//        $withdrawalTemp = $user->withdrawalTemps()->create([
+//            'withdraw_coin_id' => $defaultCoin->id,
+//            'address' => $user->withdrawWallets()
+//                ->where('withdraw_coin_id', $defaultCoin->id)
+//                ->firstOrFail()
+//                ->address,
+//            'amount' => $request->amount,     // USDt
+//            'fees' => $fee,                   // USDt
+//            'receivable_amount' => $receivable,
+//            'status' => 'pending'
+//        ]);
+//
+//        /*
+//        |--------------------------------------------------------------------------
+//        | Put Amount On Hold (USDT Wallet)
+//        |--------------------------------------------------------------------------
+//        */
+//        $wallet->decrement('balance', $request->amount);
+//        $wallet->increment('balance_on_hold', $request->amount);
+//
+//        $otpModel = OtpMethod::init()->create()->save($user, 30);
+//        $user->notify(new OtpNotification($otpModel->code));
+//
+//        return back()->with('message', [
+//            'withdraw_id' => $withdrawalTemp->id
+//        ]);
+//    }
 
     public function withdrawUsdtAttempt(Request $request)
     {
+        $user = auth()->user();
+
+        $defaultCoin = WithdrawCoin::where('is_active', 1)
+            ->firstOrFail();
+
         $request->validate([
-            'amount' => ['required', 'numeric', 'gte:10',
-                function ($attribute, $value, $fail) {
-                    if (is_null(auth()->user()->userIncomeWallet) || userIncomeWallet(\auth()->user())->balance < $value) {
-                        $fail('You dont have sufficient balance');
-                    }
-                    if (castDecimalString($value, 2) < '10.00') {
-                        $fail('Minimum amount should be 10 ');
-                    }
-
-                    if (WithdrawalHistory::where('user_id', auth()->user()->id)->whereDate('created_at', now()->format('Y-m-d'))->exists()) {
-                        $fail('Only one withdrawal is allowed per day.');
-                    }
-
-//                    $amountToday = WithdrawalHistory::where('user_id', auth()->user()->id)->whereDate('created_at', now()->format('Y-m-d'))->sum('amount');
-//                    $userWithdrawalLimit = UserWithdrawalLimit::where('user_id', auth()->user()->id)->first();
-//                    if (!is_null($userWithdrawalLimit) && castDecimalString($userWithdrawalLimit->daily_limit, 4) > castDecimalString(0, 4)) {
-//                        if (castDecimalString($amountToday ?? 0, 2) >= castDecimalString($userWithdrawalLimit->daily_limit, 2) || (castDecimalString($amountToday ?? 0, 2) + castDecimalString($value, 2)) > castDecimalString($userWithdrawalLimit->daily_limit, 2)) {
-//                            $fail('Maximum Withdrawal limit is $' . $userWithdrawalLimit->daily_limit . ' per day!');
-//                        }
-//                    } else {
-//                        if (castDecimalString($amountToday ?? 0, 2) >= castDecimalString(100, 2) || (castDecimalString($amountToday ?? 0, 2) + castDecimalString($value, 2)) > castDecimalString(100, 2)) {
-//                            $fail('Maximum Withdrawal limit is $100 per day!');
-//                        }
-//                    }
-
-                    if (userStop(\auth()->user())->withdrawal) {
-                        $fail('Unable to process request at this time');
-                    }
-                },
-//                function ($attribute, $value, $fail) {
-//                    $fail("Unable to process at thi time.");
-//                }
-            ],
-
+            'amount' => ['required', 'numeric', 'gte:10'], // USDT
         ]);
-        $userIncomeWallet = userIncomeWallet(\auth()->user());
-        $userIncomeStats = userIncomeStat(\auth()->user());
-        $withdrawable_amount = $userIncomeWallet->balance;
-        $withdrawWallet = auth()->user()->withdrawWallets()->where('withdraw_coin_id', 1)->first();
-        if (!$withdrawWallet){
-            return redirect()->route('account.withdraw.wallet')->with('notification', ['Withdraw Address not yet updated', 'danger']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ Convert USDT → INR
+        |--------------------------------------------------------------------------
+        */
+        $amountUsdt = castDecimalString($request->amount, 8);
+
+        $amountInr = CurrencyService::convert(
+            (string) $amountUsdt,
+            'USDT',
+            'INR'
+        );
+
+        $wallet = userIncomeWallet($user); // INR wallet
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ Validate INR Balance
+        |--------------------------------------------------------------------------
+        */
+        if (bccomp($wallet->balance, $amountInr, 2) < 0) {
+            return back()->with('notification', [
+                'Insufficient wallet balance',
+                'danger'
+            ]);
         }
 
-        if ($withdrawable_amount < $request->amount){
-            return redirect()->back()->with('notification', ['You dont have sufficient balance', 'danger']);
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ Calculate Fees (INR)
+        |--------------------------------------------------------------------------
+        */
+        $feePercent = $defaultCoin->withdraw_fee_percent ?? 10;
 
-        $usdAmount = castDecimalString($request->amount, 2);
-        $fees = multipleDecimalStrings($usdAmount, '0.10', 2);
-        $withdrawAddress = $withdrawWallet->address;
+        $feeInr = multipleDecimalStrings(
+            $amountInr,
+            bcdiv($feePercent, 100, 8),
+            2
+        );
 
-        $withdrawalTemp = auth()->user()->withdrawalTemps()->create([
-            'withdraw_coin_id' => 1,
-            'address' => $withdrawAddress,
-            'tokens' => castDecimalString('0', 8),
-            'token_price' => castDecimalString('0', 4),
-            'withdrawal_crypto_price' => castDecimalString('1', 8),
-            'fees' => $fees,
-            'amount' => $usdAmount,
-            'receivable_amount' => subDecimalStrings($usdAmount, $fees, 8),
+        $receivableInr = subDecimalStrings($amountInr, $feeInr, 2);
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4️⃣ Create Withdrawal Temp (INR ONLY)
+        |--------------------------------------------------------------------------
+        */
+        $withdrawalTemp = $user->withdrawalTemps()->create([
+            'withdraw_coin_id' => $defaultCoin->id,
+            'address' => $user->withdrawWallets()
+                ->where('withdraw_coin_id', $defaultCoin->id)
+                ->firstOrFail()
+                ->address,
+
+            'amount' => $amountInr,        // Store INR
+            'fees' => $feeInr,             // Store INR
+            'receivable_amount' => $receivableInr,
             'status' => 'pending'
         ]);
-        $otpModel = OtpMethod::init()->create()->save($request->user(), 30);
-        $request->user()->notify(new OtpNotification($otpModel->code));
-        return back()->with('message', ['withdraw_id' => $withdrawalTemp->id]);
+
+        $otpModel = OtpMethod::init()->create()->save($user, 30);
+        $user->notify(new OtpNotification($otpModel->code));
+
+        return back()->with('message', [
+            'withdraw_id' => $withdrawalTemp->id
+        ]);
     }
 
     public function withdrawVerifyOtp(Request $request)
@@ -384,7 +600,7 @@ class WithdrawController extends Controller
             ]
         ]);
 
-
+        $user = auth()->user();
         $otpModel = Auth::user()->otps()->where('code', $request->otp)->where('is_used', false)->orderByDesc('id')->first();
         $otpModel->update([
             'is_used' => true
@@ -393,7 +609,7 @@ class WithdrawController extends Controller
         $withdrawalTemp = WithdrawalTemp::find($request->withdraw_id);
 
 
-        if ($withdrawalTemp->amount > userIncomeWallet(\auth()->user())->balance) {
+        if ($withdrawalTemp->amount > userIncomeWallet($user)->balance) {
             $withdrawalTemp->update([
                 'status' => 'failed'
             ]);
@@ -402,29 +618,57 @@ class WithdrawController extends Controller
         }
         $withdrawalHistory = null;
 
-        DB::transaction(function () use (&$withdrawalTemp, &$request, &$withdrawalHistory) {
-            $userCoinWallet = auth()->user()->userIncomeWallet()->select('id', 'balance', 'balance_on_hold')->first();
-            $userCoinWallet->decrement('balance', $withdrawalTemp->amount);
-            $userCoinWallet->increment('balance_on_hold', $withdrawalTemp->amount);
+//        DB::transaction(function () use (&$withdrawalTemp, &$request, &$withdrawalHistory) {
+//            $userCoinWallet = auth()->user()->userIncomeWallet()->select('id', 'balance', 'balance_on_hold')->first();
+//            $userCoinWallet->decrement('balance', $withdrawalTemp->amount);
+//            $userCoinWallet->increment('balance_on_hold', $withdrawalTemp->amount);
+//
+//            $withdrawalHistory = $request->user()->withdrawalHistories()->create([
+//                'txn_id' => null,
+//                'withdraw_coin_id' => $withdrawalTemp->withdraw_coin_id,
+//                'address' => $withdrawalTemp->address,
+//                'tokens' => $withdrawalTemp->tokens,
+//                'token_price' => $withdrawalTemp->token_price,
+//                'withdrawal_crypto_price' => $withdrawalTemp->withdrawal_crypto_price,
+//                'fees' => $withdrawalTemp->fees,
+//                'amount' => $withdrawalTemp->amount,
+//                'receivable_amount' => $withdrawalTemp->receivable_amount,
+//                'status' => 'pending'
+//            ]);
+//            $withdrawalTemp->update([
+//                'status' => 'success'
+//            ]);
+//        });
 
-            $withdrawalHistory = $request->user()->withdrawalHistories()->create([
-                'txn_id' => null,
+        DB::transaction(function () use ($user, $withdrawalTemp, $otpModel) {
+
+            $wallet = $user->userIncomeWallet()
+                ->lockForUpdate()
+                ->first();
+
+            if (bccomp($wallet->balance, $withdrawalTemp->amount, 2) < 0) {
+                throw new \Exception("Insufficient balance");
+            }
+
+            $wallet->decrement('balance', $withdrawalTemp->amount);
+            $wallet->increment('balance_on_hold', $withdrawalTemp->amount);
+
+            $withdrawalHistory = $user->withdrawalHistories()->create([
                 'withdraw_coin_id' => $withdrawalTemp->withdraw_coin_id,
                 'address' => $withdrawalTemp->address,
-                'tokens' => $withdrawalTemp->tokens,
-                'token_price' => $withdrawalTemp->token_price,
-                'withdrawal_crypto_price' => $withdrawalTemp->withdrawal_crypto_price,
-                'fees' => $withdrawalTemp->fees,
-                'amount' => $withdrawalTemp->amount,
+                'amount' => $withdrawalTemp->amount, // INR
+                'fees' => $withdrawalTemp->fees,     // INR
                 'receivable_amount' => $withdrawalTemp->receivable_amount,
                 'status' => 'pending'
             ]);
-            $withdrawalTemp->update([
-                'status' => 'success'
-            ]);
+
+            $withdrawalTemp->update(['status' => 'success']);
+            $otpModel->update(['is_used' => true]);
+
+            ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory);
         });
 
-        ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
+       // ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
 
         return redirect()->route('history.withdrawal')->with('notification', ['Withdrawal submitted successfully', 'success']);
 

@@ -69,6 +69,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('update-profile-picture', [AccountController::class, 'updateProfilePicture'])->name('update.profile.picture');
         Route::post('update-profile-active', [AccountController::class, 'updateActiveProfile'])->name('update.profile.active');
         Route::post('currency', [AccountController::class, 'updateCurrency'])->name('currency.update');
+
+        Route::post('update-mode', [AccountController::class, 'updateWithdrawMode'])
+            ->name('update.mode');
     });
 
     Route::prefix('history')->name('history.')->group(function () {

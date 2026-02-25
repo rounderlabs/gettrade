@@ -13,7 +13,7 @@ class AdminKycController extends Controller
     public function index(Request $request)
     {
         $kycs = UserKyc::with('user')
-            ->where('status', 'submitted')
+//            ->where('status', 'submitted')
             ->latest()
             ->paginate(10);
 
@@ -28,8 +28,13 @@ class AdminKycController extends Controller
 
     public function show(UserKyc $kyc)
     {
+        $latestSubmission = KycSubmission::where('kyc_id', $kyc->id)
+            ->latest()
+            ->first();
+
         return Inertia::render('Admin/Kyc/Show', [
             'kyc' => $kyc->load('user'),
+            'latestSubmission' => $latestSubmission,
             'history' => KycSubmission::where('kyc_id', $kyc->id)
                 ->latest()
                 ->get(),
@@ -91,5 +96,23 @@ class AdminKycController extends Controller
         return redirect()
             ->route('admin.kyc.index')
             ->with('success', 'KYC rejected successfully');
+    }
+
+    public function download(KycSubmission $submission, $field)
+    {
+        $allowedFields = [
+            'aadhaar_front',
+            'aadhaar_back',
+            'pan_file',
+            'cancel_cheque',
+        ];
+
+        abort_unless(in_array($field, $allowedFields), 403);
+
+        $path = $submission->$field;
+
+        abort_unless($path && Storage::disk('private')->exists($path), 404);
+
+        return Storage::disk('private')->download($path);
     }
 }

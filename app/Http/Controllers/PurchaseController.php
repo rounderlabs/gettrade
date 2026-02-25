@@ -320,7 +320,7 @@ class PurchaseController extends Controller
         try {
 
             $pgResponse = Http::timeout(10)
-                ->post("https://gateway.eaglebattle.io/api/address/generate/$coinName", [
+                ->post("https://gateway.getwealth.live/api/address/generate/$coinName", [
                     'address_out' => $fundWallet,
                     'callback_url' => $callbackUrlComplete,
                 ]);

@@ -176,12 +176,32 @@ class AccountController extends Controller
         ]);
     }
 
+//    public function withdrawWallet()
+//    {
+//        $user = auth()->user();
+//        $userKyc = $user->kyc;
+//        return Inertia::render('Account/WithdrawWalletForm', [
+//            'kyc' => $userKyc ? : null,
+//        ]);
+//    }
+
     public function withdrawWallet()
     {
         $user = auth()->user();
+
         $userKyc = $user->kyc;
+
+        $cryptoWallet = $user->withdrawWallets()
+            ->whereHas('withdrawCoin', function ($q) {
+                $q->where('is_default', 1)
+                    ->where('is_active', 1);
+            })
+            ->first();
+
         return Inertia::render('Account/WithdrawWalletForm', [
-            'kyc' => $userKyc ? : null,
+            'kyc' => $userKyc ?: null,
+            'withdraw_mode' => $user->withdraw_mode,
+            'crypto_wallet' => $cryptoWallet,
         ]);
     }
 
@@ -201,6 +221,21 @@ class AccountController extends Controller
         }
 
 
+    }
+
+    public function updateWithdrawMode(Request $request)
+    {
+        $request->validate([
+            'withdraw_mode' => 'required|in:INR,CRYPTO'
+        ]);
+
+        $user = auth()->user();
+
+        $user->update([
+            'withdraw_mode' => $request->withdraw_mode
+        ]);
+
+        return back();
     }
 
 }

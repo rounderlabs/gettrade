@@ -9,6 +9,7 @@ defineOptions({
 
 const props = defineProps({
     kyc: Object,
+    latestSubmission: Object,
     history: Array,
 });
 
@@ -27,8 +28,9 @@ function mask(value, visible = 4) {
 
         <!-- Header -->
         <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between">
-                <h3 class="card-title">KYC Review</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">KYC Review</h3>
+
                 <span
                     class="badge"
                     :class="{
@@ -73,23 +75,30 @@ function mask(value, visible = 4) {
                     <tbody>
                     <tr>
                         <th width="200">Aadhaar Number</th>
-                        <td>{{ kyc.aadhaar_number }}</td>
+                        <td>{{ mask(kyc.aadhaar_number) }}</td>
                     </tr>
                     <tr>
                         <th>PAN Number</th>
-                        <td>{{ kyc.pan_number }}</td>
+                        <td>{{ mask(kyc.pan_number) }}</td>
                     </tr>
                     <tr>
                         <th>Aadhaar Files</th>
-                        <td>
+                        <td v-if="latestSubmission">
                             <Link
-                                :href="route('admin.kyc.file', { path: kyc.aadhaar_front })"
+                                :href="route('admin.kyc.file', {
+                                        submission: latestSubmission.id,
+                                        field: 'aadhaar_front'
+                                    })"
                                 class="btn btn-sm btn-outline-primary me-2"
                             >
                                 Front
                             </Link>
+
                             <Link
-                                :href="route('admin.kyc.file', { path: kyc.aadhaar_back })"
+                                :href="route('admin.kyc.file', {
+                                        submission: latestSubmission.id,
+                                        field: 'aadhaar_back'
+                                    })"
                                 class="btn btn-sm btn-outline-primary"
                             >
                                 Back
@@ -98,9 +107,12 @@ function mask(value, visible = 4) {
                     </tr>
                     <tr>
                         <th>PAN File</th>
-                        <td>
+                        <td v-if="latestSubmission">
                             <Link
-                                :href="route('admin.kyc.file', { path: kyc.pan_file })"
+                                :href="route('admin.kyc.file', {
+                                        submission: latestSubmission.id,
+                                        field: 'pan_file'
+                                    })"
                                 class="btn btn-sm btn-outline-primary"
                             >
                                 View PAN
@@ -112,7 +124,7 @@ function mask(value, visible = 4) {
             </div>
         </div>
 
-        <!-- Bank -->
+        <!-- Bank Details -->
         <div class="card mb-3">
             <div class="card-header">
                 <h5>Banking Details</h5>
@@ -130,13 +142,16 @@ function mask(value, visible = 4) {
                     </tr>
                     <tr>
                         <th>Account Number</th>
-                        <td>{{ kyc.account_number }}</td>
+                        <td>{{ mask(kyc.account_number) }}</td>
                     </tr>
                     <tr>
                         <th>Cancelled Cheque</th>
-                        <td>
+                        <td v-if="latestSubmission">
                             <Link
-                                :href="route('admin.kyc.file', { path: kyc.cancel_cheque })"
+                                :href="route('admin.kyc.file', {
+                                        submission: latestSubmission.id,
+                                        field: 'cancel_cheque'
+                                    })"
                                 class="btn btn-sm btn-outline-primary"
                             >
                                 View Cheque
@@ -175,8 +190,9 @@ function mask(value, visible = 4) {
             <div class="card-header">
                 <h5>KYC Submission History</h5>
             </div>
+
             <div class="card-body table-responsive p-0">
-                <table class="table table-bordered">
+                <table class="table table-bordered mb-0">
                     <thead>
                     <tr>
                         <th>#</th>
@@ -227,6 +243,7 @@ function mask(value, visible = 4) {
                             placeholder="Enter rejection reason"
                             v-model="rejectForm.rejection_reason"
                         ></textarea>
+
                         <div class="text-danger mt-1" v-if="rejectForm.errors.rejection_reason">
                             {{ rejectForm.errors.rejection_reason }}
                         </div>
