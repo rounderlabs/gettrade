@@ -230,7 +230,7 @@ class KycController extends Controller
     {
         $kyc = auth()->user()->kyc;
 
-        if ($kyc->status !== 'rejected') {
+        if (!$kyc || $kyc->status !== 'rejected') {
             abort(403);
         }
 
@@ -238,13 +238,37 @@ class KycController extends Controller
             ->latest()
             ->first();
 
+        /*
+        |--------------------------------------------------------------------------
+        | If submission missing → reset fully
+        |--------------------------------------------------------------------------
+        */
+        if (!$submission) {
+            $kyc->update([
+                'status' => 'pending',
+                'current_step' => 1,
+                'rejection_reason' => null,
+                'aadhaar_verified' => false,
+                'pan_verified' => false,
+                'bank_details_completed' => false,
+            ]);
+
+            return redirect()->route('kyc.index')
+                ->with('notification', ['KYC restarted. Please submit again.', 'warning']);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Normal Flow
+        |--------------------------------------------------------------------------
+        */
         $submission->update([
             'status' => 'rejected',
             'rejection_reason' => $kyc->rejection_reason,
         ]);
 
         $kyc->update([
-            'status' => 'pending',   // or 'pending'
+            'status' => 'pending',
             'current_step' => 1,
             'rejection_reason' => null,
         ]);
