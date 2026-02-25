@@ -36,6 +36,7 @@ class User extends Authenticatable
         'email_verified_at',
         'profile_picture',
         'is_blocked',
+        'kyc_verified',
         'welcome_seen_at',
         'welcome_mode',
         'preferred_currency',

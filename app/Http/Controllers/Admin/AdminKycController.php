@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\UserKyc;
 use App\Models\KycSubmission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class AdminKycController extends Controller
 {
@@ -43,26 +45,32 @@ class AdminKycController extends Controller
 
     public function approve(UserKyc $kyc)
     {
-        if ($kyc->status !== 'submitted') {
-            abort(403, 'KYC already processed');
-        }
+        DB::transaction(function () use ($kyc) {
 
-        $kyc->update([
-            'status' => 'approved',
-            'rejection_reason' => null,
-        ]);
+            $updated = UserKyc::where('id', $kyc->id)
+                ->where('status', 'submitted')
+                ->update([
+                    'status' => 'approved',
+                    'rejection_reason' => null,
+                ]);
 
-        // ✅ Update latest submission
-        KycSubmission::where('kyc_id', $kyc->id)
-            ->latest()
-            ->first()
-            ?->update([
+            if (!$updated) {
+                abort(409, 'KYC already processed');
+            }
+
+            $latest = KycSubmission::where('kyc_id', $kyc->id)
+                ->latest()
+                ->lockForUpdate()
+                ->first();
+
+            $latest?->update([
                 'status' => 'approved',
             ]);
 
-        $kyc->user->update([
-            'kyc_verified' => true,
-        ]);
+            $kyc->user()->update([
+                'kyc_verified' => true,
+            ]);
+        });
 
         return redirect()
             ->route('admin.kyc.index')
@@ -98,6 +106,24 @@ class AdminKycController extends Controller
             ->with('success', 'KYC rejected successfully');
     }
 
+//    public function download(KycSubmission $submission, $field)
+//    {
+//        $allowedFields = [
+//            'aadhaar_front',
+//            'aadhaar_back',
+//            'pan_file',
+//            'cancel_cheque',
+//        ];
+//
+//        abort_unless(in_array($field, $allowedFields), 403);
+//
+//        $path = $submission->$field;
+//
+//        abort_unless($path && Storage::disk('private')->exists($path), 404);
+//
+//        return Storage::disk('private')->download($path);
+//    }
+
     public function download(KycSubmission $submission, $field)
     {
         $allowedFields = [
@@ -113,6 +139,8 @@ class AdminKycController extends Controller
 
         abort_unless($path && Storage::disk('private')->exists($path), 404);
 
-        return Storage::disk('private')->download($path);
+        return response()->file(
+            Storage::disk('private')->path($path)
+        );
     }
 }

@@ -34,6 +34,7 @@ class CreateUsersTable extends Migration
             $table->string('city')->nullable();
             $table->timestamp('active_at')->nullable()->default(null);
             $table->tinyInteger('is_blocked')->default(0);
+            $table->tinyInteger('kyc_verified')->default(0);
             $table->timestamp('welcome_seen_at')->nullable();
             $table->enum('welcome_mode', ['every_login', 'weekly', 'monthly', 'once', 'never'])->default('once');
             $table->rememberToken();

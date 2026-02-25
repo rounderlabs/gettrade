@@ -1,10 +1,12 @@
 <script setup>
 import AdminLayout from "@/layouts/Admin/MainAdminLayout.vue";
 import { Link, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 defineOptions({
     layout: AdminLayout,
     name: "AdminKycShow",
+    components:{Link}
 });
 
 const props = defineProps({
@@ -17,9 +19,39 @@ const rejectForm = useForm({
     rejection_reason: "",
 });
 
+/* Mask helper */
 function mask(value, visible = 4) {
     if (!value) return "-";
     return "*".repeat(value.length - visible) + value.slice(-visible);
+}
+
+/* ================= FILE PREVIEW ================= */
+
+const previewUrl = ref(null);
+const previewType = ref(null); // image | pdf
+
+function openFile(field) {
+    if (!props.latestSubmission) return;
+
+    const path = props.latestSubmission[field];
+
+    if (!path) return;
+
+    previewUrl.value = route("admin.kyc.file", {
+        submission: props.latestSubmission.id,
+        field: field,
+    });
+
+    if (path.toLowerCase().endsWith(".pdf")) {
+        previewType.value = "pdf";
+    } else {
+        previewType.value = "image";
+    }
+
+    const modal = new bootstrap.Modal(
+        document.getElementById("previewModal")
+    );
+    modal.show();
 }
 </script>
 
@@ -84,39 +116,30 @@ function mask(value, visible = 4) {
                     <tr>
                         <th>Aadhaar Files</th>
                         <td v-if="latestSubmission">
-                            <Link
-                                :href="route('admin.kyc.file', {
-                                        submission: latestSubmission.id,
-                                        field: 'aadhaar_front'
-                                    })"
+                            <button
                                 class="btn btn-sm btn-outline-primary me-2"
+                                @click="openFile('aadhaar_front')"
                             >
                                 Front
-                            </Link>
+                            </button>
 
-                            <Link
-                                :href="route('admin.kyc.file', {
-                                        submission: latestSubmission.id,
-                                        field: 'aadhaar_back'
-                                    })"
+                            <button
                                 class="btn btn-sm btn-outline-primary"
+                                @click="openFile('aadhaar_back')"
                             >
                                 Back
-                            </Link>
+                            </button>
                         </td>
                     </tr>
                     <tr>
                         <th>PAN File</th>
                         <td v-if="latestSubmission">
-                            <Link
-                                :href="route('admin.kyc.file', {
-                                        submission: latestSubmission.id,
-                                        field: 'pan_file'
-                                    })"
+                            <button
                                 class="btn btn-sm btn-outline-primary"
+                                @click="openFile('pan_file')"
                             >
                                 View PAN
-                            </Link>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -147,15 +170,12 @@ function mask(value, visible = 4) {
                     <tr>
                         <th>Cancelled Cheque</th>
                         <td v-if="latestSubmission">
-                            <Link
-                                :href="route('admin.kyc.file', {
-                                        submission: latestSubmission.id,
-                                        field: 'cancel_cheque'
-                                    })"
+                            <button
                                 class="btn btn-sm btn-outline-primary"
+                                @click="openFile('cancel_cheque')"
                             >
                                 View Cheque
-                            </Link>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -164,24 +184,60 @@ function mask(value, visible = 4) {
         </div>
 
         <!-- Actions -->
-        <div class="card mb-3" v-if="kyc.status === 'submitted'">
-            <div class="card-body">
-                <Link
-                    method="post"
-                    as="button"
-                    :href="route('admin.kyc.approve', kyc.id)"
-                    class="btn btn-success me-2"
-                >
-                    Approve
-                </Link>
+        <div class="card mb-3">
 
-                <button
-                    class="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#rejectModal"
-                >
-                    Reject
-                </button>
+            <div class="card-header">
+                <h5>Verification Action</h5>
+            </div>
+
+            <div class="card-body">
+
+                <!-- If Submitted -->
+                <template v-if="kyc.status === 'submitted'">
+
+                    <div class="alert alert-warning">
+                        This KYC is pending review. Please verify documents carefully.
+                    </div>
+
+                    <Link
+                        method="post"
+                        as="button"
+                        :href="route('admin.kyc.approve', kyc.id)"
+                        class="btn btn-success me-2"
+                    >
+                        Approve KYC
+                    </Link>
+
+                    <button
+                        class="btn btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#rejectModal"
+                    >
+                        Reject KYC
+                    </button>
+
+                </template>
+
+                <!-- If Approved -->
+                <template v-else-if="kyc.status === 'approved'">
+
+                    <div class="alert alert-success">
+                        ✅ This KYC has already been approved.
+                    </div>
+
+                </template>
+
+                <!-- If Rejected -->
+                <template v-else-if="kyc.status === 'rejected'">
+
+                    <div class="alert alert-danger">
+                        ❌ This KYC was rejected.
+                        <br>
+                        <strong>Reason:</strong> {{ kyc.rejection_reason }}
+                    </div>
+
+                </template>
+
             </div>
         </div>
 
@@ -205,16 +261,16 @@ function mask(value, visible = 4) {
                     <tr v-for="(row, i) in history" :key="row.id">
                         <td>{{ i + 1 }}</td>
                         <td>
-                                <span
-                                    class="badge"
-                                    :class="{
-                                        'bg-success': row.status === 'approved',
-                                        'bg-danger': row.status === 'rejected',
-                                        'bg-warning': row.status === 'submitted',
-                                    }"
-                                >
-                                    {{ row.status }}
-                                </span>
+                            <span
+                                class="badge"
+                                :class="{
+                                    'bg-success': row.status === 'approved',
+                                    'bg-danger': row.status === 'rejected',
+                                    'bg-warning': row.status === 'submitted',
+                                }"
+                            >
+                                {{ row.status }}
+                            </span>
                         </td>
                         <td>{{ row.created_at }}</td>
                         <td>{{ row.rejection_reason ?? '-' }}</td>
@@ -256,6 +312,38 @@ function mask(value, visible = 4) {
                         <button class="btn btn-danger">Reject</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Preview Modal -->
+        <div class="modal fade" id="previewModal" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Document Preview</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+
+                        <img
+                            v-if="previewType === 'image'"
+                            :src="previewUrl"
+                            class="img-fluid"
+                            style="max-height: 70vh;"
+                        />
+
+                        <iframe
+                            v-if="previewType === 'pdf'"
+                            :src="previewUrl"
+                            width="100%"
+                            height="600px"
+                        ></iframe>
+
+                    </div>
+
+                </div>
             </div>
         </div>
 
