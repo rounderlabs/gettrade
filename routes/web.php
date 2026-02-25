@@ -164,6 +164,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('step1', [KycController::class, 'step1'])->name('step1');
         Route::post('step2', [KycController::class, 'step2'])->name('step2');
         Route::post('step3', [KycController::class, 'step3'])->name('step3');
+        Route::post('save-crypto-wallet-step', [KycController::class, 'saveCryptoWallet'])->name('save.crypto.wallet');
         Route::get('status', [KycController::class, 'status'])->name('status');
         Route::get('resubmit', [KycController::class, 'resubmit'])
             ->name('resubmit');

@@ -77,20 +77,51 @@ class WithdrawController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | 2️⃣ Basic KYC Required (Aadhaar + PAN)
+        | 2️⃣ KYC Not Started
         |--------------------------------------------------------------------------
         */
-        if (
-            !$kyc ||
-            !$kyc->aadhaar_verified ||
-            !$kyc->pan_verified
-        ) {
+        if (!$kyc) {
             return redirect()->route("kyc.index");
         }
 
         /*
         |--------------------------------------------------------------------------
-        | 3️⃣ INR MODE FLOW
+        | 3️⃣ KYC Submitted (Waiting Admin Approval)
+        |--------------------------------------------------------------------------
+        */
+        if ($kyc->status === 'submitted') {
+            return redirect()->route("kyc.status")
+                ->with("notification", [
+                    "Your KYC is under review. Please wait for approval.",
+                    "warning"
+                ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4️⃣ KYC Rejected
+        |--------------------------------------------------------------------------
+        */
+        if ($kyc->status === 'rejected') {
+            return redirect()->route("kyc.index")
+                ->with("notification", [
+                    "Your KYC was rejected. Please resubmit.",
+                    "danger"
+                ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 5️⃣ Only Approved KYC Can Proceed
+        |--------------------------------------------------------------------------
+        */
+        if ($kyc->status !== 'approved') {
+            return redirect()->route("kyc.status");
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 6️⃣ INR MODE FLOW
         |--------------------------------------------------------------------------
         */
         if ($user->withdraw_mode === "INR") {
@@ -104,7 +135,7 @@ class WithdrawController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | 4️⃣ CRYPTO MODE FLOW
+        | 7️⃣ CRYPTO MODE FLOW
         |--------------------------------------------------------------------------
         */
         if ($user->withdraw_mode === "CRYPTO") {
@@ -126,7 +157,11 @@ class WithdrawController extends Controller
                 ->first();
 
             if (!$wallet) {
-                return redirect()->route("kyc.index");
+                return redirect()->route("kyc.index")
+                    ->with("notification", [
+                        "Please add your crypto wallet address first.",
+                        "danger"
+                    ]);
             }
 
             return redirect()->route("withdraw.fund", $defaultCoin->id);

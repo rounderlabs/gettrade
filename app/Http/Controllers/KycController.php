@@ -125,29 +125,78 @@ class KycController extends Controller
     {
         $request->validate([
             'address' => 'required|string',
+            'otp' => 'required|digits:6',
         ]);
 
         $user = auth()->user();
         $kyc = $user->kyc;
+
+        if (!$kyc) {
+            abort(403, 'KYC not started');
+        }
+
+        // 🚨 Must complete Aadhaar + PAN first
+        if (
+            empty($kyc->aadhaar_number) ||
+            empty($kyc->aadhaar_front) ||
+            empty($kyc->aadhaar_back) ||
+            empty($kyc->pan_number) ||
+            empty($kyc->pan_file)
+        ) {
+            abort(403, 'Complete identity verification first');
+        }
+
+        // 🚨 Prevent resubmission
+        if (in_array($kyc->status, ['submitted', 'approved'])) {
+            abort(403, 'KYC already submitted');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify OTP
+        |--------------------------------------------------------------------------
+        */
+        $otp = $user->otps()
+            ->where('code', $request->otp)
+            ->where('is_used', false)
+            ->latest()
+            ->first();
+
+        if (!$otp || now()->gt($otp->expire_at)) {
+            return response()->json(['message' => 'Invalid OTP'], 422);
+        }
+
+        $otp->update(['is_used' => true]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save Wallet
+        |--------------------------------------------------------------------------
+        */
         $coin = WithdrawCoin::where('is_default', 1)
             ->where('is_active', 1)
             ->firstOrFail();
 
-        $wallet = $user->withdrawWallets()
-            ->where('withdraw_coin_id', $coin->id)
-            ->first();
+        $user->withdrawWallets()->updateOrCreate(
+            ['withdraw_coin_id' => $coin->id],
+            ['address' => $request->address]
+        );
 
-        if ($wallet) {
-            $wallet->update([
-                'address' => $request->address,
-            ]);
-        } else {
-            $user->withdrawWallets()->create([
-                'withdraw_coin_id' => $coin->id,
-                'address' => $request->address,
-            ]);
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | Mark KYC Submitted
+        |--------------------------------------------------------------------------
+        */
+        $kyc->update([
+            'status' => 'submitted',
+            'current_step' => 3,
+        ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Snapshot
+        |--------------------------------------------------------------------------
+        */
         KycSubmission::create([
             'user_id' => $user->id,
             'kyc_id' => $kyc->id,
@@ -163,8 +212,7 @@ class KycController extends Controller
             'status' => 'submitted',
         ]);
 
-        return redirect()->route('withdraw.redirect')->with('reload', true);
-
+        return response()->json(['success' => true]);
     }
 
     public function status()

@@ -74,7 +74,9 @@ function submitStep3() {
 
 /* ================= STEP 3 - CRYPTO OTP ================= */
 
-const walletExists = ref(!!props.withdraw_address);
+const walletExists = ref(
+    !!props.withdraw_address && props.kyc?.status === 'approved'
+);
 const otpSent = ref(false);
 const sending = ref(false);
 const saving = ref(false);
@@ -121,12 +123,12 @@ async function verifyWallet() {
     saving.value = true;
 
     try {
-        await axios.post(route("withdraw.update.usdt.wallet"), {
+        await axios.post(route("kyc.save.crypto.wallet"), {
             address: walletForm.value.address,
             otp: walletForm.value.otp,
         });
 
-        window.location.href = route("withdraw.redirect");
+        window.location.href = route("kyc.status");
 
     } finally {
         saving.value = false;
