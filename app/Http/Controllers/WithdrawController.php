@@ -347,25 +347,52 @@ class WithdrawController extends Controller
     {
         $user = auth()->user();
 
-        $baseCurrency = 'INR';
-        $displayCurrency = $user->preferred_currency ?? 'INR';
-
         $wallet = userIncomeWallet($user);
 
-        $incomeWallet = [
-            'balance_base' => $wallet->balance,
-            'balance_display' => CurrencyService::convert(
+        /*
+        |--------------------------------------------------------------------------
+        | Determine Withdraw Currency Based On Mode
+        |--------------------------------------------------------------------------
+        */
+
+        if ($user->withdraw_mode === 'CRYPTO') {
+
+            // No conversion for crypto withdrawal
+            $displayCurrency = 'USDT';
+
+            $incomeWallet = [
+                'balance_base'    => $wallet->balance,
+                'balance_display' => number_format($wallet->balance, 2, '.', ''),
+            ];
+
+            $currencySymbol = 'USDT';
+
+        } else {
+
+            // INR withdrawal (or other fiat)
+            $baseCurrency = 'INR';
+            $displayCurrency = $user->preferred_currency ?? 'INR';
+
+            $convertedBalance = CurrencyService::convert(
                 (string) $wallet->balance,
                 $baseCurrency,
                 $displayCurrency
-            ),
-        ];
+            );
+
+            $incomeWallet = [
+                'balance_base'    => $wallet->balance,
+                'balance_display' => $convertedBalance,
+            ];
+
+            $currencySymbol = $this->getCurrencySymbol($displayCurrency);
+        }
 
         return Inertia::render('Withdraw/WithdrawUsdt', [
-            'income_wallet'    => $incomeWallet,
-            'withdrawable_balance' => $wallet->balance, // base value for validation
-            'display_currency' => $displayCurrency,
-            'currency_symbol' => $this->getCurrencySymbol($displayCurrency),
+            'income_wallet'         => $incomeWallet,
+            'withdrawable_balance'  => $wallet->balance, // always base value
+            'display_currency'      => $displayCurrency,
+            'currency_symbol'       => $currencySymbol,
+            'withdraw_mode'         => $user->withdraw_mode, // IMPORTANT
         ]);
     }
 
@@ -533,6 +560,10 @@ class WithdrawController extends Controller
         $request->validate([
             'amount' => ['required', 'numeric', 'gte:10'], // USDT
         ]);
+
+        if (auth()->user()->withdraw_mode !== 'CRYPTO') {
+            abort(403);
+        }
 
         /*
         |--------------------------------------------------------------------------

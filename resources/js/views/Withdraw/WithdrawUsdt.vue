@@ -4,20 +4,24 @@
             <div class="title">
                 <h2>withdraw USDT</h2>
             </div>
+
             <ul class="select-bank">
                 <li>
                     <div class="balance-box active">
-                        <input checked="" class="form-check-input" name="flexRadio" type="radio">
+                        <input checked class="form-check-input" name="flexRadio" type="radio">
+
                         <img alt="balance-box"
                              class="img-fluid balance-box-img active"
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg-active.svg">
+
                         <img alt="balance-box"
                              class="img-fluid balance-box-img unactive"
                              src="/user-panel/assets-panel/assets/images/svg/balance-box-bg.svg">
+
                         <div class="balance-content">
                             <h6>Balance</h6>
-                            <h3>{{ currency_symbol }} {{ income_wallet.balance_display }}</h3>
-                            <h5 class="dark-text">Withdrawal Balance </h5>
+                            <h3>{{ withdrawSymbol }} {{ income_wallet.balance_display }}</h3>
+                            <h5 class="dark-text">Withdrawal Balance</h5>
                         </div>
                     </div>
                 </li>
@@ -34,14 +38,14 @@
 
                     <div class="form-group">
                         <label class="form-label dark-text">
-                            Withdraw Amount in {{ display_currency }}
+                            Withdraw Amount in {{ withdrawCurrency }}
                         </label>
 
                         <div class="form-input">
                             <input
                                 v-model="withdrawForm.amount"
                                 class="form-control"
-                                :placeholder="`Minimum ${currency_symbol}10`"
+                                :placeholder="`Minimum ${withdrawSymbol}10`"
                                 type="number"
                                 step="0.01"
                                 required
@@ -54,28 +58,28 @@
                         <div class="col-md-3 col-6">
                             <div class="bill-box theme-color">
                                 <h5 class="dark-text">Min Withdraw</h5>
-                                <h5 class="dark-text">{{ currency_symbol }}10.00</h5>
+                                <h5 class="dark-text">{{ withdrawSymbol }}10.00</h5>
                             </div>
                         </div>
 
                         <div class="col-md-3 col-6">
                             <div class="bill-box">
                                 <h5 class="dark-text">Withdrawal Fees</h5>
-                                <h5 class="dark-text">{{ currency_symbol }}{{ fees }}</h5>
+                                <h5 class="dark-text">{{ withdrawSymbol }}{{ fees }}</h5>
                             </div>
                         </div>
 
                         <div class="col-md-3 col-6">
                             <div class="bill-box">
                                 <h5 class="dark-text">Withdrawal Amount</h5>
-                                <h5 class="dark-text">{{ currency_symbol }}{{ amount }}</h5>
+                                <h5 class="dark-text">{{ withdrawSymbol }}{{ amount }}</h5>
                             </div>
                         </div>
 
                         <div class="col-md-3 col-6">
                             <div class="bill-box">
                                 <h5 class="dark-text">Receivable Amount</h5>
-                                <h5 class="dark-text">{{ currency_symbol }}{{ receivableAmount }}</h5>
+                                <h5 class="dark-text">{{ withdrawSymbol }}{{ receivableAmount }}</h5>
                             </div>
                         </div>
                     </div>
@@ -94,7 +98,7 @@
 
                     <div class="form-group">
                         <label class="form-label">
-                            Withdraw Amount in {{ display_currency }}
+                            Withdraw Amount in {{ withdrawCurrency }}
                         </label>
 
                         <input
@@ -134,9 +138,9 @@
 
 <script>
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
-import {useForm} from "@inertiajs/vue3";
-import {ref, watch} from "vue";
-import {toast} from "@/utils/toast";
+import { useForm } from "@inertiajs/vue3";
+import { ref, watch, computed } from "vue";
+import { toast } from "@/utils/toast";
 
 export default {
     name: "WithdrawUsdt",
@@ -147,6 +151,7 @@ export default {
         withdrawable_balance: String,
         display_currency: String,
         currency_symbol: String,
+        withdraw_mode: String   // IMPORTANT
     },
 
     setup(props) {
@@ -157,6 +162,19 @@ export default {
         const amount = ref("0.00");
         const fees = ref("0.00");
         const receivableAmount = ref("0.00");
+
+        /* ✅ FIXED CURRENCY LOGIC */
+        const withdrawCurrency = computed(() => {
+            return props.withdraw_mode === "CRYPTO"
+                ? "$ "
+                : props.display_currency;
+        });
+
+        const withdrawSymbol = computed(() => {
+            return props.withdraw_mode === "CRYPTO"
+                ? "$ "
+                : props.currency_symbol;
+        });
 
         const withdrawForm = useForm({
             amount: null,
@@ -229,7 +247,9 @@ export default {
             fees,
             receivableAmount,
             withdrawAttempt,
-            submitWithdraw
+            submitWithdraw,
+            withdrawCurrency,
+            withdrawSymbol
         };
     }
 };
