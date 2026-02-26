@@ -134,6 +134,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('fund-request', [WalletController::class, 'submitAddFundRequest'])->name('fund.request.submit');
         Route::post('invoice', [InvoiceController::class, 'store'])->name('invoice.create');
         Route::get('add-fund-form/{invoice}', [PurchaseController::class, 'showAddFundForm'])->name('add.fund.form');
+        Route::get('invoice-status/{invoice}', [InvoiceController::class, 'status'])->name('invoice.status');
     });
 
     Route::prefix('withdraw')->name('withdraw.')->group(function () {

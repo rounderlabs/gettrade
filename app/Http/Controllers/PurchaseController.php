@@ -60,6 +60,7 @@ class PurchaseController extends Controller
         }
 
         return Inertia::render('Deposit/PaymentAddress', [
+            'invoice_id' => $invoice->id,
             'address' => $cryptApiWallet->address_in,
             'qr' => base64_encode(QrCode::size(250)->generate($cryptApiWallet->address_in)),
             'currency' => $invoice->coin,

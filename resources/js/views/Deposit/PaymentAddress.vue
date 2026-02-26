@@ -1,11 +1,14 @@
 <template>
     <section class="section-b-space">
         <div class="custom-container ">
-            <div class="card-box">
+
+            <!-- ================= QR BLOCK ================= -->
+            <div class="card-box" v-if="status === 'pending'">
                 <div class="card-details">
                     <h5 class="fw-semibold text-center">Add USDT To Fund Wallet</h5>
                     <h1 class="mt-2 text-white text-center">Scan & Pay</h1>
-                    <h5 class="fw-semibold mt-3 text-center">PAY {{ parseFloat(amount).toFixed(2) }}
+                    <h5 class="fw-semibold mt-3 text-center">
+                        PAY {{ parseFloat(amount).toFixed(2) }}
                         {{ currency.toUpperCase() }}
                         <copy-icon class="w-4 h-4 ml-2 cursor-pointer" @click="copy(amount)"></copy-icon>
                     </h5>
@@ -19,10 +22,36 @@
                         <button class="btn btn-theme mb-3" @click="copy(address)">Copy Address</button>
                         <h6><a :href="explorer" class="fw-500" target="_blank">View On Blockchain</a></h6>
                     </div>
-
-
+                    <div class="text-center mt-3">
+                        <h6>Waiting for blockchain confirmation...</h6>
+                        <small>Please do not close this page</small>
+                    </div>
                 </div>
             </div>
+
+            <!-- ================= SUCCESS BLOCK ================= -->
+            <div class="card-box" v-if="status === 'success'">
+                <div class="card-details">
+                    <h5 class="fw-semibold text-center">Add USDT To Fund Wallet</h5>
+                    <h1 class="mt-2 text-white text-center">Payment Successful</h1>
+
+                    <div class="text-center mt-4">
+                        <h5 class="fw-semibold text-success">
+                            Your payment has been received successfully.
+                        </h5>
+                        <small class="text-white">
+                            Your wallet has been credited.
+                        </small>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a :href="route('history.deposit')" class="btn btn-theme">
+                            View Deposit History
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 </template>
@@ -32,12 +61,14 @@
 import UserLayout from "@/layouts/UserLayouts/UserLayout.vue";
 import {toast} from "@/utils/toast";
 import {VueClipboard} from '@soerenmartius/vue3-clipboard'
-import {onMounted} from "vue";
+import { onMounted, onUnmounted, ref } from "vue"
+import axios from "axios"
 
 export default {
     name: "PaymentForm",
     layout: UserLayout,
     props: {
+        invoice_id: Number,
         address: String,
         qr: String,
         currency: String,
@@ -47,9 +78,31 @@ export default {
     components: {
         VueClipboard
     },
-    setup() {
+    setup(props) {
+
+        const status = ref('pending')
+        let interval = null
 
         onMounted(() => {
+
+            interval = setInterval(async () => {
+                try {
+                    const response = await axios.get(
+                        route('deposit.invoice.status', props.invoice_id)
+                    )
+
+                    if (response.data.status === 'success') {
+                        status.value = 'success'
+                        clearInterval(interval)
+                    }
+
+                } catch (e) {
+                    console.error("Polling error", e)
+                }
+
+            }, 5000)
+
+
             window.copyText = function (value) {
                 var s = document.createElement('input');
                 s.value = value;
@@ -69,12 +122,13 @@ export default {
                 }
                 try {
                     document.execCommand('copy');
-
-                } catch (err) {
-
-                }
+                } catch (err) {}
                 s.remove();
             };
+        })
+
+        onUnmounted(() => {
+            if (interval) clearInterval(interval)
         })
 
         function copy(text) {
@@ -82,7 +136,7 @@ export default {
             toast('Copied!', 'success')
         }
 
-        return {copy}
+        return {copy, status}
     }
 }
 </script>

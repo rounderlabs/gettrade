@@ -64,5 +64,17 @@ class InvoiceController extends Controller
 
     }
 
+    public function status(Invoice $invoice)
+    {
+        // Security: ensure invoice belongs to logged in user
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return response()->json([
+            'status' => $invoice->status
+        ]);
+    }
+
 
 }
