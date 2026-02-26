@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminFundWallet;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,6 +18,7 @@ class SiteSettingController extends Controller
                 'branding' => 'Branding',
                 'commission' => 'Commission',
                 'email' => 'Email',
+                'deposit'    => 'Deposit Settings',
             ],
         ]);
     }
@@ -153,5 +155,42 @@ class SiteSettingController extends Controller
         return view('emails.welcome', [
             'user' => $fakeUser,
         ]);
+    }
+
+
+    public function updateDeposit(Request $request)
+    {
+        $request->validate([
+            'deposit_wallet_address' => 'required|string',
+        ]);
+
+        $deposit = AdminFundWallet::find(1);
+        $deposit->update([
+            'coin'=>'bep20_usdt',
+            'address'=>$request->deposit_wallet_address,
+            'can_deposit'=>1,
+            'is_active'=>1,
+        ]);
+
+        return back()->with('notification', ['Deposit settings updated', 'success']);
+    }
+
+    public function updateWithdrawal(Request $request)
+    {
+        $request->validate([
+            'withdrawal_wallet_address' => 'required|string',
+            'withdrawal_network' => 'required|string',
+            'min_withdraw_amount' => 'required|numeric|min:0',
+            'withdraw_fee_percent' => 'required|numeric|min:0|max:100',
+        ]);
+
+        setting([
+            'withdrawal_wallet_address' => $request->withdrawal_wallet_address,
+            'withdrawal_network' => $request->withdrawal_network,
+            'min_withdraw_amount' => $request->min_withdraw_amount,
+            'withdraw_fee_percent' => $request->withdraw_fee_percent,
+        ])->save();
+
+        return back()->with('success', 'Withdrawal settings updated');
     }
 }

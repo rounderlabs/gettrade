@@ -33,5 +33,14 @@ class DepositTransaction extends Model
         return $this->morphTo();
     }
 
+    public function getTxnDateAttribute()
+    {
+        return $this->txn_time->format('F j, Y');
+    }
+
+    public function getPriceInUsdAttribute()
+    {
+        return $this->crypto_price;
+    }
 
 }

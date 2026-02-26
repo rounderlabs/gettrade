@@ -89,6 +89,36 @@ function saveEmailSettings() {
         preserveScroll: true,
     })
 }
+
+/* =========================
+   DEPOSIT SETTINGS FORM
+========================= */
+const depositForm = useForm({
+    deposit_wallet_address: props.settings.deposit_wallet_address ?? '',
+    deposit_network: props.settings.deposit_network ?? 'BEP20',
+})
+
+function saveDepositSettings() {
+    depositForm.post(route('admin.site.settings.update.deposit'), {
+        preserveScroll: true,
+    })
+}
+
+/* =========================
+   WITHDRAWAL SETTINGS FORM
+========================= */
+const withdrawalForm = useForm({
+    withdrawal_wallet_address: props.settings.withdrawal_wallet_address ?? '',
+    withdrawal_network: props.settings.withdrawal_network ?? 'BEP20',
+    min_withdraw_amount: props.settings.min_withdraw_amount ?? 10,
+    withdraw_fee_percent: props.settings.withdraw_fee_percent ?? 10,
+})
+
+function saveWithdrawalSettings() {
+    withdrawalForm.post(route('admin.site.settings.update.withdrawal'), {
+        preserveScroll: true,
+    })
+}
 </script>
 
 <template>
@@ -310,6 +340,76 @@ function saveEmailSettings() {
                 ```
 
             </div>
+
+            <!-- ================= DEPOSIT TAB ================= -->
+            <div v-if="activeTab === 'deposit'">
+
+                <div class="form-group">
+                    <label>Deposit Wallet Address</label>
+                    <input v-model="depositForm.deposit_wallet_address"
+                           class="form-control"
+                           placeholder="Enter deposit wallet address">
+                </div>
+
+                <div class="form-group">
+                    <label>Network</label>
+                    <select v-model="depositForm.deposit_network"
+                            class="form-control">
+                        <option value="BEP20">BEP20</option>
+                        <option value="ERC20">ERC20</option>
+                        <option value="TRC20">TRC20</option>
+                    </select>
+                </div>
+
+                <button
+                    :disabled="depositForm.processing"
+                    class="btn btn-primary"
+                    @click="saveDepositSettings">
+                    Save Deposit Settings
+                </button>
+            </div>
+
+            <!-- ================= WITHDRAWAL TAB ================= -->
+<!--            <div v-if="activeTab === 'withdrawal'">-->
+
+<!--                <div class="form-group">-->
+<!--                    <label>Withdrawal Wallet Address</label>-->
+<!--                    <input v-model="withdrawalForm.withdrawal_wallet_address"-->
+<!--                           class="form-control"-->
+<!--                           placeholder="Enter withdrawal hot wallet">-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label>Network</label>-->
+<!--                    <select v-model="withdrawalForm.withdrawal_network"-->
+<!--                            class="form-control">-->
+<!--                        <option value="BEP20">BEP20</option>-->
+<!--                        <option value="ERC20">ERC20</option>-->
+<!--                        <option value="TRC20">TRC20</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label>Minimum Withdrawal Amount</label>-->
+<!--                    <input v-model.number="withdrawalForm.min_withdraw_amount"-->
+<!--                           type="number"-->
+<!--                           class="form-control">-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label>Withdrawal Fee (%)</label>-->
+<!--                    <input v-model.number="withdrawalForm.withdraw_fee_percent"-->
+<!--                           type="number"-->
+<!--                           class="form-control">-->
+<!--                </div>-->
+
+<!--                <button-->
+<!--                    :disabled="withdrawalForm.processing"-->
+<!--                    class="btn btn-primary"-->
+<!--                    @click="saveWithdrawalSettings">-->
+<!--                    Save Withdrawal Settings-->
+<!--                </button>-->
+<!--            </div>-->
 
 
         </div>

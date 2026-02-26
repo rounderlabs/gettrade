@@ -230,6 +230,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/system', [SiteSettingController::class, 'updateSystem'])->name('update.system');
         Route::post('update-email', [SiteSettingController::class, 'updateEmail'])->name('update.email');
         Route::get('email-preview', [SiteSettingController::class, 'previewWelcomeEmail'])->name('email.preview');
+        Route::post('/deposit', [SiteSettingController::class, 'updateDeposit'])->name('update.deposit');
+        Route::post('/withdrawal', [SiteSettingController::class, 'updateWithdrawal'])->name('update.withdrawal');
+
     });
     Route::prefix('ranks')->name('ranks.')->group(function () {
         Route::get('/rank-rules', [RankRuleController::class, 'index'])->name('index');
