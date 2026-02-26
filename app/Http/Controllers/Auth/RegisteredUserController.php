@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\WelcomeNotification;
 use App\Providers\RouteServiceProvider;
+use App\Services\AdminNotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +57,10 @@ class RegisteredUserController extends Controller
         ]);
         $user->team()->create();
         event(new Registered($user));
-
+        AdminNotificationService::notify(
+            'registration',
+            "🆕 <b>New User Registered</b>\nName: {$user->name}\nUsername: {$user->username}"
+        );
         try {
 //            $otpModel = OtpMethod::init()->create()->save($user, 30);
 //            $user->notify(new OtpNotification($otpModel->code));

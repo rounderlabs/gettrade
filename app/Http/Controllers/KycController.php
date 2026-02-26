@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KycSubmission;
 use App\Models\WithdrawCoin;
+use App\Services\AdminNotificationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -211,7 +212,10 @@ class KycController extends Controller
             'cancel_cheque' => $kyc->cancel_cheque,
             'status' => 'submitted',
         ]);
-
+        AdminNotificationService::notify(
+            'kyc',
+            "📄 <b>New KYC Submitted</b>\nUser: {$user->username}"
+        );
         return response()->json(['success' => true]);
     }
 

@@ -11,6 +11,7 @@ use App\Models\Subscription;
 use App\Models\UserIncomeWallet;
 use App\Models\UserUsdWallet;
 use App\Models\UserUsdWalletTransaction;
+use App\Services\AdminNotificationService;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -140,7 +141,10 @@ class PurchaseController extends Controller
             $user,
             $walletTransaction
         )->delay(now()->addSecond());
-
+        AdminNotificationService::notify(
+            'activation',
+            "🚀 <b>User Activated</b>\nUsername: {$user->username}\nPlan: {$plan->name}"
+        );
         return redirect()
             ->route('dashboard')
             ->with('notification', [

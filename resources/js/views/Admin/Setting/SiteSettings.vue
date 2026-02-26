@@ -119,6 +119,22 @@ function saveWithdrawalSettings() {
         preserveScroll: true,
     })
 }
+
+/* =========================
+   TELEGRAM SETTINGS FORM
+========================= */
+const telegramForm = useForm({
+    telegram_bot_token: props.settings.telegram_bot_token ?? '',
+    telegram_chat_id: props.settings.telegram_chat_id ?? '',
+})
+
+function saveTelegramSettings() {
+    telegramForm.post(route('admin.site.settings.update.telegram'), {
+        preserveScroll: true,
+    })
+}
+
+
 </script>
 
 <template>
@@ -410,6 +426,41 @@ function saveWithdrawalSettings() {
 <!--                    Save Withdrawal Settings-->
 <!--                </button>-->
 <!--            </div>-->
+
+
+            <!-- ================= TELEGRAM TAB ================= -->
+            <div v-if="activeTab === 'telegram'">
+
+                <div class="form-group">
+                    <label>Telegram Bot Token</label>
+                    <input
+                        v-model="telegramForm.telegram_bot_token"
+                        class="form-control"
+                        placeholder="Enter Telegram Bot Token">
+                    <div class="text-danger">
+                        {{ telegramForm.errors.telegram_bot_token }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Telegram Chat ID</label>
+                    <input
+                        v-model="telegramForm.telegram_chat_id"
+                        class="form-control"
+                        placeholder="Example: -100xxxxxxxxxx">
+                    <div class="text-danger">
+                        {{ telegramForm.errors.telegram_chat_id }}
+                    </div>
+                </div>
+
+                <button
+                    :disabled="telegramForm.processing"
+                    class="btn btn-primary"
+                    @click="saveTelegramSettings">
+                    Save Telegram Settings
+                </button>
+
+            </div>
 
 
         </div>

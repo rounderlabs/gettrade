@@ -19,6 +19,7 @@ class SiteSettingController extends Controller
                 'commission' => 'Commission',
                 'email' => 'Email',
                 'deposit'    => 'Deposit Settings',
+                'telegram' => 'Telegram',
             ],
         ]);
     }
@@ -184,13 +185,34 @@ class SiteSettingController extends Controller
             'withdraw_fee_percent' => 'required|numeric|min:0|max:100',
         ]);
 
-        setting([
-            'withdrawal_wallet_address' => $request->withdrawal_wallet_address,
-            'withdrawal_network' => $request->withdrawal_network,
-            'min_withdraw_amount' => $request->min_withdraw_amount,
-            'withdraw_fee_percent' => $request->withdraw_fee_percent,
-        ])->save();
+
 
         return back()->with('success', 'Withdrawal settings updated');
+    }
+
+    public function updateTelegram(Request $request)
+    {
+        $validated = $request->validate([
+            'telegram_bot_token' => ['nullable', 'string'],
+            'telegram_chat_id' => ['nullable', 'string'],
+        ]);
+
+        foreach ($validated as $key => $value) {
+            SiteSetting::updateOrCreate(
+                ['key' => $key],
+                [
+                    'value' => $value,
+                    'type' => 'string',
+                    'autoload' => true
+                ]
+            );
+        }
+
+        cache()->forget('site_settings');
+
+        return back()->with('notification', [
+            'Telegram settings updated successfully',
+            'success'
+        ]);
     }
 }

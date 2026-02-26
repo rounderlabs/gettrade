@@ -263,7 +263,10 @@ class WalletController extends Controller
         );
 
         DB::commit();
-
+        AdminNotificationService::notify(
+            'transfer',
+            "🔁 <b>Fund Transfer</b>\nFrom: {$fromUser->username}\nTo: {$toUser->username}\nAmount: {$amountInInr}"
+        );
         return back()->with('notification', [
             'Funds transferred successfully',
             'success'

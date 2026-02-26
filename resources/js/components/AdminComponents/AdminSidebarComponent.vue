@@ -175,6 +175,16 @@ export default {
                     {title: "Currency Setting", link: route("admin.currencies.index")},
                 ],
             },
+            {
+                heading: "Notifications",
+                iconClass: "bi-cash-stack",
+                sub_menus: [
+                    {
+                        title: "Activity Notifications",
+                        link: route("admin.notifications.index"),
+                    },
+                ],
+            },
         ];
 
         onMounted(() => {

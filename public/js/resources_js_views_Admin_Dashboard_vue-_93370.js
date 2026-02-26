@@ -2268,6 +2268,13 @@ __webpack_require__.r(__webpack_exports__);
         title: "Currency Setting",
         link: route("admin.currencies.index")
       }]
+    }, {
+      heading: "Notifications",
+      iconClass: "bi-cash-stack",
+      sub_menus: [{
+        title: "Activity Notifications",
+        link: route("admin.notifications.index")
+      }]
     }];
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
       var updateSidebarState = function updateSidebarState() {

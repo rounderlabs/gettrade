@@ -8,6 +8,7 @@ use App\Models\WithdrawalHistory;
 use App\Models\WithdrawalTemp;
 use App\Models\WithdrawCoin;
 use App\Notifications\OtpNotification;
+use App\Services\AdminNotificationService;
 use App\Services\CurrencyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -665,6 +666,7 @@ class WithdrawController extends Controller
         | 4️⃣ Create Withdrawal Temp (INR ONLY)
         |--------------------------------------------------------------------------
         */
+
         $withdrawalTemp = $user->withdrawalTemps()->create([
             'withdraw_coin_id' => $defaultCoin->id,
             'address' => $user->withdrawWallets()
@@ -785,6 +787,18 @@ class WithdrawController extends Controller
             $otpModel->update(['is_used' => true]);
 
             ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory);
+
+            $receivableInr = $this->withdrawalHistory->receivable_amount;
+
+            $amount = CurrencyService::convert(
+                (string) $receivableInr,
+                'INR',
+                'USDT'
+            );
+            AdminNotificationService::notify(
+                'withdrawal',
+                "🏦 <b>Withdrawal Requested</b>\nUser: {$user->username}\nAmount: {$amount}"
+            );
         });
 
        // ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());

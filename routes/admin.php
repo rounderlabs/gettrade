@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminFundRequestController;
 use App\Http\Controllers\Admin\AdminKycController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWithdrawalReportController;
@@ -20,10 +21,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\UserUsdWalletAdminUpdateController;
-use App\Models\KycSubmission;
-use http\Client\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 Inertia::setRootView('admin');
@@ -156,9 +154,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 //            })->name('file');
 //
 
-        Route::get('/file/{submission}/{field}',
-            [AdminKycController::class, 'download']
-        )->name('file');
+            Route::get('/file/{submission}/{field}',
+                [AdminKycController::class, 'download']
+            )->name('file');
 
         });
 
@@ -232,6 +230,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('email-preview', [SiteSettingController::class, 'previewWelcomeEmail'])->name('email.preview');
         Route::post('/deposit', [SiteSettingController::class, 'updateDeposit'])->name('update.deposit');
         Route::post('/withdrawal', [SiteSettingController::class, 'updateWithdrawal'])->name('update.withdrawal');
+        Route::post('/update-telegram', [SiteSettingController::class, 'updateTelegram'])->name('update.telegram');
 
     });
     Route::prefix('ranks')->name('ranks.')->group(function () {
@@ -267,7 +266,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/', [ExchangeRateController::class, 'store'])->name('store');
     });
 
-
-
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [AdminNotificationController::class, 'index'])->name('index');
+        Route::post('{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('read');
+    });
 
 });

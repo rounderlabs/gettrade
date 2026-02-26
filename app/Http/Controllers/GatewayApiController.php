@@ -6,6 +6,7 @@ use App\Jobs\UserDepositFundJob;
 use App\Models\CryptApiTransaction;
 use App\Models\CryptApiWallet;
 use App\Models\Invoice;
+use App\Services\AdminNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -151,6 +152,11 @@ class GatewayApiController extends Controller
                 'deposit_transaction_id' => $depositTransaction->id,
                 'status' => 'success'
             ]);
+
+            AdminNotificationService::notify(
+                'deposit',
+                "💰 <b>Deposit Received</b>\nUser: {$invoice->user->username}\nAmount: {$invoice->amount_in_usd} USD"
+            );
 
             // 8️⃣ Credit user wallet
             dispatch(new UserDepositFundJob($depositTransaction));
