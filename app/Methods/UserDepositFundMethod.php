@@ -77,7 +77,7 @@ class UserDepositFundMethod
 
         CreateUserWalletLedgerJob::dispatch(
             $purchase->user,
-            'Income Wallet',
+            'USDT Wallet',
             'INR',
             'Credit',
             $purchase->deposit_amount,
