@@ -788,7 +788,7 @@ class WithdrawController extends Controller
 
             ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory);
 
-            $receivableInr = $this->withdrawalHistory->receivable_amount;
+            $receivableInr = $withdrawalHistory->receivable_amount;
 
             $amount = CurrencyService::convert(
                 (string) $receivableInr,
