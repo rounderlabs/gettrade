@@ -786,8 +786,6 @@ class WithdrawController extends Controller
             $withdrawalTemp->update(['status' => 'success']);
             $otpModel->update(['is_used' => true]);
 
-            ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory);
-
             $receivableInr = $withdrawalHistory->receivable_amount;
 
             $amount = CurrencyService::convert(
@@ -795,13 +793,10 @@ class WithdrawController extends Controller
                 'INR',
                 'USDT'
             );
-            AdminNotificationService::notify(
-                'withdrawal',
-                "🏦 <b>Withdrawal Requested</b>\nUser: {$user->username}\nAmount: {$amount}"
-            );
-        });
 
-       // ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
+        });
+       // ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory);
+        ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
 
         return redirect()->route('history.withdrawal')->with('notification', ['Withdrawal submitted successfully', 'success']);
 

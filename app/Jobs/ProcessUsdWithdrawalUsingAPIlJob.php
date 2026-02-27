@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\WithdrawalGatewaySetting;
 use App\Models\WithdrawalHistory;
+use App\Services\AdminNotificationService;
 use App\Services\CurrencyService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -175,6 +176,10 @@ class ProcessUsdWithdrawalUsingAPIlJob implements ShouldQueue
                         $amountInr,
                         $remark
                     )->delay(now()->addSecond());
+                    AdminNotificationService::notify(
+                        'withdrawal',
+                        "🏦 <b>Withdrawal Requested</b>\nUser: {$user->username}\nAmount: {$amount}"
+                    );
 
                 } else {
 
