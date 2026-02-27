@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Plan;
 use App\Models\User;
 use App\Models\UserUsdWalletTransaction;
+use App\Services\AdminNotificationService;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -83,6 +84,10 @@ class CreateSubscriptionJob implements ShouldQueue
                 dispatch(new UpdateActiveTeamStatJob($this->user))->delay(now()->addSeconds(1));
             }
             CreateDirectIncomeJob::dispatch($this->userUsdWalletTransaction, $subscription)->delay(now()->addSecond());
+            AdminNotificationService::notify(
+                'activation',
+                "🚀 <b>User Activated</b>\nUsername: {$user->username}\nPlan: {$plan->name}"
+            );
         }
 
         $userActiveModel = $this->user->userActive;
