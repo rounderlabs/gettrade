@@ -192,6 +192,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('user-trading-bonus-report', [AdminReportController::class, 'userTradingBonus'])->name('user.trading.bonus');
         Route::get('get-user-trading-bonus-report', [AdminReportController::class, 'getUserTradingBonus'])->name('get.user.trading.bonus');
+        Route::get('user-trading-bonus/export', [AdminReportController::class, 'exportUserTradingBonus'])->name('user.trading.bonus.export');
 
         Route::get('user-level-roi-bonus', [AdminReportController::class, 'userTradeProfitBonus'])->name('user.level.roi.bonus');
         Route::get('get-user-level-roi-bonus-report', [AdminReportController::class, 'getUserTradeProfitBonus'])->name('user.level.roi.bonus.data');
