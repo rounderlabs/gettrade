@@ -7,7 +7,6 @@ use App\Models\UserIncomeOnHold;
 use App\Models\WithdrawalHistory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -47,11 +46,18 @@ class CreateAutoNonWorkingWithdrawHistoryJob implements ShouldQueue
                 return;
             }
 
-            $fees = multipleDecimalStrings($amount, '0.10', 8);
-            $receivable = subDecimalStrings($amount, $fees, 8);
 
             $user = User::findOrFail($income->user_id);
-            $kyc = $user->kyc;
+            $userIncomeWallet = userIncomeWallet($user);
+            $userIncomeWallet->increment('balance', $amount);
+
+
+
+//            $fees = multipleDecimalStrings($amount, '0.10', 8);
+//            $receivable = subDecimalStrings($amount, $fees, 8);
+
+
+            //           $kyc = $user->kyc;
 
             // ✅ SAFETY: KYC missing
 //            if (!$kyc) {
@@ -59,29 +65,29 @@ class CreateAutoNonWorkingWithdrawHistoryJob implements ShouldQueue
 //            }
 
             // ✅ IDEMPOTENCY CHECK (same day)
-            $alreadyExists = WithdrawalHistory::where('user_id', $user->id)
-                ->whereDate('created_at', now()->toDateString())
-                ->where('type', 'non_working')
-                ->exists();
-
-            if ($alreadyExists) {
-                return;
-            }
-
-            WithdrawalHistory::create([
-                'user_id' => $user->id,
-                'bank_name' => $kyc->bank_name ?? null,
-                'bank_ifsc' => $kyc->ifsc_code ?? null,
-                'bank_account_no' => $kyc->account_number ?? null,
-                'upi_id' => $kyc->upi_id ?? null,
-                'upi_number' => $kyc->upi_number ?? null,
-                'fees' => $fees,
-                'amount' => $amount,
-                'receivable_amount' => $receivable,
-                'status' => 'pending',
-                'type' => 'non_working', // ✅ FIXED
-            ]);
-
+//            $alreadyExists = WithdrawalHistory::where('user_id', $user->id)
+//                ->whereDate('created_at', now()->toDateString())
+//                ->where('type', 'non_working')
+//                ->exists();
+//
+//            if ($alreadyExists) {
+//                return;
+//            }
+//
+//            WithdrawalHistory::create([
+//                'user_id' => $user->id,
+//                'bank_name' => $kyc->bank_name ?? null,
+//                'bank_ifsc' => $kyc->ifsc_code ?? null,
+//                'bank_account_no' => $kyc->account_number ?? null,
+//                'upi_id' => $kyc->upi_id ?? null,
+//                'upi_number' => $kyc->upi_number ?? null,
+//                'fees' => $fees,
+//                'amount' => $amount,
+//                'receivable_amount' => $receivable,
+//                'status' => 'pending',
+//                'type' => 'non_working', // ✅ FIXED
+//            ]);
+//
             // ✅ Reset buckets
             $income->update([
                 'roi' => 0,
