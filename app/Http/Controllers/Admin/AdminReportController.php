@@ -20,8 +20,41 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class AdminReportController extends Controller
 {
     // All Income Controller
-    public function index(){
+    private function tradingBonusQuery(Request $request)
+    {
+        $search  = $request->input('search');
+        $from    = $request->input('from');
+        $to      = $request->input('to');
+        $sortBy  = $request->input('sort_by', 'closing_date');
+        $sortDir = $request->input('sort_dir', 'desc');
 
+        $allowedSorts = ['closing_date', 'created_at', 'amount', 'id'];
+
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'closing_date';
+        }
+
+        $query = UserRoiIncome::with([
+            'user:id,username,name,email,mobile',
+        ]);
+
+        if ($search) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($from) {
+            $query->whereDate('closing_date', '>=', $from);
+        }
+
+        if ($to) {
+            $query->whereDate('closing_date', '<=', $to);
+        }
+
+        return $query->orderBy($sortBy, $sortDir);
     }
 
     // ROI
@@ -69,14 +102,54 @@ class AdminReportController extends Controller
         return response()->json($result);
     }
 
+//    public function exportUserTradingBonus(Request $request)
+//    {
+//        $rows = $this->getFilteredQuery($request)->get(); // implement getFilteredQuery similar to above but returning query builder
+//
+//        $response = new StreamedResponse(function() use ($rows) {
+//            $handle = fopen('php://output', 'w');
+//            // header
+//            fputcsv($handle, ['roi_id','username','name','email','investment_amount','closing_date','roi_amount','roi_income']);
+//            foreach ($rows as $r) {
+//                fputcsv($handle, [
+//                    $r->id,
+//                    $r->user->username ?? '',
+//                    $r->user->name ?? '',
+//                    $r->user->email ?? '',
+//                    $r->userInvestment->amount ?? '',
+//                    $r->closing_date,
+//                    $r->amount,
+//                    $r->income,
+//                ]);
+//            }
+//            fclose($handle);
+//        });
+//
+//        $response->headers->set('Content-Type','text/csv');
+//        $response->headers->set('Content-Disposition','attachment; filename="user_trading_bonus_'.now()->format('Ymd_His').'.csv"');
+//
+//        return $response;
+//    }
+
     public function exportUserTradingBonus(Request $request)
     {
-        $rows = $this->getFilteredQuery($request)->get(); // implement getFilteredQuery similar to above but returning query builder
+        $rows = $this->tradingBonusQuery($request)->get();
 
-        $response = new StreamedResponse(function() use ($rows) {
+        $response = new StreamedResponse(function () use ($rows) {
+
             $handle = fopen('php://output', 'w');
-            // header
-            fputcsv($handle, ['roi_id','username','name','email','investment_amount','closing_date','roi_amount','roi_income']);
+
+            fputcsv($handle, [
+                'roi_id',
+                'username',
+                'name',
+                'email',
+                'investment_amount',
+                'closing_date',
+                'roi_amount',
+                'roi_income'
+            ]);
+
             foreach ($rows as $r) {
                 fputcsv($handle, [
                     $r->id,
@@ -89,11 +162,16 @@ class AdminReportController extends Controller
                     $r->income,
                 ]);
             }
+
             fclose($handle);
+
         });
 
-        $response->headers->set('Content-Type','text/csv');
-        $response->headers->set('Content-Disposition','attachment; filename="user_trading_bonus_'.now()->format('Ymd_His').'.csv"');
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set(
+            'Content-Disposition',
+            'attachment; filename="user_trading_bonus_' . now()->format('Ymd_His') . '.csv"'
+        );
 
         return $response;
     }
