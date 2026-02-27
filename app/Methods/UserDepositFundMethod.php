@@ -51,8 +51,12 @@ class UserDepositFundMethod
 
         return $this->transaction->purchase()->create([
             'user_id' => $this->user->id,
+            'crypto' => 'USDT',
+            'crypto_price' => $rate,
             'deposit_amount' => $amountInr,
-            'withdrawal_crypto_price' => $rate,
+            'deposit_amount_in_usd' => $amountUsdt,
+            'token_price' => 0,
+            'token_qty' => 0,
             'created_at' => $this->transaction->created_at
         ]);
     }
