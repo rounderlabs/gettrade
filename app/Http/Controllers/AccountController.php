@@ -190,6 +190,9 @@ class AccountController extends Controller
         $user = auth()->user();
 
         $userKyc = $user->kyc;
+        if (is_null($userKyc) || !$userKyc->status == 'approved') {
+            return redirect()->route('withdraw.redirect')->with('notification', ['Kyc Not Completed yet. Cant add wallet before KYC not Approved', 'danger']);
+        }
 
         $cryptoWallet = $user->withdrawWallets()
             ->whereHas('withdrawCoin', function ($q) {
