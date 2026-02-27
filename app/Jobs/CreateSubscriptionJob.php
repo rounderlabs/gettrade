@@ -86,7 +86,7 @@ class CreateSubscriptionJob implements ShouldQueue
             CreateDirectIncomeJob::dispatch($this->userUsdWalletTransaction, $subscription)->delay(now()->addSecond());
             AdminNotificationService::notify(
                 'activation',
-                "🚀 <b>User Activated</b>\nUsername: {$user->username}\nPlan: {$plan->name}"
+                "🚀 <b>User Activated</b>\nUsername: {$this->user->username}\nPlan: {$plan->name}"
             );
         }
 
