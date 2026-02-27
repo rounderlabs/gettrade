@@ -178,7 +178,7 @@ class ProcessUsdWithdrawalUsingAPIlJob implements ShouldQueue
                     )->delay(now()->addSecond());
                     AdminNotificationService::notify(
                         'withdrawal',
-                        "🏦 <b>Withdrawal Requested</b>\nUser: {$user->username}\nAmount: {$amount}"
+                        "🏦 <b>Withdrawal Requested</b>\nUser: {$this->withdrawalHistory->user->username}\nAmount: {$amount}"
                     );
 
                 } else {
