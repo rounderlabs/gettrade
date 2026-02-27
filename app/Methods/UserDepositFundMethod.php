@@ -63,7 +63,7 @@ class UserDepositFundMethod
 
     private function addInrToWallet(Purchase $purchase)
     {
-        $wallet = userIncomeWallet($purchase->user);
+        $wallet = userUsdWallet($purchase->user);
 
         $wallet->increment(
             'balance',
