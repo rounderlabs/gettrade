@@ -85,6 +85,7 @@ return [
 
     'waits' => [
         'redis:default' => 60,
+        'redis:notifications' => 30,
     ],
 
     /*
@@ -165,7 +166,7 @@ return [
     */
 
     'silenced' => [
-        App\Jobs\UpdateCryptoPriceJob::class,
+     //   App\Jobs\UpdateCryptoPriceJob::class,
     ],
 
     'defaults' => [
@@ -209,6 +210,15 @@ return [
                 'balance' => 'simple',
                 'processes' => 1,
                 'tries' => 1,
+            ],
+            'supervisor-notifications' => [
+                'connection' => 'redis',
+                'queue' => ['notifications'],
+                'balance' => 'auto',
+                'processes' => 3,
+                'tries' => 3,
+                'timeout' => 60,
+                'memory' => 128,
             ],
         ],
 

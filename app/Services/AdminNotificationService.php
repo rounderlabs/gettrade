@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Jobs\SendAdminTelegramNotificationJob;
 use App\Models\AdminNotification;
 
 class AdminNotificationService
@@ -13,6 +14,6 @@ class AdminNotificationService
             'meta' => $meta,
         ]);
 
-        AdminTelegramService::send($message);
+        SendAdminTelegramNotificationJob::dispatch($message);
     }
 }
