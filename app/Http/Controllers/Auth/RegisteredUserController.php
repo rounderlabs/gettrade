@@ -57,10 +57,7 @@ class RegisteredUserController extends Controller
         ]);
         $user->team()->create();
         event(new Registered($user));
-        AdminNotificationService::notify(
-            'registration',
-            "🆕 <b>New User Registered</b>\nName: {$user->name}\nUsername: {$user->username}"
-        );
+
         try {
 //            $otpModel = OtpMethod::init()->create()->save($user, 30);
 //            $user->notify(new OtpNotification($otpModel->code));
@@ -74,6 +71,10 @@ class RegisteredUserController extends Controller
             ]);
         }
         Auth::login($user);
+        AdminNotificationService::notify(
+            'registration',
+            "🆕 <b>New User Registered</b>\nName: {$user->name}\nUsername: {$user->username}"
+        );
         return redirect(RouteServiceProvider::HOME);
     }
 
