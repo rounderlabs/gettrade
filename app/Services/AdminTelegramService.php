@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AdminTelegramService
 {
@@ -13,14 +15,23 @@ class AdminTelegramService
         if (!$token || !$chatId) {
             return;
         }
+        try {
+            Http::timeout(10)
+                ->retry(3, 1000)
+                ->post(
+                    "https://api.telegram.org/bot{$token}/sendMessage",
+                    [
+                        'chat_id' => $chatId,
+                        'text' => $message,
+                        'parse_mode' => 'HTML'
+                    ]
+                );
+        } catch (\Throwable $e) {
 
-        Http::post(
-            "https://api.telegram.org/bot{$token}/sendMessage",
-            [
-                'chat_id' => $chatId,
-                'text' => $message,
-                'parse_mode' => 'HTML'
-            ]
-        );
+            Log::warning('Telegram error', [
+                'message' => $e->getMessage()
+            ]);
+
+        }
     }
 }
