@@ -6,6 +6,7 @@ use App\Models\WithdrawalGatewaySetting;
 use App\Models\WithdrawalHistory;
 use App\Services\AdminNotificationService;
 use App\Services\CurrencyService;
+use App\Services\WithdrawCurrencyService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -114,7 +115,7 @@ class ProcessUsdWithdrawalUsingAPIlJob implements ShouldQueue
         */
         $receivableInr = $this->withdrawalHistory->receivable_amount;
 
-        $receivableUsdt = CurrencyService::convert(
+        $receivableUsdt = WithdrawCurrencyService::convert(
             (string) $receivableInr,
             'INR',
             'USDT'
