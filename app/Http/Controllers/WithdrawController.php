@@ -767,7 +767,7 @@ class WithdrawController extends Controller
         });
         ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
         return redirect()->route('history.withdrawal')->with('notification', ['Withdrawal submitted successfully', 'success']);
-        
+
     }
 
 }

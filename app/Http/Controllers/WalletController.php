@@ -351,7 +351,7 @@ class WalletController extends Controller
             'transaction_type' => UserUsdWalletTransaction::TXN_TYPE['DEBIT'],
             'amount_in_usd'    => $amountBase, // BASE (INR)
             'last_amount'      => $fromWallet->balance,
-            'summary'          => 'Team member activation',
+            'summary'          => 'Team member activation. User : '.'$toUser',
             'status'           => UserUsdWalletTransaction::TXN_STATUS['SUCCESS'],
             'txn_time'         => now(),
         ]);
