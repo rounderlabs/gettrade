@@ -226,7 +226,7 @@ class WithdrawController extends Controller
 
         $withdrawal_amount = $userIncomeWallet->balance;
         $kyc = $user->kyc;
-        if ($kyc->status == 'approved'){
+        if ($kyc->status !== 'approved'){
             return redirect()->route('kyc.index')->with('notification', ['Update Your KYC, One Approve Then Only You Can Request Withdraw', 'danger']);
         }
 
@@ -739,29 +739,7 @@ class WithdrawController extends Controller
         }
         $withdrawalHistory = null;
 
-//        DB::transaction(function () use (&$withdrawalTemp, &$request, &$withdrawalHistory) {
-//            $userCoinWallet = auth()->user()->userIncomeWallet()->select('id', 'balance', 'balance_on_hold')->first();
-//            $userCoinWallet->decrement('balance', $withdrawalTemp->amount);
-//            $userCoinWallet->increment('balance_on_hold', $withdrawalTemp->amount);
-//
-//            $withdrawalHistory = $request->user()->withdrawalHistories()->create([
-//                'txn_id' => null,
-//                'withdraw_coin_id' => $withdrawalTemp->withdraw_coin_id,
-//                'address' => $withdrawalTemp->address,
-//                'tokens' => $withdrawalTemp->tokens,
-//                'token_price' => $withdrawalTemp->token_price,
-//                'withdrawal_crypto_price' => $withdrawalTemp->withdrawal_crypto_price,
-//                'fees' => $withdrawalTemp->fees,
-//                'amount' => $withdrawalTemp->amount,
-//                'receivable_amount' => $withdrawalTemp->receivable_amount,
-//                'status' => 'pending'
-//            ]);
-//            $withdrawalTemp->update([
-//                'status' => 'success'
-//            ]);
-//        });
-
-        DB::transaction(function () use ($user, $withdrawalTemp, $otpModel) {
+        DB::transaction(function () use ($user, $withdrawalTemp, $otpModel, &$withdrawalHistory) {
 
             $wallet = $user->userIncomeWallet()
                 ->lockForUpdate()
@@ -786,21 +764,10 @@ class WithdrawController extends Controller
             $withdrawalTemp->update(['status' => 'success']);
             $otpModel->update(['is_used' => true]);
 
-            $receivableInr = $withdrawalHistory->receivable_amount;
-
-            $amount = CurrencyService::convert(
-                (string) $receivableInr,
-                'INR',
-                'USDT'
-            );
-
         });
-       // ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory);
         ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
-
         return redirect()->route('history.withdrawal')->with('notification', ['Withdrawal submitted successfully', 'success']);
-
-
+        
     }
 
 }
