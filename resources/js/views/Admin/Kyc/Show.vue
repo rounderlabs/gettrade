@@ -107,11 +107,11 @@ function openFile(field) {
                     <tbody>
                     <tr>
                         <th width="200">Aadhaar Number</th>
-                        <td>{{ mask(kyc.aadhaar_number) }}</td>
+                        <td>{{ kyc.aadhaar_number }}</td>
                     </tr>
                     <tr>
                         <th>PAN Number</th>
-                        <td>{{ mask(kyc.pan_number) }}</td>
+                        <td>{{ kyc.pan_number }}</td>
                     </tr>
                     <tr>
                         <th>Aadhaar Files</th>

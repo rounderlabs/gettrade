@@ -15,7 +15,6 @@ class AdminKycController extends Controller
     public function index(Request $request)
     {
         $kycs = UserKyc::with('user')
-//            ->where('status', 'submitted')
             ->latest()
             ->paginate(10);
 
@@ -33,6 +32,9 @@ class AdminKycController extends Controller
         $latestSubmission = KycSubmission::where('kyc_id', $kyc->id)
             ->latest()
             ->first();
+        if (is_null($latestSubmission)) {
+            $latestSubmission = UserKyc::find($kyc->id);
+        }
 
         return Inertia::render('Admin/Kyc/Show', [
             'kyc' => $kyc->load('user'),
