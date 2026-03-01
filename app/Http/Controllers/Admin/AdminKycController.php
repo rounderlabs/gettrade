@@ -33,7 +33,21 @@ class AdminKycController extends Controller
             ->latest()
             ->first();
         if (is_null($latestSubmission)) {
-            $latestSubmission = UserKyc::find($kyc->id);
+            KycSubmission::create([
+                'user_id' => $kyc->user_id,
+                'kyc_id' => $kyc->id,
+                'aadhaar_number' => $kyc->aadhaar_number,
+                'aadhaar_front' => $kyc->aadhaar_front,
+                'aadhaar_back' => $kyc->aadhaar_back,
+                'pan_number' => $kyc->pan_number,
+                'pan_file' => $kyc->pan_file,
+                'bank_name' => $kyc->bank_name,
+                'ifsc_code' => $kyc->ifsc_code,
+                'account_number' => $kyc->account_number,
+                'cancel_cheque' => $kyc->cancel_cheque,
+                'status' => 'submitted',
+            ]);
+
         }
 
         return Inertia::render('Admin/Kyc/Show', [
