@@ -31,7 +31,11 @@ class CreateRoiIncomeJob implements ShouldQueue
     {
         $this->subscription->refresh();
         $user = $this->subscription->user;
+        $userStop = userStop($user);
 
+        if ($userStop->is_blocked || $userStop->withdrawal) {
+            return;
+        }
         if (! $user || ! isUserActive($user)) return;
         if (! $this->subscription->is_active) return;
 
