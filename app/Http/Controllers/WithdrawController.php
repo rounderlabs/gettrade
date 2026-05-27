@@ -73,7 +73,7 @@ class WithdrawController extends Controller
                     "danger"
                 ]);
         }
-        
+
 
         /*
         |--------------------------------------------------------------------------
@@ -169,7 +169,7 @@ class WithdrawController extends Controller
             return redirect()->route("withdraw.send.request");
         }
 
-        
+
 
         /*
         |--------------------------------------------------------------------------
@@ -669,13 +669,15 @@ class WithdrawController extends Controller
         | 3️⃣ Calculate Fees (INR)
         |--------------------------------------------------------------------------
         */
-        $feePercent = $defaultCoin->withdraw_fee_percent ?? 10;
+//        $feePercent = $defaultCoin->withdraw_fee_percent ?? 10;
+//
+//        $feeInr = multipleDecimalStrings(
+//            $amountInr,
+//            bcdiv($feePercent, 100, 8),
+//            2
+//        );
 
-        $feeInr = multipleDecimalStrings(
-            $amountInr,
-            bcdiv($feePercent, 100, 8),
-            2
-        );
+        $feeInr = 0;
 
         $receivableInr = subDecimalStrings($amountInr, $feeInr, 2);
 

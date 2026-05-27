@@ -188,7 +188,8 @@ export default {
             if (entered >= 10) {
                 amount.value = entered.toFixed(2);
 
-                const calculatedFee = entered * 0.10;
+               // const calculatedFee = entered * 0.10;
+                const calculatedFee = 0;
                 fees.value = calculatedFee.toFixed(2);
 
                 receivableAmount.value = (

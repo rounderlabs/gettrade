@@ -71,7 +71,9 @@ class WithdrawCurrencyService
         if (!$price) {
             throw new RuntimeException("Crypto price missing: {$crypto}/{$fiat}");
         }
-        $price = addDecimalStrings($price, 6, 2);
+//        $price = addDecimalStrings($price, 6, 2);
+        $price = 100;
+        $price = castDecimalString($price, 8);
         return bcdiv($amount, $price, 8);
     }
 
