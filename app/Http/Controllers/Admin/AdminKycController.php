@@ -103,10 +103,16 @@ class AdminKycController extends Controller
             'rejection_reason' => 'required|string|min:5',
         ]);
 
-        $kyc->update([
-            'status' => 'rejected',
-            'rejection_reason' => $request->rejection_reason,
-        ]);
+        $updated = UserKyc::where('id', $kyc->id)
+            ->where('status', 'submitted')
+            ->update([
+                'status' => 'rejected',
+                'rejection_reason' => $request->rejection_reason,
+            ]);
+
+        if (!$updated) {
+            abort(409, 'KYC already processed');
+        }
 
         // ✅ Update latest submission
         KycSubmission::where('kyc_id', $kyc->id)

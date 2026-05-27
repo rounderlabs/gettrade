@@ -117,6 +117,11 @@ class KycController extends Controller
             'status' => 'submitted',
         ]);
 
+        AdminNotificationService::notify(
+            'kyc',
+            "📄 <b>New KYC Submitted</b>\nUser: {$user->username}"
+        );
+
         return redirect()
             ->route('kyc.status')
             ->with('notification', ['KYC submitted successfully', 'success']);

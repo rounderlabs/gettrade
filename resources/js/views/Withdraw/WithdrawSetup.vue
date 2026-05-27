@@ -40,7 +40,7 @@ function submit() {
                                 class="form-control"
                                 required>
                             <option value="">Select Mode</option>
-                            <option value="INR">₹ INR Withdrawal</option>
+                            <!-- <option value="INR">₹ INR Withdrawal</option> -->
                             <option value="CRYPTO">USDT (BEP20 Crypto)</option>
                         </select>
                     </div>

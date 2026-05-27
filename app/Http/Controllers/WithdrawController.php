@@ -73,6 +73,41 @@ class WithdrawController extends Controller
                     "danger"
                 ]);
         }
+        
+
+        /*
+        |--------------------------------------------------------------------------
+        | 7️⃣ CRYPTO MODE FLOW
+        |--------------------------------------------------------------------------
+        */
+        if ($user->withdraw_mode == "CRYPTO") {
+
+            $defaultCoin = WithdrawCoin::where('is_active', 1)
+                ->where('is_default', 1)
+                ->first();
+
+            if (!$defaultCoin) {
+                return redirect()->route("withdraw.setup")
+                    ->with("notification", [
+                        "No crypto withdrawal method available",
+                        "danger"
+                    ]);
+            }
+
+            $wallet = $user->withdrawWallets()
+                ->where('withdraw_coin_id', $defaultCoin->id)
+                ->first();
+
+            if (!$wallet) {
+                return redirect()->route("withdraw.wallet.usdt")
+                    ->with("notification", [
+                        "Please add your crypto wallet address first.",
+                        "danger"
+                    ]);
+            }
+
+            return redirect()->route("withdraw.fund", $defaultCoin->id);
+        }
 
         $kyc = $user->kyc;
 
@@ -134,39 +169,7 @@ class WithdrawController extends Controller
             return redirect()->route("withdraw.send.request");
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | 7️⃣ CRYPTO MODE FLOW
-        |--------------------------------------------------------------------------
-        */
-        if ($user->withdraw_mode === "CRYPTO") {
-
-            $defaultCoin = WithdrawCoin::where('is_active', 1)
-                ->where('is_default', 1)
-                ->first();
-
-            if (!$defaultCoin) {
-                return redirect()->route("withdraw.setup")
-                    ->with("notification", [
-                        "No crypto withdrawal method available",
-                        "danger"
-                    ]);
-            }
-
-            $wallet = $user->withdrawWallets()
-                ->where('withdraw_coin_id', $defaultCoin->id)
-                ->first();
-
-            if (!$wallet) {
-                return redirect()->route("kyc.index")
-                    ->with("notification", [
-                        "Please add your crypto wallet address first.",
-                        "danger"
-                    ]);
-            }
-
-            return redirect()->route("withdraw.fund", $defaultCoin->id);
-        }
+        
 
         /*
         |--------------------------------------------------------------------------
@@ -237,22 +240,33 @@ class WithdrawController extends Controller
         $withdrawAmount = castDecimalString($request->amount, 2);
         $fees = multipleDecimalStrings($withdrawAmount, '0.10', 2);
 
-        $userIncomeWallet = $user->userIncomeWallet()->select('id', 'balance', 'balance_on_hold')->first();
-        $userIncomeWallet->decrement('balance', $withdrawAmount);
-        $userIncomeWallet->increment('balance_on_hold', $withdrawAmount);
+        DB::transaction(function () use ($user, $kyc, $withdrawAmount, $fees) {
+            $wallet = $user->userIncomeWallet()->lockForUpdate()->first();
+            if (bccomp($wallet->balance, $withdrawAmount, 2) < 0) {
+                abort(400, 'Insufficient balance');
+            }
+            $wallet->decrement('balance', $withdrawAmount);
+            $wallet->increment('balance_on_hold', $withdrawAmount);
 
-        WithdrawalHistory::create([
-            'user_id' => $user->id,
-            'bank_name'=>$kyc->bank_name,
-            'bank_ifsc'=>$kyc->ifsc_code,
-            'bank_account_no'=>$kyc->account_number,
-            'upi_id'=>$kyc->upi_id,
-            'upi_number'=>$kyc->upi_number,
-            'fees' => $fees,
-            'amount' => $withdrawAmount,
-            'receivable_amount' => subDecimalStrings($withdrawAmount, $fees, 8),
-            'status' => 'pending'
-        ]);
+            WithdrawalHistory::create([
+                'user_id' => $user->id,
+                'bank_name' => $kyc->bank_name,
+                'bank_ifsc' => $kyc->ifsc_code,
+                'bank_account_no' => $kyc->account_number,
+                'upi_id' => $kyc->upi_id,
+                'upi_number' => $kyc->upi_number,
+                'fees' => $fees,
+                'amount' => $withdrawAmount,
+                'receivable_amount' => subDecimalStrings($withdrawAmount, $fees, 8),
+                'status' => 'pending'
+            ]);
+        });
+
+        AdminNotificationService::notify(
+            'withdraw',
+            "🏦 <b>New Fiat Withdraw</b>\nUser: {$user->username}\nAmount: {$withdrawAmount}"
+        );
+
         return redirect()->route('history.withdrawal')->with('notification', ['Withdrawal submitted successfully', 'success']);
     }
 
@@ -619,6 +633,10 @@ class WithdrawController extends Controller
             abort(403);
         }
 
+        if ($user->withdrawalTemps()->where('status', 'pending')->exists()) {
+            return back()->with('notification', ['You already have a pending withdrawal request.', 'warning']);
+        }
+
         /*
         |--------------------------------------------------------------------------
         | 1️⃣ Convert USDT → INR
@@ -739,32 +757,44 @@ class WithdrawController extends Controller
         }
         $withdrawalHistory = null;
 
-        DB::transaction(function () use ($user, $withdrawalTemp, $otpModel, &$withdrawalHistory) {
+        try {
+            DB::transaction(function () use ($user, $withdrawalTemp, $otpModel, &$withdrawalHistory) {
+                $wallet = $user->userIncomeWallet()
+                    ->lockForUpdate()
+                    ->first();
 
-            $wallet = $user->userIncomeWallet()
-                ->lockForUpdate()
-                ->first();
+                if (bccomp($wallet->balance, $withdrawalTemp->amount, 2) < 0) {
+                    throw new \Exception("Insufficient balance");
+                }
 
-            if (bccomp($wallet->balance, $withdrawalTemp->amount, 2) < 0) {
-                throw new \Exception("Insufficient balance");
+                $wallet->decrement('balance', $withdrawalTemp->amount);
+                $wallet->increment('balance_on_hold', $withdrawalTemp->amount);
+
+                $withdrawalHistory = $user->withdrawalHistories()->create([
+                    'withdraw_coin_id' => $withdrawalTemp->withdraw_coin_id,
+                    'address' => $withdrawalTemp->address,
+                    'amount' => $withdrawalTemp->amount, // INR
+                    'fees' => $withdrawalTemp->fees,     // INR
+                    'receivable_amount' => $withdrawalTemp->receivable_amount,
+                    'status' => 'pending'
+                ]);
+
+                $withdrawalTemp->update(['status' => 'success']);
+                $otpModel->update(['is_used' => true]);
+            });
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Insufficient balance") {
+                $withdrawalTemp->update(['status' => 'failed']);
+                return redirect()->back()->with('notification', ['Insufficient balance', 'danger']);
             }
+            throw $e;
+        }
 
-            $wallet->decrement('balance', $withdrawalTemp->amount);
-            $wallet->increment('balance_on_hold', $withdrawalTemp->amount);
+        AdminNotificationService::notify(
+            'withdraw',
+            "💰 <b>New Crypto Withdraw</b>\nUser: {$user->username}\nAmount: {$withdrawalTemp->amount}"
+        );
 
-            $withdrawalHistory = $user->withdrawalHistories()->create([
-                'withdraw_coin_id' => $withdrawalTemp->withdraw_coin_id,
-                'address' => $withdrawalTemp->address,
-                'amount' => $withdrawalTemp->amount, // INR
-                'fees' => $withdrawalTemp->fees,     // INR
-                'receivable_amount' => $withdrawalTemp->receivable_amount,
-                'status' => 'pending'
-            ]);
-
-            $withdrawalTemp->update(['status' => 'success']);
-            $otpModel->update(['is_used' => true]);
-
-        });
         ProcessUsdWithdrawalUsingAPIlJob::dispatch($withdrawalHistory)->delay(now());
         return redirect()->route('history.withdrawal')->with('notification', ['Withdrawal submitted successfully', 'success']);
 
