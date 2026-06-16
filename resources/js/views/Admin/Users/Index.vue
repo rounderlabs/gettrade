@@ -1,10 +1,18 @@
 <template>
-    <div>
-        <section class="content-header">
+    <div class="admin-container pb-5 position-relative overflow-hidden">
+        <!-- Background Glowing Blobs for True Glassmorphism Blur Effect -->
+        <div class="bg-glow-blob blob-1"></div>
+        <div class="bg-glow-blob blob-2"></div>
+        <div class="bg-glow-blob blob-3"></div>
+
+        <section class="content-header px-4 py-3 position-relative z-index-2">
             <div class="container-fluid">
                 <div class="row mb-2 align-items-center">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Users</h1>
+                        <h1 class="welcome-title mb-1">
+                            <i class="fas fa-users text-primary mr-2 icon-pulse"></i><span class="gradient-text ultra-pulse">User Management Center</span>
+                        </h1>
+                        <p class="welcome-subtitle text-secondary small mb-0">Deep dive into user profiles, filter statuses, and perform administrative operations.</p>
                     </div>
                     <div class="col-sm-6 text-end">
                         <ol class="breadcrumb float-sm-end">
@@ -16,10 +24,11 @@
             </div>
         </section>
 
-        <section class="content">
+        <section class="content px-4 position-relative z-index-2">
             <div class="container-fluid">
                 <!-- Filters card -->
-                <div class="card mb-3">
+                <div class="card glass-card mb-4" style="animation-delay: 0.1s;">
+                    <div class="cyber-scanner-line"></div>
                     <div class="card-body">
                         <form @submit.prevent="filterSubmit" class="row g-2 align-items-end">
                             <div class="col-md-3">
@@ -48,17 +57,23 @@
                 </div>
 
                 <!-- Table card -->
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">User List</h3>
-                        <div>
-                            <small class="text-muted">Total: {{ total_count.count ?? 0 }}</small>
+                <div class="card glass-card mb-4" style="animation-delay: 0.2s;">
+                    <div class="cyber-scanner-line"></div>
+                    <div class="card-header border-bottom py-3 card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h3 class="card-title-custom mb-0"><i class="fas fa-list text-primary mr-2 stat-icon-pulse"></i> User List</h3>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-success shadow-sm" type="button" @click="downloadUserList">
+                                <i class="fas fa-file-csv me-1"></i> Download CSV
+                            </button>
+                            <div class="glass-date-badge shadow-sm px-3 py-1">
+                                <span class="text-muted fw-bold">Total: <span class="text-primary">{{ total_count.count ?? 0 }}</span></span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover table-striped mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-light">
                             <tr>
                                 <th class="text-nowrap">S.No</th>
                                 <th class="text-nowrap">User</th>
@@ -88,7 +103,7 @@
                                         <i v-if="user.email_verified_at" class="fa fa-check-double text-success ms-1"></i>
                                         <span v-else class="d-block mt-1">
                         <i class="fa fa-times text-danger me-1"></i>
-                        <button class="btn btn-sm btn-info" @click="verifyEmail(user.id)">Verify Email</button>
+                        <button class="btn btn-sm btn-info shadow-sm" @click="verifyEmail(user.id)"><i class="fas fa-envelope-circle-check me-1"></i>Verify Email</button>
                       </span>
                                     </small>
                                     <div class="text-muted mt-1"><small>ID: {{ user.id }}</small></div>
@@ -128,7 +143,7 @@
                                 <td>
                                     <div class="d-grid gap-2">
                                         <div class="d-flex flex-column">
-                                            <Link :href="route('admin.user.create', [user.id])" class="btn btn-sm btn-primary mb-1">View</Link>
+                                            <Link :href="route('admin.user.create', [user.id])" class="btn btn-sm btn-primary mb-1 shadow-sm"><i class="fas fa-eye me-1"></i>View</Link>
 
                                             <!-- Add Fund (opens modal) -->
 <!--                                            <button v-if="user" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalAddFund" @click.prevent="setSelectedItem(user)">-->
@@ -146,7 +161,7 @@
 <!--                                            </button>-->
 
                                             <!-- User Panel -->
-                                            <a v-if="user" :href="route('admin.user.access.panel', [user.id])" target="_blank" class="btn btn-sm btn-warning mb-1">User Panel</a>
+                                            <a v-if="user" :href="route('admin.user.access.panel', [user.id])" target="_blank" class="btn btn-sm btn-warning mb-1 shadow-sm"><i class="fas fa-external-link-alt me-1"></i>User Panel</a>
                                         </div>
                                     </div>
                                 </td>
@@ -171,8 +186,9 @@
         <!-- Add Fund Modal -->
         <div class="modal fade" id="modalAddFund" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content glass-card border-0">
+                    <div class="cyber-scanner-line"></div>
+                    <div class="modal-header border-bottom-0">
                         <h5 class="modal-title">Add Fund to: {{ selectedItem ? selectedItem.username : '' }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -226,8 +242,9 @@
         <!-- Stop ROI Modal -->
         <div class="modal fade" id="modalStopRoi" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content glass-card border-0">
+                    <div class="cyber-scanner-line bg-danger-gradient"></div>
+                    <div class="modal-header border-bottom-0">
                         <h5 class="modal-title">Stop ROI: {{ selectedItem ? selectedItem.username : '' }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -279,8 +296,9 @@
         <!-- Withdrawal Limit Modal -->
         <div class="modal fade" id="modalWithdrawalLimit" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content glass-card border-0">
+                    <div class="cyber-scanner-line"></div>
+                    <div class="modal-header border-bottom-0">
                         <h5 class="modal-title">Set User Withdrawal Limit</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -312,8 +330,9 @@
         <!-- Team Withdrawal Modal -->
         <div class="modal fade" id="modalStartStopWithdrawal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content glass-card border-0">
+                    <div class="cyber-scanner-line bg-danger-gradient"></div>
+                    <div class="modal-header border-bottom-0">
                         <h5 class="modal-title">Team Withdrawal Start/Stop</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -351,9 +370,8 @@
 
 <script>
 import { onMounted, reactive, ref } from "vue";
-import { useForm,Link } from "@inertiajs/vue3";
+import { useForm, Link, router } from "@inertiajs/vue3";
 import { toast } from "@/utils/toast";
-import { Inertia } from "@inertiajs/inertia";
 import Notification from "@/components/Notification";
 import MainAdminLayout from "@/layouts/Admin/MainAdminLayout.vue";
 import Paginator from "@/components/xino/Paginator.vue";
@@ -570,7 +588,7 @@ export default {
         }
 
         function verifyEmail(user_id) {
-            Inertia.post(route("admin.user.verify.email", [user_id]), {
+            router.post(route("admin.user.verify.email", [user_id]), {
                 onSuccess: () => {
                     toast("Email Verified Successfully.", "success", 3000);
                     getUsers(route("admin.users.get_users"));
@@ -603,6 +621,22 @@ export default {
             randomKey.value = Date.now();
         }
 
+        function downloadUserList() {
+            let url = route("admin.users.export_users");
+            let params = new URLSearchParams();
+
+            if (status.value && status.value !== "all") {
+                params.append("status", status.value);
+            }
+
+            if (filterText.value) {
+                params.append("filter", filterText.value);
+            }
+
+            const queryString = params.toString();
+            window.location.href = queryString ? `${url}?${queryString}` : url;
+        }
+
         function resetFilter() {
             filterText.value = null;
             status.value = "all";
@@ -610,7 +644,7 @@ export default {
         }
 
         function goDashboard() {
-            Inertia.visit(route("admin.dashboard"));
+            router.visit(route("admin.dashboard"));
         }
 
         onMounted(() => {
@@ -646,11 +680,12 @@ export default {
             randomKey,
             resetFilter,
             goDashboard,
+            downloadUserList,
         };
     },
 };
 </script>
 
-<style scoped>
-
+<style>
+@import '../../../../css/admin-custom.css';
 </style>

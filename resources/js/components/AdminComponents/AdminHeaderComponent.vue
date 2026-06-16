@@ -1,87 +1,83 @@
 <template>
 
     <!--begin::Header-->
-    <nav class="app-header navbar navbar-expand bg-body">
+    <nav class="app-header navbar navbar-expand bg-white border-bottom shadow-sm">
         <!--begin::Container-->
-        <div class="container-fluid">
+        <div class="container-fluid px-4">
             <!--begin::Start Navbar Links-->
-            <ul class="navbar-nav">
-                <li class="nav-item">
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item me-2">
                     <!-- use @click.prevent so it works without relying on AdminLTE -->
                     <button
-                        class="btn btn-sidebar-toggle"
-                        @click="$emit('toggle-sidebar')"
+                        class="btn btn-sidebar-toggle border-0 rounded-circle"
+                        @click="toggleSidebar"
                     >
-                        <i class="bi bi-list"></i>
+                        <i class="bi bi-list fs-4"></i>
                     </button>
                 </li>
-                <li class="nav-item d-none d-md-block"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item d-none d-md-block"><a class="nav-link" href="#">Contact</a></li>
+                <li class="nav-item d-none d-md-block px-2">
+                    <a class="nav-link fw-semibold text-secondary hover-primary" href="#">Home</a>
+                </li>
+                <li class="nav-item d-none d-md-block px-2">
+                    <a class="nav-link fw-semibold text-secondary hover-primary" href="#">Contact</a>
+                </li>
             </ul>
             <!--end::Start Navbar Links-->
             <!--begin::End Navbar Links-->
-            <ul class="navbar-nav ms-auto">
-
+            <ul class="navbar-nav ms-auto align-items-center">
 
                 <!--begin::Fullscreen Toggle-->
-                <li class="nav-item">
-                    <a class="nav-link" data-lte-toggle="fullscreen" href="#">
-                        <i class="bi bi-arrows-fullscreen" data-lte-icon="maximize"></i>
-                        <i class="bi bi-fullscreen-exit" data-lte-icon="minimize" style="display: none"></i>
+                <li class="nav-item me-2">
+                    <a class="nav-link rounded-circle btn-icon" data-lte-toggle="fullscreen" href="#">
+                        <i class="bi bi-arrows-fullscreen text-dark fs-5" data-lte-icon="maximize"></i>
+                        <i class="bi bi-fullscreen-exit text-dark fs-5" data-lte-icon="minimize" style="display: none"></i>
                     </a>
                 </li>
                 <!--end::Fullscreen Toggle-->
                 <!--begin::User Menu Dropdown-->
                 <li class="nav-item dropdown user-menu">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center px-2 py-1 rounded-pill bg-light border" data-bs-toggle="dropdown" href="#">
                         <img
                             alt="User Image"
-                            class="user-image rounded-circle shadow"
+                            class="user-image rounded-circle border border-2 border-white shadow-sm"
                             src="/assets/img/user2-160x160.jpg"
+                            style="width: 32px; height: 32px; object-fit: cover;"
                         />
-                        <span class="d-none d-md-inline">{{ $page.props.admin?.name ?? 'Admin' }}</span>
+                        <span class="d-none d-md-inline fw-semibold text-dark ms-2 me-1">{{ $page.props.admin?.name ?? 'Admin' }}</span>
+                        <i class="bi bi-chevron-down text-muted fs-7 ms-1 me-1"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                        <!--begin::User Image-->
-                        <li class="user-header text-bg-primary">
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end border-0 shadow-lg dropdown-animated mt-2">
+                        <!--begin::User Header-->
+                        <li class="user-header bg-gradient-dark text-white p-4 rounded-top d-flex flex-column align-items-center">
                             <img
                                 alt="User Image"
-                                class="rounded-circle shadow"
+                                class="rounded-circle shadow border border-3 border-white-50 mb-3"
                                 src="/assets/img/user2-160x160.jpg"
+                                style="width: 80px; height: 80px; object-fit: cover;"
                             />
-                            <p>{{ $page.props.admin?.name ?? 'Admin' }}
-
+                            <p class="mb-0 fw-bold fs-5">
+                                {{ $page.props.admin?.name ?? 'Admin' }}
                             </p>
+                            <small class="text-white-50">Administrator</small>
                         </li>
-                        <!--end::User Image-->
-                        <!--begin::Menu Body-->
-                        <li class="user-body">
-                            <!--begin::Row-->
-                            <div class="row">
-                                <div class="col-4 text-center"><a href="#">Followers</a></div>
-                                <div class="col-4 text-center"><a href="#">Sales</a></div>
-                                <div class="col-4 text-center"><a href="#">Friends</a></div>
-                            </div>
-                            <!--end::Row-->
-                        </li>
-                        <!--end::Menu Body-->
+                        <!--end::User Header-->
                         <!--begin::Menu Footer-->
-                        <li class="user-footer">
-
-                            <Link :href="route('account.profile')" class="btn btn-default btn-flat"><i
-                                class="w-4 h-4 mr-2" data-feather="user"></i> Profile
-                            </Link>
-                            <Link :href="route('account.change.password')" class="btn btn-default btn-flat"><i
-                                class="w-4 h-4 mr-2" data-feather="lock"></i> Reset Password
-                            </Link>
-                            <Link :href="route('account.setting')" class="btn btn-default btn-flat"><i
-                                class="w-4 h-4 mr-2" data-feather="help-circle"></i> Update Profile
-                            </Link>
-
-                            <a class="btn btn-default btn-flat float-end" href="/logout"> <i class="w-4 h-4 mr-2"
-                                                                                             data-feather="toggle-right"></i>
-                                Logout </a>
-
+                        <li class="user-footer p-3 bg-light rounded-bottom border-top">
+                            <div class="d-grid gap-2">
+                                <Link :href="route('account.profile')" class="btn btn-white text-start shadow-sm border py-2 px-3 rounded-3 hover-bg-light">
+                                    <i class="bi bi-person me-2 text-primary fs-5"></i> Profile
+                                </Link>
+                                <Link :href="route('account.change.password')" class="btn btn-white text-start shadow-sm border py-2 px-3 rounded-3 hover-bg-light">
+                                    <i class="bi bi-shield-lock me-2 text-warning fs-5"></i> Reset Password
+                                </Link>
+                                <Link :href="route('account.setting')" class="btn btn-white text-start shadow-sm border py-2 px-3 rounded-3 hover-bg-light">
+                                    <i class="bi bi-gear me-2 text-info fs-5"></i> Settings
+                                </Link>
+                                <hr class="my-2 border-secondary-subtle">
+                                <a class="btn btn-danger py-2 rounded-3 text-white fw-semibold hover-shadow" href="/logout">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </a>
+                            </div>
                         </li>
                         <!--end::Menu Footer-->
                     </ul>
@@ -104,45 +100,7 @@ export default {
     components: {Link},
     methods: {
         toggleSidebar() {
-            const body = document.body;
-
-            // Mobile viewport
-            if (window.innerWidth < 992) {
-                // Toggle mobile "sidebar-open"
-                if (body.classList.contains('sidebar-open')) {
-                    body.classList.remove('sidebar-open');
-                    body.classList.add('sidebar-closed');
-                    // Remove overlay if exists
-                    const overlay = document.querySelector('.sidebar-overlay');
-                    if (overlay) overlay.remove();
-                } else {
-                    body.classList.add('sidebar-open');
-                    body.classList.remove('sidebar-closed');
-
-                    // Add overlay for mobile background
-                    const overlay = document.createElement('div');
-                    overlay.classList.add('sidebar-overlay');
-                    overlay.style.position = 'fixed';
-                    overlay.style.top = '0';
-                    overlay.style.left = '0';
-                    overlay.style.width = '100%';
-                    overlay.style.height = '100%';
-                    overlay.style.background = 'rgba(0, 0, 0, 0.5)';
-                    overlay.style.zIndex = '1038';
-                    overlay.addEventListener('click', () => {
-                        body.classList.remove('sidebar-open');
-                        overlay.remove();
-                    });
-                    document.body.appendChild(overlay);
-                }
-            }
-            // Desktop viewport
-            else {
-                body.classList.toggle('sidebar-collapse');
-            }
-
-            // Trigger resize event so charts/layouts adjust
-            window.dispatchEvent(new Event('resize'));
+            this.$emit('toggle-sidebar');
         }
 
     },
@@ -150,13 +108,80 @@ export default {
 </script>
 
 <style scoped>
-/* Optional fallback if AdminLTE styles aren't loaded */
-body.sidebar-open .app-sidebar {
-    transform: translateX(0);
+.app-header {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    height: 70px;
+    display: flex;
+    align-items: center;
 }
-body.sidebar-closed .app-sidebar {
-    transform: translateX(-100%);
+
+.btn-sidebar-toggle {
+    background-color: transparent;
+    color: #475569;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
+.btn-sidebar-toggle:hover {
+    background-color: #f1f5f9;
+    color: #0d6efd;
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.btn-icon:hover {
+    background-color: #f1f5f9;
+}
+
+.hover-primary {
+    transition: color 0.2s ease;
+}
+.hover-primary:hover {
+    color: #0d6efd !important;
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+}
+
+.btn-white {
+    background-color: #ffffff;
+    color: #475569;
+    border-color: #e2e8f0 !important;
+    font-weight: 500;
+}
+.btn-white:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.dropdown-animated {
+    animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top right;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .sidebar-overlay {
     transition: opacity 0.3s ease;
 }

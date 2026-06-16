@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('rewards', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->decimal('business');
+            $table->string('rank_name');
+            $table->decimal('matching_leg_business');
             $table->decimal('reward_amount');
+            $table->decimal('salary_amount');
+            $table->integer('salary_tenure');
             $table->string('reward_text')->nullable();
             $table->timestamps();
         });

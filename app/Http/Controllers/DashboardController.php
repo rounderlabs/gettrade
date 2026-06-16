@@ -129,9 +129,56 @@ class DashboardController extends Controller
 
         $qr_url = route('register', ['ref_code' => $user->username]);
 
+        $rewardRankRecord = \App\Models\UserRewardRank::where('user_id', $user->id)
+            ->where('is_achieved', 1)
+            ->orderByDesc('rank')
+            ->first();
+        $rewardRankId = $rewardRankRecord ? $rewardRankRecord->rank : 0;
+        $rewardRankName = 'No Reward Rank';
+        if ($rewardRankId > 0) {
+            $reward = \App\Models\Reward::find($rewardRankId);
+            if ($reward) {
+                $rewardRankName = $reward->rank_name;
+            }
+        }
+
+        // Fetch booster data for the user's latest active subscription
+        $latestSubscription = $user->subscriptions()->where('is_active', 1)->latest()->first();
+        $boosterData = null;
+
+        if ($latestSubscription) {
+            $boosterStat = \App\Models\UserBoosterStat::where('subscription_id', $latestSubscription->id)->first();
+            $isAchieved = $boosterStat ? (bool)$boosterStat->is_booster_active : false;
+            $expiresAt = $latestSubscription->created_at->addDays(7);
+            
+            $referralsCount = 0;
+            if ($boosterStat) {
+                $referralsCount = $boosterStat->active_direct_count;
+            } else {
+                $directUserIds = getDirectUserIds($user->id);
+                if (!empty($directUserIds)) {
+                    $referralsCount = \App\Models\Subscription::whereIn('user_id', $directUserIds)
+                        ->where('is_active', 1)
+                        ->whereBetween('created_at', [$latestSubscription->created_at, $expiresAt])
+                        ->where('amount', '>=', $latestSubscription->amount)
+                        ->distinct('user_id')
+                        ->count('user_id');
+                }
+            }
+
+            $boosterData = [
+                'is_achieved' => $isAchieved,
+                'expires_at' => $expiresAt->toIso8601String(),
+                'referrals_count' => $referralsCount,
+            ];
+        }
+
         return Inertia::render('Dashboards/UserDashboard', [
             'user' => $user,
             'team' => $user->team,
+            'reward_rank_id' => $rewardRankId,
+            'reward_rank_name' => $rewardRankName,
+            'booster' => $boosterData,
 
             // ✅ converted values
             'investment'       => $investment,

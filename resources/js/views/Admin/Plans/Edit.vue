@@ -14,6 +14,7 @@ const form = useForm({
     monthly_roi_amount: props.plan.monthly_roi_amount,
     tenure: props.plan.tenure,
     principle_amount: props.plan.principle_amount,
+    type: props.plan.type,
     is_active: props.plan.is_active,
     allow_to_user: props.plan.allow_to_user,
 })
@@ -57,6 +58,14 @@ const form = useForm({
                     v-model="form.principle_amount"
                     class="form-control"
                 />
+            </div>
+
+            <div class="form-group">
+                <label>Plan Type</label>
+                <select v-model="form.type" class="form-control">
+                    <option value="regular">Regular Plan</option>
+                    <option value="secure">Secured Plan (Property Investment Plan)</option>
+                </select>
             </div>
 
             <div class="form-check">

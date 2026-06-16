@@ -633,9 +633,9 @@ class WithdrawController extends Controller
             abort(403);
         }
 
-        if ($user->withdrawalTemps()->where('status', 'pending')->exists()) {
-            return back()->with('notification', ['You already have a pending withdrawal request.', 'warning']);
-        }
+        // if ($user->withdrawalTemps()->where('status', 'pending')->exists()) {
+        //     return back()->with('notification', ['You already have a pending withdrawal request.', 'warning']);
+        // }
 
         /*
         |--------------------------------------------------------------------------

@@ -66,6 +66,7 @@
     <script src="{{ mix('js/app.js') }}" defer></script>
 
     <!-- ================= SERVICE WORKER ================= -->
+    @production
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -73,6 +74,17 @@
             });
         }
     </script>
+    @else
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
+    @endproduction
 </head>
 
 <body class="dark">

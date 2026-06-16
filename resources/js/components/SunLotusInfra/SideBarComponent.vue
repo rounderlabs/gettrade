@@ -123,6 +123,21 @@ const menus_vue = [
         menu_icon: "sunrise",
     },
     {
+        heading: "Ranks & Rewards",
+        link: route("earnings.rewards.list"),
+        menu_icon: "gift",
+    },
+    {
+        heading: "Rewards Income",
+        link: route("earnings.rewards.income"),
+        menu_icon: "award",
+    },
+    {
+        heading: "Salary Rewards",
+        link: route("earnings.salary.income"),
+        menu_icon: "calendar",
+    },
+    {
         heading: "Withdrawals History",
         link: route("history.withdrawal"),
         menu_icon: "menu",

@@ -84,6 +84,14 @@ class CreateSubscriptionJob implements ShouldQueue
                 dispatch(new UpdateActiveTeamStatJob($this->user))->delay(now()->addSeconds(1));
             }
             CreateDirectIncomeJob::dispatch($this->userUsdWalletTransaction, $subscription)->delay(now()->addSecond());
+            // Trigger booster check for user and sponsor
+            \App\Jobs\UpdateUserBoosterJob::dispatch($this->user)->delay(now()->addSeconds(2));
+            if ($this->user->sponsor_id) {
+                $sponsor = User::find($this->user->sponsor_id);
+                if ($sponsor) {
+                    \App\Jobs\UpdateUserBoosterJob::dispatch($sponsor)->delay(now()->addSeconds(2));
+                }
+            }
             AdminNotificationService::notify(
                 'activation',
                 "🚀 <b>User Activated</b>\nUsername: {$this->user->username}\nPlan: {$plan->name}"

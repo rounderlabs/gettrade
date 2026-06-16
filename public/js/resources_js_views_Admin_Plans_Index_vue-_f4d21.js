@@ -2181,11 +2181,9 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.Link
   },
   setup: function setup() {
-    var _usePage = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)(),
-      props = _usePage.props;
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)();
     var openIndex = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)(null);
-    var currentPath = window.location.pathname;
-    var siteSettings = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)().props.siteSettings;
+    var siteSettings = page.props.siteSettings;
     var menus_vue = [{
       heading: "Dashboard",
       iconClass: "bi-speedometer2",
@@ -2256,6 +2254,9 @@ __webpack_require__.r(__webpack_exports__);
         title: "Plan List",
         link: route("admin.plans.index")
       }, {
+        title: "Rewards List",
+        link: route("admin.rewards.index")
+      }, {
         title: "Rank Setting",
         link: route("admin.ranks.index")
       }, {
@@ -2276,20 +2277,35 @@ __webpack_require__.r(__webpack_exports__);
         link: route("admin.notifications.index")
       }]
     }];
+    var updateSidebarState = function updateSidebarState() {
+      var body = document.body;
+      if (window.innerWidth <= 991) {
+        // Mobile view collapsed
+        body.classList.add("sidebar-collapse", "sidebar-closed");
+        body.classList.remove("sidebar-open");
+      } else {
+        // Desktop view open
+        body.classList.remove("sidebar-closed", "sidebar-collapse");
+        body.classList.add("sidebar-open");
+      }
+    };
+    var isActive = function isActive(link) {
+      try {
+        var relativeLink = link.replace(window.location.origin, '');
+        var cleanLink = relativeLink.split('?')[0];
+        var cleanCurrent = page.url.split('?')[0];
+        return cleanCurrent === cleanLink;
+      } catch (e) {
+        return page.url === link;
+      }
+    };
+    var isActiveGroup = function isActiveGroup(menu) {
+      var _menu$sub_menus;
+      return (_menu$sub_menus = menu.sub_menus) === null || _menu$sub_menus === void 0 ? void 0 : _menu$sub_menus.some(function (s) {
+        return isActive(s.link);
+      });
+    };
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
-      var updateSidebarState = function updateSidebarState() {
-        var body = document.body;
-        if (window.innerWidth <= 991) {
-          // Mobile view collapsed
-          body.classList.add("sidebar-collapse", "sidebar-closed");
-          body.classList.remove("sidebar-open");
-        } else {
-          // Desktop view open
-          body.classList.remove("sidebar-closed", "sidebar-collapse");
-          body.classList.add("sidebar-open");
-        }
-      };
-
       // Initial check and resize listener
       updateSidebarState();
       window.addEventListener("resize", updateSidebarState);
@@ -2303,6 +2319,15 @@ __webpack_require__.r(__webpack_exports__);
           document.body.classList.remove("sidebar-open");
         }
       });
+
+      // Auto-expand current active menu group on mount
+      menus_vue.forEach(function (menu, index) {
+        if (menu.sub_menus.some(function (s) {
+          return isActive(s.link);
+        })) {
+          openIndex.value = index;
+        }
+      });
     });
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onBeforeUnmount)(function () {
       window.removeEventListener("resize", updateSidebarState);
@@ -2311,24 +2336,6 @@ __webpack_require__.r(__webpack_exports__);
     var toggleSubmenu = function toggleSubmenu(index) {
       openIndex.value = openIndex.value === index ? null : index;
     };
-    var isActive = function isActive(link) {
-      return currentPath === link;
-    };
-    var isActiveGroup = function isActiveGroup(menu) {
-      var _menu$sub_menus;
-      return (_menu$sub_menus = menu.sub_menus) === null || _menu$sub_menus === void 0 ? void 0 : _menu$sub_menus.some(function (s) {
-        return currentPath === s.link;
-      });
-    };
-    (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
-      menus_vue.forEach(function (menu, index) {
-        if (menu.sub_menus.some(function (s) {
-          return currentPath === s.link;
-        })) {
-          openIndex.value = index;
-        }
-      });
-    });
     return {
       menus_vue: menus_vue,
       openIndex: openIndex,
@@ -3041,12 +3048,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return _cache[0] || (_cache[0] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" + Add Plan ")]);
     }),
     _: 1 /* STABLE */
-  }, 8 /* PROPS */, ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_4, [_cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Name"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Amount"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Monthly ROI"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Tenure"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Status"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  }, 8 /* PROPS */, ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_4, [_cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Name"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Amount"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Monthly ROI"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Tenure"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Type"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", null, "Status"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
     width: "160"
   }, "Actions")])], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.plans, function (plan) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       key: plan.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.amount), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.monthly_roi_amount), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.tenure), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.amount), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.monthly_roi_amount), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.tenure), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.type), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["badge", plan.is_active ? 'badge-success' : 'badge-danger'])
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.is_active ? 'Active' : 'Inactive'), 3 /* TEXT, CLASS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
       "class": "btn btn-sm btn-primary mr-1",

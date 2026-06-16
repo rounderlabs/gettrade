@@ -72,6 +72,14 @@ class CreateInvestmentJob implements ShouldQueue
 
         if ($subscription) {
             dispatch(new UpdateActiveTeamStatJob($this->user))->delay(now()->addSeconds(5));
+            // Trigger booster check for user and sponsor
+            \App\Jobs\UpdateUserBoosterJob::dispatch($this->user)->delay(now()->addSeconds(2));
+            if ($this->user->sponsor_id) {
+                $sponsor = User::find($this->user->sponsor_id);
+                if ($sponsor) {
+                    \App\Jobs\UpdateUserBoosterJob::dispatch($sponsor)->delay(now()->addSeconds(2));
+                }
+            }
         }
 
         $userActiveModel = $this->user->userActive;

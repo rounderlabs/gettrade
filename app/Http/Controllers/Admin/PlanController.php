@@ -28,6 +28,7 @@ class PlanController extends Controller
             'monthly_roi_amount' => 'required|numeric|min:0',
             'tenure' => 'required|numeric|min:0',
             'principle_amount' => 'required|numeric|min:0',
+            'type' => 'required|in:regular,secure',
             'is_active' => 'required|boolean',
             'allow_to_user' => 'required|boolean',
         ]);
@@ -54,6 +55,7 @@ class PlanController extends Controller
             'amount' => 'required|numeric|min:0',
             'monthly_roi_amount' => 'required|numeric|min:0',
             'tenure' => 'required|numeric|min:0',
+            'type' => 'required|in:regular,secure',
             'principle_amount' => 'required|numeric|min:0',
             'is_active' => 'required|boolean',
             'allow_to_user' => 'required|boolean',

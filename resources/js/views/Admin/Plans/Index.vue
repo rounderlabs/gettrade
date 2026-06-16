@@ -35,6 +35,7 @@ function deletePlan(id) {
                     <th>Amount</th>
                     <th>Monthly ROI</th>
                     <th>Tenure</th>
+                    <th>Type</th>
                     <th>Status</th>
                     <th width="160">Actions</th>
                 </tr>
@@ -45,6 +46,7 @@ function deletePlan(id) {
                     <td>{{ plan.amount }}</td>
                     <td>{{ plan.monthly_roi_amount }}</td>
                     <td>{{ plan.tenure }}</td>
+                    <td>{{ plan.type }}</td>
                     <td>
                             <span
                                 class="badge"

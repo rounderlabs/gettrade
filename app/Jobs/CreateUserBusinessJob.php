@@ -8,6 +8,7 @@ use App\Models\UserLegBusiness;
 use App\Models\UserUsdWalletTransaction;
 use App\Methods\UserLevelMethods;
 use App\Services\RankService;
+use App\Jobs\UpdateUserRewardsRank;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -72,7 +73,8 @@ class CreateUserBusinessJob implements ShouldQueue
             ['amount' => '0']
         );
         $userLegBusiness->increment('amount', $amountInUsd);
-        UpdateUserDailyBusinessJob::dispatch($user, 'team_business',$this->totalBusiness )->delay(now()->addSecond());
+        UpdateUserDailyBusinessJob::dispatch($user, 'team_business', $this->totalBusiness)->delay(now()->addSecond());
+        UpdateUserRewardsRank::dispatch($user)->delay(now()->addSeconds(2));
     }
 
     private function isUserActive(User $parent_user): bool

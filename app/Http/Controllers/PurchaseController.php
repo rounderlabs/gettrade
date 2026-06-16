@@ -170,6 +170,23 @@ class PurchaseController extends Controller
 
         $plans = Plan::where('is_active', 1)
             ->where('allow_to_user', 1)
+            ->where('type', 'regular')
+            ->orderBy('id', 'ASC')
+            ->get()
+            ->map(function ($plan) use ($baseCurrency, $displayCurrency) {
+
+                $plan->display_amount = CurrencyService::convert(
+                    (string) $plan->amount,
+                    $baseCurrency,
+                    $displayCurrency
+                );
+
+                return $plan;
+            });
+
+        $securedPlans = Plan::where('is_active', 1)
+            ->where('allow_to_user', 1)
+            ->where('type', 'secure')
             ->orderBy('id', 'ASC')
             ->get()
             ->map(function ($plan) use ($baseCurrency, $displayCurrency) {
@@ -186,6 +203,7 @@ class PurchaseController extends Controller
         return Inertia::render('Purchase/Pricing', [
             'plans' => $plans,
             'display_currency' => $displayCurrency,
+            'secured_plans'=>$securedPlans,
         ]);
     }
 

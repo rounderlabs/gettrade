@@ -38,8 +38,13 @@ class CreateLevelIncomeJob implements ShouldQueue
      */
     public function handle()
     {
+        $plan = \App\Models\Plan::find($this->subscription->plan_id);
+        $isSecured = $plan && $plan->type === 'secure';
 
-        UserLevelMethods::init($this->user)->eachSponsorV1(function ($parentUser, $level) {
+        UserLevelMethods::init($this->user)->eachSponsorV1(function ($parentUser, $level) use ($isSecured) {
+            if ($isSecured && $level > 3) {
+                return true;
+            }
             if ($level > 13) {
                 return true;
             }

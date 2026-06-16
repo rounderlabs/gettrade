@@ -55,6 +55,16 @@ class CreateRoiIncomeJob implements ShouldQueue
            MONTHLY % → DAILY ROI AMOUNT
         =============================== */
         $monthlyPercent = castDecimalString($plan->monthly_roi_amount, 4);
+
+        // Check if booster is active for this subscription
+        $isBoosterActive = \App\Models\UserBoosterStat::where('subscription_id', $this->subscription->id)
+            ->where('is_booster_active', 1)
+            ->exists();
+
+        if ($isBoosterActive) {
+            $monthlyPercent = addDecimalStrings($monthlyPercent, '1.00', 4);
+        }
+
         $monthlyAmount  = multipleDecimalStrings(
             $this->subscription->amount,
             divDecimalStrings($monthlyPercent, '100', 6),

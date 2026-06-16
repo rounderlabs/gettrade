@@ -219,6 +219,18 @@ __webpack_require__.r(__webpack_exports__);
       link: route("earnings.rank.bonus"),
       menu_icon: "sunrise"
     }, {
+      heading: "Ranks & Rewards",
+      link: route("earnings.rewards.list"),
+      menu_icon: "gift"
+    }, {
+      heading: "Rewards Income",
+      link: route("earnings.rewards.income"),
+      menu_icon: "award"
+    }, {
+      heading: "Salary Rewards",
+      link: route("earnings.salary.income"),
+      menu_icon: "calendar"
+    }, {
       heading: "Withdrawals History",
       link: route("history.withdrawal"),
       menu_icon: "menu"
@@ -374,7 +386,9 @@ __webpack_require__.r(__webpack_exports__);
       var entered = parseFloat(withdrawForm.amount || 0);
       if (entered >= 10) {
         amount.value = entered.toFixed(2);
-        var calculatedFee = entered * 0.10;
+
+        // const calculatedFee = entered * 0.10;
+        var calculatedFee = 0;
         fees.value = calculatedFee.toFixed(2);
         receivableAmount.value = (entered - calculatedFee).toFixed(2);
       } else {

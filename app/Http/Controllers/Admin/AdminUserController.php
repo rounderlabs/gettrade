@@ -648,5 +648,107 @@ class AdminUserController extends Controller
         return back();
     }
 
+    public function exportUsers(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $status = $request->input('status');
+        $filter = $request->input('filter');
 
+        $query = User::with(['tree.sponsor', 'subscriptions.plan', 'userIncomeStat', 'withdrawalHistories']);
+
+        if ($status == 'active') {
+            $query->whereHas('subscriptions');
+        } else if ($status == 'inactive') {
+            $query->whereDoesntHave('subscriptions');
+        }
+
+        if (!empty($filter)) {
+            if (is_numeric($filter)) {
+                $query->where(function($q) use ($filter) {
+                    $q->where('id', $filter)
+                      ->orWhere('username', 'like', '%' . $filter);
+                });
+            } else {
+                $query->where(function($q) use ($filter) {
+                    $q->where('name', 'like', '%' . $filter . '%')
+                      ->orWhere('email', 'like', '%' . $filter . '%')
+                      ->orWhere('username', 'like', '%' . $filter . '%')
+                      ->orWhere('mobile', 'like', '%' . $filter . '%')
+                      ->orWhere('id', $filter);
+                });
+            }
+        }
+
+        $columns = [
+            'ID',
+            'Name',
+            'Username',
+            'Email',
+            'Mobile',
+            'Sponsor Username',
+            'Sponsor Name',
+            'Status',
+            'Registration Date',
+            'Total Investment ($)',
+            'Active Packages',
+            'Direct Income ($)',
+            'Level Income ($)',
+            'ROI Income ($)',
+            'ROI on ROI Income ($)',
+            'Rank Income ($)',
+            'Bonanza Income ($)',
+            'Reward Income ($)',
+            'Total Successful Withdrawal ($)',
+            'Total Pending Withdrawal ($)',
+        ];
+
+        return response()->streamDownload(function () use ($columns, $query) {
+            $file = fopen('php://output', 'w+');
+            fputcsv($file, $columns);
+
+            $query->orderByDesc('id')->chunk(100, function ($users) use ($file) {
+                foreach ($users as $user) {
+                    // Calculate totals safely
+                    $totalInvestment = $user->subscriptions->where('is_active', true)->sum('amount');
+                    $successWithdrawals = $user->withdrawalHistories->where('status', 'success')->sum('amount');
+                    $pendingWithdrawals = $user->withdrawalHistories->where('status', 'pending')->sum('amount');
+
+                    $statusText = $user->subscriptions->count() > 0 ? 'Active' : 'InActive';
+
+                    $activePackages = $user->subscriptions->where('is_active', true)->map(function ($sub) {
+                        return ($sub->plan ? strtoupper($sub->plan->name) : 'PLAN') . ' ($' . number_format($sub->amount, 2) . ')';
+                    })->implode(', ');
+
+                    $row = [
+                        $user->id,
+                        $user->name,
+                        $user->username,
+                        $user->email,
+                        $user->mobile,
+                        $user->tree?->sponsor?->username ?? '---',
+                        $user->tree?->sponsor?->name ?? '---',
+                        $statusText,
+                        $user->created_at ? date('Y-m-d', strtotime($user->getRawOriginal('created_at'))) : '---',
+                        number_format($totalInvestment, 2, '.', ''),
+                        $activePackages ?: '---',
+                        number_format($user->userIncomeStat?->direct ?? 0, 2, '.', ''),
+                        number_format($user->userIncomeStat?->level ?? 0, 2, '.', ''),
+                        number_format($user->userIncomeStat?->roi ?? 0, 2, '.', ''),
+                        number_format($user->userIncomeStat?->roi_on_roi ?? 0, 2, '.', ''),
+                        number_format($user->userIncomeStat?->rank ?? 0, 2, '.', ''),
+                        number_format($user->userIncomeStat?->bonanza ?? 0, 2, '.', ''),
+                        number_format($user->userIncomeStat?->reward ?? 0, 2, '.', ''),
+                        number_format($successWithdrawals, 2, '.', ''),
+                        number_format($pendingWithdrawals, 2, '.', ''),
+                    ];
+
+                    fputcsv($file, $row);
+                }
+            });
+
+            fclose($file);
+        }, 'users_list_' . date('Ymd_His') . '.csv', [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="users_list_' . date('Ymd_His') . '.csv"',
+        ]);
+    }
 }

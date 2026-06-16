@@ -116,6 +116,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('rank-bonus', [EarningController::class, 'showRankBonus'])->name('rank.bonus');
         Route::get('rank-bonus-get', [EarningController::class, 'getRankBonus'])->name('rank.bonus.get');
 
+        Route::get('rewards-list', [EarningController::class, 'showRewardsList'])->name('rewards.list');
+
+        Route::get('rewards-income', [EarningController::class, 'showRewardBonus'])->name('rewards.income');
+        Route::get('rewards-income-get', [EarningController::class, 'getRewardBonus'])->name('rewards.income.get');
+
+        Route::get('salary-income', [EarningController::class, 'showSalaryIncome'])->name('salary.income');
+        Route::get('salary-income-get', [EarningController::class, 'getSalaryIncome'])->name('salary.income.get');
+
     });
 
     Route::prefix('purchase')->name('purchase.')->group(function () {

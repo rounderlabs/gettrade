@@ -9,7 +9,7 @@
                 <div class="container-fluid">
                     <div class="app-content">
                         <!--begin::Container-->
-                        <div class="">
+                        <div class="pt-3">
                             <slot></slot>
                         </div>
                     </div>
@@ -17,47 +17,47 @@
             </div>
         </main>
 
-
         <AdminFooterComponent></AdminFooterComponent>
-
     </div>
     <NotificationToast></NotificationToast>
-
 </template>
 
 <script>
-
-import MainAdminHeaderComponent from "@/components/AdminComponents/MainAdminHeaderComponent.vue";
 import AdminFooterComponent from "@/components/AdminComponents/AdminFooterComponent.vue";
 import NotificationToast from "@/components/NotificationToast.vue";
 import AdminHeaderComponent from "@/components/AdminComponents/AdminHeaderComponent.vue";
 import AdminSidebarComponent from "@/components/AdminComponents/AdminSidebarComponent.vue";
 import { toast } from "@/utils/toast";
+
 export default {
     name: "MainAdminLayout",
     components: {
         AdminSidebarComponent,
         AdminHeaderComponent,
         NotificationToast,
-        AdminFooterComponent, MainAdminHeaderComponent,
+        AdminFooterComponent,
         toast
     },
     methods: {
         toggleSidebar() {
             const body = document.body;
-            // Toggle sidebar visibility for mobile and desktop
-            if (body.classList.contains("sidebar-open")) {
-                body.classList.remove("sidebar-open");
-                body.classList.add("sidebar-collapse");
-            } else {
-                body.classList.add("sidebar-open");
+            if (body.classList.contains("sidebar-collapse")) {
                 body.classList.remove("sidebar-collapse");
+                body.classList.add("sidebar-open");
+            } else {
+                body.classList.add("sidebar-collapse");
+                body.classList.remove("sidebar-open");
             }
-        },
-    },
+            window.dispatchEvent(new Event('resize'));
+        }
+    }
 };
 </script>
 
-<style scoped>
-
+<style>
+/* Responsive layout offsets keeping standard AdminLTE flow intact */
+.app-wrapper {
+    min-height: 100vh;
+    background-color: #f8fafc;
+}
 </style>

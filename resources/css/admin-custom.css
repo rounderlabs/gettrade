@@ -1,0 +1,218 @@
+/* ========================================================================= */
+/* Admin Ultra Pro Elite Custom CSS                                          */
+/* This file contains all global custom styling for the admin panel          */
+/* ========================================================================= */
+
+.dashboard-container,
+.admin-container {
+    background-color: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* Typography & Titles */
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 850;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.welcome-subtitle {
+    font-size: 0.975rem;
+    font-weight: 500;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Animations */
+@keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes float-blob {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-25px) scale(1.02); }
+}
+@keyframes scan-line {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+@keyframes text-pulse {
+    0% { opacity: 0.85; filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.3)); }
+    100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(124, 58, 237, 0.6)); }
+}
+@keyframes icon-beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    100% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 10px #28a745; }
+}
+
+.ultra-pulse { animation: text-pulse 3s infinite alternate; }
+.icon-pulse { animation: icon-beat 2s infinite ease-in-out; }
+.stat-icon-pulse { display: inline-block; animation: icon-beat 3s infinite ease-in-out; }
+
+/* Badges */
+.glass-date-badge {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 0.65rem 1.3rem;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-date-badge:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Premium Stat Cards with Glass Door Effect */
+.premium-stat-card {
+    padding: 1.5rem;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.premium-stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 40px -10px var(--card-glow, rgba(0,0,0,0.1)), inset 0 1px 1px 0 rgba(255, 255, 255, 1) !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Glass Shine Reflection */
+.glass-shine {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+.premium-stat-card:hover .glass-shine {
+    left: 150%;
+}
+
+.glass-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 1.25rem;
+    z-index: 1;
+}
+
+/* Cyber Scanner Line */
+.cyber-scanner-line {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: scan-line 3.5s infinite linear;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Glass Inner Accent Glow */
+.premium-stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    box-shadow: inset 0 0 20px var(--card-glow, transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+.premium-stat-card:hover::after {
+    opacity: 1;
+}
+
+.card-label { font-size: 0.8rem; letter-spacing: 1px; }
+.stat-value { font-size: 1.75rem; letter-spacing: -0.5px; }
+.fw-extrabold { font-weight: 800; }
+.tracking-wide { letter-spacing: 0.05em; }
+
+/* Standard Glass Card for Charts/Reports */
+.glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.35) 100%) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8) !important;
+    animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: 0.1s;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 1) !important;
+}
+.card-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Background Glow Blobs */
+.bg-glow-blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; animation: float-blob 15s infinite ease-in-out alternate; }
+.blob-1 { top: 5%; left: 10%; width: 300px; height: 300px; background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%); animation-duration: 12s; }
+.blob-2 { top: 25%; right: 15%; width: 350px; height: 350px; background: radial-gradient(circle, #8b5cf6 0%, #6d28d9 100%); animation-duration: 18s; animation-delay: -5s; }
+.blob-3 { bottom: 10%; left: 20%; width: 400px; height: 400px; background: radial-gradient(circle, #10b981 0%, #059669 100%); animation-duration: 15s; animation-delay: -10s; }
+
+/* Utilities */
+.card-header-custom { background: transparent !important; border-bottom: 1px solid rgba(0,0,0,0.05) !important; }
+.card-title-custom { font-size: 1.15rem; font-weight: 700; color: #1e293b; }
+.card-desc { font-size: 0.85rem; }
+.z-index-2 { position: relative; z-index: 2; }
+.bg-light-danger { background-color: rgba(255, 245, 245, 0.5) !important; }
+.border-danger { border-color: #feb2b2 !important; }
+.bg-light { background-color: rgba(248, 249, 250, 0.5) !important; }
+.bg-danger-gradient { background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.15), transparent); }
+
+.telemetry-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 18px 16px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+.pulse-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #28a745;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #28a745;
+    animation: pulse 1.6s infinite alternate;
+}

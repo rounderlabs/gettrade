@@ -2181,11 +2181,9 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.Link
   },
   setup: function setup() {
-    var _usePage = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)(),
-      props = _usePage.props;
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)();
     var openIndex = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)(null);
-    var currentPath = window.location.pathname;
-    var siteSettings = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)().props.siteSettings;
+    var siteSettings = page.props.siteSettings;
     var menus_vue = [{
       heading: "Dashboard",
       iconClass: "bi-speedometer2",
@@ -2256,6 +2254,9 @@ __webpack_require__.r(__webpack_exports__);
         title: "Plan List",
         link: route("admin.plans.index")
       }, {
+        title: "Rewards List",
+        link: route("admin.rewards.index")
+      }, {
         title: "Rank Setting",
         link: route("admin.ranks.index")
       }, {
@@ -2276,20 +2277,35 @@ __webpack_require__.r(__webpack_exports__);
         link: route("admin.notifications.index")
       }]
     }];
+    var updateSidebarState = function updateSidebarState() {
+      var body = document.body;
+      if (window.innerWidth <= 991) {
+        // Mobile view collapsed
+        body.classList.add("sidebar-collapse", "sidebar-closed");
+        body.classList.remove("sidebar-open");
+      } else {
+        // Desktop view open
+        body.classList.remove("sidebar-closed", "sidebar-collapse");
+        body.classList.add("sidebar-open");
+      }
+    };
+    var isActive = function isActive(link) {
+      try {
+        var relativeLink = link.replace(window.location.origin, '');
+        var cleanLink = relativeLink.split('?')[0];
+        var cleanCurrent = page.url.split('?')[0];
+        return cleanCurrent === cleanLink;
+      } catch (e) {
+        return page.url === link;
+      }
+    };
+    var isActiveGroup = function isActiveGroup(menu) {
+      var _menu$sub_menus;
+      return (_menu$sub_menus = menu.sub_menus) === null || _menu$sub_menus === void 0 ? void 0 : _menu$sub_menus.some(function (s) {
+        return isActive(s.link);
+      });
+    };
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
-      var updateSidebarState = function updateSidebarState() {
-        var body = document.body;
-        if (window.innerWidth <= 991) {
-          // Mobile view collapsed
-          body.classList.add("sidebar-collapse", "sidebar-closed");
-          body.classList.remove("sidebar-open");
-        } else {
-          // Desktop view open
-          body.classList.remove("sidebar-closed", "sidebar-collapse");
-          body.classList.add("sidebar-open");
-        }
-      };
-
       // Initial check and resize listener
       updateSidebarState();
       window.addEventListener("resize", updateSidebarState);
@@ -2303,6 +2319,15 @@ __webpack_require__.r(__webpack_exports__);
           document.body.classList.remove("sidebar-open");
         }
       });
+
+      // Auto-expand current active menu group on mount
+      menus_vue.forEach(function (menu, index) {
+        if (menu.sub_menus.some(function (s) {
+          return isActive(s.link);
+        })) {
+          openIndex.value = index;
+        }
+      });
     });
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onBeforeUnmount)(function () {
       window.removeEventListener("resize", updateSidebarState);
@@ -2311,24 +2336,6 @@ __webpack_require__.r(__webpack_exports__);
     var toggleSubmenu = function toggleSubmenu(index) {
       openIndex.value = openIndex.value === index ? null : index;
     };
-    var isActive = function isActive(link) {
-      return currentPath === link;
-    };
-    var isActiveGroup = function isActiveGroup(menu) {
-      var _menu$sub_menus;
-      return (_menu$sub_menus = menu.sub_menus) === null || _menu$sub_menus === void 0 ? void 0 : _menu$sub_menus.some(function (s) {
-        return currentPath === s.link;
-      });
-    };
-    (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
-      menus_vue.forEach(function (menu, index) {
-        if (menu.sub_menus.some(function (s) {
-          return currentPath === s.link;
-        })) {
-          openIndex.value = index;
-        }
-      });
-    });
     return {
       menus_vue: menus_vue,
       openIndex: openIndex,
@@ -2508,6 +2515,7 @@ __webpack_require__.r(__webpack_exports__);
       monthly_roi_amount: props.plan.monthly_roi_amount,
       tenure: props.plan.tenure,
       principle_amount: props.plan.principle_amount,
+      type: props.plan.type,
       is_active: props.plan.is_active,
       allow_to_user: props.plan.allow_to_user
     });
@@ -3041,70 +3049,82 @@ var _hoisted_7 = {
   "class": "form-group"
 };
 var _hoisted_8 = {
-  "class": "form-check"
+  "class": "form-group"
 };
 var _hoisted_9 = {
   "class": "form-check"
 };
 var _hoisted_10 = {
+  "class": "form-check"
+};
+var _hoisted_11 = {
   "class": "card-footer"
 };
-var _hoisted_11 = ["disabled"];
+var _hoisted_12 = ["disabled"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[18] || (_cache[18] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "card-header"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
     "class": "card-title"
-  }, "Edit Plan")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Name", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, "Edit Plan")], -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Name", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $setup.form.name = $event;
     }),
     "class": "form-control"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.name]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.name]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "number",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $setup.form.amount = $event;
     }),
     "class": "form-control"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Monthly ROI", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Monthly ROI", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "number",
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $setup.form.monthly_roi_amount = $event;
     }),
     "class": "form-control"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.monthly_roi_amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Tenure", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.monthly_roi_amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Tenure", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "number",
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $setup.form.tenure = $event;
     }),
     "class": "form-control"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.tenure]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Principle Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.tenure]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Principle Amount", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "number",
     "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
       return $setup.form.principle_amount = $event;
     }),
     "class": "form-control"
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.principle_amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    type: "checkbox",
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.principle_amount]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Plan Type", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
     "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
-      return $setup.form.is_active = $event;
-    })
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.form.is_active]]), _cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-    "class": "ml-2"
-  }, "Active", -1 /* HOISTED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      return $setup.form.type = $event;
+    }),
+    "class": "form-control"
+  }, _cache[14] || (_cache[14] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+    value: "regular"
+  }, "Regular Plan", -1 /* HOISTED */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+    value: "secure"
+  }, "Secured Plan (Property Investment Plan)", -1 /* HOISTED */)]), 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.form.type]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "checkbox",
     "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+      return $setup.form.is_active = $event;
+    })
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.form.is_active]]), _cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+    "class": "ml-2"
+  }, "Active", -1 /* HOISTED */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "checkbox",
+    "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
       return $setup.form.allow_to_user = $event;
     })
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.form.allow_to_user]]), _cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $setup.form.allow_to_user]]), _cache[17] || (_cache[17] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "ml-2"
-  }, "Allow to User", -1 /* HOISTED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, "Allow to User", -1 /* HOISTED */))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn btn-primary",
     disabled: $setup.form.processing,
-    onClick: _cache[7] || (_cache[7] = function ($event) {
+    onClick: _cache[8] || (_cache[8] = function ($event) {
       return $setup.form.put("/admin/plans/".concat($setup.props.plan.id));
     })
-  }, " Update Plan ", 8 /* PROPS */, _hoisted_11)])]);
+  }, " Update Plan ", 8 /* PROPS */, _hoisted_12)])]);
 }
 
 /***/ }),

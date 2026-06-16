@@ -26,6 +26,11 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes()
             ->withoutOverlapping()
             ->onOneServer();
+
+        $schedule->command('app:pay-monthly-salary')
+            ->daily()
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**

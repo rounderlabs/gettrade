@@ -2603,11 +2603,9 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.Link
   },
   setup: function setup() {
-    var _usePage = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)(),
-      props = _usePage.props;
+    var page = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)();
     var openIndex = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)(null);
-    var currentPath = window.location.pathname;
-    var siteSettings = (0,_inertiajs_vue3__WEBPACK_IMPORTED_MODULE_1__.usePage)().props.siteSettings;
+    var siteSettings = page.props.siteSettings;
     var menus_vue = [{
       heading: "Dashboard",
       iconClass: "bi-speedometer2",
@@ -2678,6 +2676,9 @@ __webpack_require__.r(__webpack_exports__);
         title: "Plan List",
         link: route("admin.plans.index")
       }, {
+        title: "Rewards List",
+        link: route("admin.rewards.index")
+      }, {
         title: "Rank Setting",
         link: route("admin.ranks.index")
       }, {
@@ -2698,20 +2699,35 @@ __webpack_require__.r(__webpack_exports__);
         link: route("admin.notifications.index")
       }]
     }];
+    var updateSidebarState = function updateSidebarState() {
+      var body = document.body;
+      if (window.innerWidth <= 991) {
+        // Mobile view collapsed
+        body.classList.add("sidebar-collapse", "sidebar-closed");
+        body.classList.remove("sidebar-open");
+      } else {
+        // Desktop view open
+        body.classList.remove("sidebar-closed", "sidebar-collapse");
+        body.classList.add("sidebar-open");
+      }
+    };
+    var isActive = function isActive(link) {
+      try {
+        var relativeLink = link.replace(window.location.origin, '');
+        var cleanLink = relativeLink.split('?')[0];
+        var cleanCurrent = page.url.split('?')[0];
+        return cleanCurrent === cleanLink;
+      } catch (e) {
+        return page.url === link;
+      }
+    };
+    var isActiveGroup = function isActiveGroup(menu) {
+      var _menu$sub_menus;
+      return (_menu$sub_menus = menu.sub_menus) === null || _menu$sub_menus === void 0 ? void 0 : _menu$sub_menus.some(function (s) {
+        return isActive(s.link);
+      });
+    };
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
-      var updateSidebarState = function updateSidebarState() {
-        var body = document.body;
-        if (window.innerWidth <= 991) {
-          // Mobile view collapsed
-          body.classList.add("sidebar-collapse", "sidebar-closed");
-          body.classList.remove("sidebar-open");
-        } else {
-          // Desktop view open
-          body.classList.remove("sidebar-closed", "sidebar-collapse");
-          body.classList.add("sidebar-open");
-        }
-      };
-
       // Initial check and resize listener
       updateSidebarState();
       window.addEventListener("resize", updateSidebarState);
@@ -2725,6 +2741,15 @@ __webpack_require__.r(__webpack_exports__);
           document.body.classList.remove("sidebar-open");
         }
       });
+
+      // Auto-expand current active menu group on mount
+      menus_vue.forEach(function (menu, index) {
+        if (menu.sub_menus.some(function (s) {
+          return isActive(s.link);
+        })) {
+          openIndex.value = index;
+        }
+      });
     });
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onBeforeUnmount)(function () {
       window.removeEventListener("resize", updateSidebarState);
@@ -2733,24 +2758,6 @@ __webpack_require__.r(__webpack_exports__);
     var toggleSubmenu = function toggleSubmenu(index) {
       openIndex.value = openIndex.value === index ? null : index;
     };
-    var isActive = function isActive(link) {
-      return currentPath === link;
-    };
-    var isActiveGroup = function isActiveGroup(menu) {
-      var _menu$sub_menus;
-      return (_menu$sub_menus = menu.sub_menus) === null || _menu$sub_menus === void 0 ? void 0 : _menu$sub_menus.some(function (s) {
-        return currentPath === s.link;
-      });
-    };
-    (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)(function () {
-      menus_vue.forEach(function (menu, index) {
-        if (menu.sub_menus.some(function (s) {
-          return currentPath === s.link;
-        })) {
-          openIndex.value = index;
-        }
-      });
-    });
     return {
       menus_vue: menus_vue,
       openIndex: openIndex,

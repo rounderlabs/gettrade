@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ExchangeRateController;
 use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ModuleSettingController;
 use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Admin\RankRuleController;
 use App\Http\Controllers\Admin\ScheduledJobController;
 use App\Http\Controllers\Admin\SubscriptionHistoryController;
@@ -61,6 +62,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [AdminUserController::class, 'showAllUsersPage'])->name('index');
             Route::get('get-users', [AdminUserController::class, 'getUsers'])->name('get_users');
             Route::post('filter-users', [AdminUserController::class, 'filterUsers'])->name('filter_users');
+            Route::get('export-users', [AdminUserController::class, 'exportUsers'])->name('export_users');
         });
 
         // WITHDRAWAL
@@ -130,30 +132,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{kyc}', [AdminKycController::class, 'show'])->name('show');
             Route::post('/{kyc}/approve', [AdminKycController::class, 'approve'])->name('approve');
             Route::post('/{kyc}/reject', [AdminKycController::class, 'reject'])->name('reject');
-//            Route::get('/file', function (Request $request) {
-//                abort_unless(auth()->user()->is_admin, 403);
-//                return Storage::disk('public')->download($request->path);
-//            })->name('file');
-//            Route::get('/file/{submission}/{field}', function (KycSubmission $submission, $field) {
-//
-//                $allowedFields = [
-//                    'aadhaar_front',
-//                    'aadhaar_back',
-//                    'pan_file',
-//                    'cancel_cheque',
-//                ];
-//
-//                abort_unless(in_array($field, $allowedFields), 403);
-//
-//                $path = $submission->$field;
-//
-//                abort_unless($path && Storage::disk('private')->exists($path), 404);
-//
-//                return Storage::disk('private')->download($path);
-//
-//            })->name('file');
-//
-
             Route::get('/file/{submission}/{field}',
                 [AdminKycController::class, 'download']
             )->name('file');
@@ -210,7 +188,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('get-user-rank-income-report', [AdminReportController::class, 'getUserRankIncome'])->name('user.rank.income.data');
         Route::get('user-rank-income/export', [AdminReportController::class, 'exportUserRankIncome'])->name('user.rank.income.export');
 
-
+        Route::get('pro-user-report', [AdminReportController::class, 'showProUserReport'])->name('pro-user-report');
+        Route::post('pro-user-report/data', [AdminReportController::class, 'getProUserReportData'])->name('pro-user-report.data');
+        Route::post('pro-user-report/action', [AdminReportController::class, 'teamBulkAction'])->name('pro-user-report.action');
     });
 
 
@@ -238,6 +218,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/rank-rules', [RankRuleController::class, 'index'])->name('index');
         Route::post('/rank-rules', [RankRuleController::class, 'store'])->name('store');
     });
+
+    Route::resource('rewards', RewardController::class)->except(['show']);
+
     Route::prefix('plans')->name('plans.')->group(function () {
         Route::get('/', [PlanController::class, 'index'])->name('index');
         Route::get('/create', [PlanController::class, 'create'])->name('create');

@@ -606,6 +606,245 @@ class AdminReportController extends Controller
         }, 'user_direct_bonus_' . now()->format('Ymd_His') . '.csv');
     }
 
+    public function showProUserReport()
+    {
+        return Inertia::render('Admin/Reports/ProUserReport');
+    }
 
+    public function getProUserReportData(Request $request)
+    {
+        $search = $request->input('user_identifier');
+        if (empty($search)) {
+            return response()->json(['success' => false, 'message' => 'Please enter a Username, Email, or User ID']);
+        }
 
+        $user = \App\Models\User::with(['tree.sponsor', 'userStop'])
+            ->where('id', $search)
+            ->orWhere('username', $search)
+            ->orWhere('email', $search)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found']);
+        }
+
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+        $interval = $request->input('interval', 'daily');
+
+        // 1. Calculate Business Stats
+        $directUserIds = \App\Models\User::where('sponsor_id', $user->id)->pluck('id')->toArray();
+        $directBusiness = \App\Models\Subscription::whereIn('user_id', $directUserIds)->sum('amount') ?? 0;
+
+        $downlineUserIds = \App\Models\UserLevelStat::where('user_id', $user->id)->pluck('downline_user_id')->toArray();
+        $teamBusiness = \App\Models\Subscription::whereIn('user_id', $downlineUserIds)->sum('amount') ?? 0;
+
+        $legs = \App\Models\UserLegBusiness::where('user_id', $user->id)->orderByDesc('amount')->get();
+        $greatestLeg = $legs->first()?->amount ?? '0.00';
+        $otherLegsSum = $legs->skip(1)->sum('amount') ?? '0.00';
+        $matchingBusiness = bccomp($greatestLeg, $otherLegsSum, 2) <= 0 ? $greatestLeg : $otherLegsSum;
+
+        // 2. Calculate Incomes
+        $directIncome = UserDirectIncome::where('user_id', $user->id)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('income') ?? 0;
+
+        $levelIncome = UserLevelIncomeStat::where('user_id', $user->id)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('income_amount') ?? 0;
+
+        $roiIncome = UserRoiIncome::where('user_id', $user->id)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('income') ?? 0;
+
+        $levelRoi = UserLevelRoiIncome::where('user_id', $user->id)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('income_usd') ?? 0;
+
+        $rankRoi = UserRankRoiIncomes::where('user_id', $user->id)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('income') ?? 0;
+
+        $rewardIncome = UserRewardIncomeStats::where('user_id', $user->id)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('income_usd') ?? 0;
+
+        $totalEarned = $directIncome + $levelIncome + $roiIncome + $levelRoi + $rankRoi + $rewardIncome;
+
+        // 3. Payouts
+        $totalPayouts = \App\Models\WithdrawalHistory::where('user_id', $user->id)
+            ->where('status', 'success')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->sum('amount') ?? 0;
+
+        // 4. Team stats
+        $directsCount = count($directUserIds);
+        $activeDirectsCount = \App\Models\User::where('sponsor_id', $user->id)
+            ->whereHas('subscriptions', fn($q) => $q->where('is_active', true))
+            ->count();
+        $teamSize = count($downlineUserIds);
+
+        // 5. Generate interval-wise timeline chart data
+        $timeline = [];
+        $dateFormat = '%Y-%m-%d';
+        if ($interval === 'weekly') {
+            $dateFormat = '%Y-w%V';
+        } elseif ($interval === 'monthly') {
+            $dateFormat = '%Y-%m';
+        }
+
+        $directsTimeline = UserDirectIncome::where('user_id', $user->id)
+            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as date_key, SUM(income) as total")
+            ->groupBy('date_key')
+            ->pluck('total', 'date_key')->toArray();
+
+        $levelsTimeline = UserLevelIncomeStat::where('user_id', $user->id)
+            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as date_key, SUM(income_amount) as total")
+            ->groupBy('date_key')
+            ->pluck('total', 'date_key')->toArray();
+
+        $roisTimeline = UserRoiIncome::where('user_id', $user->id)
+            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as date_key, SUM(income) as total")
+            ->groupBy('date_key')
+            ->pluck('total', 'date_key')->toArray();
+
+        $levelRoisTimeline = UserLevelRoiIncome::where('user_id', $user->id)
+            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as date_key, SUM(income_usd) as total")
+            ->groupBy('date_key')
+            ->pluck('total', 'date_key')->toArray();
+
+        $rankRoisTimeline = UserRankRoiIncomes::where('user_id', $user->id)
+            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as date_key, SUM(income) as total")
+            ->groupBy('date_key')
+            ->pluck('total', 'date_key')->toArray();
+
+        $rewardsTimeline = UserRewardIncomeStats::where('user_id', $user->id)
+            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as date_key, SUM(income_usd) as total")
+            ->groupBy('date_key')
+            ->pluck('total', 'date_key')->toArray();
+
+        // Merge all keys
+        $allKeys = array_unique(array_merge(
+            array_keys($directsTimeline),
+            array_keys($levelsTimeline),
+            array_keys($roisTimeline),
+            array_keys($levelRoisTimeline),
+            array_keys($rankRoisTimeline),
+            array_keys($rewardsTimeline)
+        ));
+        sort($allKeys);
+
+        foreach ($allKeys as $key) {
+            $d = $directsTimeline[$key] ?? 0;
+            $l = $levelsTimeline[$key] ?? 0;
+            $r = $roisTimeline[$key] ?? 0;
+            $lr = $levelRoisTimeline[$key] ?? 0;
+            $rk = $rankRoisTimeline[$key] ?? 0;
+            $rw = $rewardsTimeline[$key] ?? 0;
+
+            $timeline[] = [
+                'date' => $key,
+                'direct' => round($d, 2),
+                'level' => round($l, 2),
+                'roi' => round($r, 2),
+                'level_roi' => round($lr, 2),
+                'rank_roi' => round($rk, 2),
+                'reward' => round($rw, 2),
+                'total' => round($d + $l + $r + $lr + $rk + $rw, 2)
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'name' => $user->name,
+                'email' => $user->email,
+                'sponsor' => $user->tree->sponsor->username ?? 'None',
+                'created_at' => \Illuminate\Support\Carbon::parse($user->created_at)->format('Y-m-d'),
+                'is_blocked' => $user->userStop->is_blocked ?? false,
+            ],
+            'business' => [
+                'direct_business' => round($directBusiness, 2),
+                'team_business' => round($teamBusiness, 2),
+                'matching_business' => round($matchingBusiness, 2),
+            ],
+            'incomes' => [
+                'direct' => round($directIncome, 2),
+                'level' => round($levelIncome, 2),
+                'roi' => round($roiIncome, 2),
+                'level_roi' => round($levelRoi, 2),
+                'rank_roi' => round($rankRoi, 2),
+                'reward' => round($rewardIncome, 2),
+                'total' => round($totalEarned, 2),
+            ],
+            'payouts' => [
+                'total' => round($totalPayouts, 2),
+            ],
+            'team' => [
+                'directs' => $directsCount,
+                'active_directs' => $activeDirectsCount,
+                'team_size' => $teamSize,
+            ],
+            'timeline' => $timeline
+        ]);
+    }
+
+    public function teamBulkAction(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'action' => 'required|in:stop_income,restart_income,block_team,unblock_team',
+        ]);
+
+        $userId = $request->input('user_id');
+        $action = $request->input('action');
+
+        // Fetch all downlines
+        $downlineUserIds = \App\Models\UserLevelStat::where('user_id', $userId)->pluck('downline_user_id')->toArray();
+
+        if (empty($downlineUserIds)) {
+            return response()->json(['success' => false, 'message' => 'No team members found for this user']);
+        }
+
+        if ($action === 'stop_income') {
+            \App\Models\UserStop::whereIn('user_id', $downlineUserIds)->update([
+                'direct' => 1,
+                'roi' => 1,
+                'roi_on_roi' => 1,
+                'rank' => 1,
+                'bonanza' => 1,
+                'reward' => 1,
+                'withdrawal' => 1
+            ]);
+            $message = 'Successfully stopped all incomes for ' . count($downlineUserIds) . ' team members.';
+        } elseif ($action === 'restart_income') {
+            \App\Models\UserStop::whereIn('user_id', $downlineUserIds)->update([
+                'direct' => 0,
+                'roi' => 0,
+                'roi_on_roi' => 0,
+                'rank' => 0,
+                'bonanza' => 0,
+                'reward' => 0,
+                'withdrawal' => 0
+            ]);
+            $message = 'Successfully restarted all incomes for ' . count($downlineUserIds) . ' team members.';
+        } elseif ($action === 'block_team') {
+            \App\Models\UserStop::whereIn('user_id', $downlineUserIds)->update(['is_blocked' => 1]);
+            $message = 'Successfully blocked login access for ' . count($downlineUserIds) . ' team members.';
+        } elseif ($action === 'unblock_team') {
+            \App\Models\UserStop::whereIn('user_id', $downlineUserIds)->update(['is_blocked' => 0]);
+            $message = 'Successfully unblocked login access for ' . count($downlineUserIds) . ' team members.';
+        }
+
+        return response()->json(['success' => true, 'message' => $message]);
+    }
 }

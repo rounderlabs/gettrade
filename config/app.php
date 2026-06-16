@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Soluminity'),
+    'name' => env('APP_NAME', 'Get Wealth'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,11 +52,11 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://soluminity.com'),
+    'url' => env('APP_URL', 'https://getwealth.com'),
 
     'asset_url' => env('ASSET_URL', null),
 
-    'PG_APP_URL' => env('PG_APP_URL', 'https://gateway.soluminity.com/api/address/generate/'),
+    'PG_APP_URL' => env('PG_APP_URL', 'https://gateway.getwealth.com/api/address/generate/'),
 
     /*
     |--------------------------------------------------------------------------

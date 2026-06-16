@@ -6,5 +6,6 @@ return [
         'generate:roi',
         'generate:non-working-withdraw',
         'generate:working-withdraw',
+        'app:pay-monthly-salary',
     ],
 ];
