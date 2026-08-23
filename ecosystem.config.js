@@ -1,8 +1,9 @@
 module.exports = {
     apps: [
         {
-            name: 'ProHorizon',
-            script: './artisan',
+            name: 'GetWealth-Horizon',
+            cwd: __dirname,
+            script: 'artisan',
             interpreter: 'php',
             instances: 1,
             args: 'horizon',
@@ -10,15 +11,13 @@ module.exports = {
             watch: false,
             max_memory_restart: '1G',
             env: {
-                NODE_ENV: 'development',
-            },
-            env_prod: {
-                NODE_ENV: 'production',
+                APP_ENV: 'production',
             },
         },
         {
-            name: 'ProScheduler',
-            script: './artisan',
+            name: 'GetWealth-Scheduler',
+            cwd: __dirname,
+            script: 'artisan',
             interpreter: 'php',
             instances: 1,
             args: 'schedule:work',
@@ -26,15 +25,13 @@ module.exports = {
             watch: false,
             max_memory_restart: '1G',
             env: {
-                NODE_ENV: 'development',
-            },
-            env_prod: {
-                NODE_ENV: 'production',
+                APP_ENV: 'production',
             },
         },
         {
-            name: 'ProShortScheduler',
-            script: './artisan',
+            name: 'GetWealth-ShortScheduler',
+            cwd: __dirname,
+            script: 'artisan',
             interpreter: 'php',
             instances: 1,
             args: 'short-schedule:run',
@@ -42,15 +39,13 @@ module.exports = {
             watch: false,
             max_memory_restart: '512M',
             env: {
-                NODE_ENV: 'development',
-            },
-            env_prod: {
-                NODE_ENV: 'production',
+                APP_ENV: 'production',
             },
         },
         {
-            name: 'ProRedis',
-            script: './artisan',
+            name: 'GetWealth-Redis',
+            cwd: __dirname,
+            script: 'artisan',
             interpreter: 'php',
             instances: 1,
             args: 'queue:work redis --sleep=3 --tries=3 --timeout=90',
@@ -58,11 +53,9 @@ module.exports = {
             watch: false,
             max_memory_restart: '2G',
             env: {
-                NODE_ENV: 'development',
-            },
-            env_prod: {
-                NODE_ENV: 'production',
+                APP_ENV: 'production',
             },
         },
     ],
 };
+
